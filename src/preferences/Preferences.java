@@ -182,8 +182,8 @@ public class Preferences {
         script.add("episode","");
         script.add("fin","");
         
-        PreferencesDialog prefsDialog = new PreferencesDialog(null, "Initialisation des Préferences", true, null, this);
-        prefsDialog.showDialog();
+        //PreferencesDialog prefsDialog = new PreferencesDialog(null, "Initialisation des Préferences", true, null, this);
+        //prefsDialog.showDialog();
         try {
             ini.store();
         } catch (IOException ex) {
