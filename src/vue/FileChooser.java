@@ -21,6 +21,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 /**
  *
  * @author Robin
+ * @author Vincent
  */
 public class FileChooser extends JPanel{
     

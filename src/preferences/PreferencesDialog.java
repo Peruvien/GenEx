@@ -13,6 +13,7 @@ import vue.FileChooser;
 /**
  *
  * @author Robin
+ * @author Vincent
  */
 public class PreferencesDialog extends JDialog {
     

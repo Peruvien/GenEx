@@ -18,6 +18,7 @@ import org.ini4j.Wini;
 /**
  *
  * @author Robin
+ * @author Vincent
  */
 public class Preferences {
     

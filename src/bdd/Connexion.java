@@ -97,7 +97,6 @@ public class Connexion {
         }
     }
     
-    
     public ResultSet executerPreparedRequete(String requete, String  ... args) throws SQLException {
         ResultSet res = null;
         try (PreparedStatement prepared = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
