@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package logicielgestionexercices;
+package main;
 
 import vue.Fenetre;
 
@@ -12,7 +12,7 @@ import vue.Fenetre;
  * @author Robin
  * @author Vincent
  */
-public class LogicielGestionExercices {
+public class Main {
 
     /**
      * @param args the command line arguments
