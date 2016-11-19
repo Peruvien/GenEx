@@ -6,11 +6,15 @@
 package vue;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -31,25 +35,33 @@ public class Fenetre extends JFrame {
     private JTextField rechercheField;
     private JButton rechercheButton;
     private JButton rechercheAvanceeButton;
-    private JTabbedPane matieres;
     private JTabbedPane onglets;
     private JTree treeChapDistants;
     private JTree treeChapPresentiels;
     
+    //MENU
+    private JMenuBar menuBar;
+    private JMenu fichier;
+    private JMenuItem nouveau;
+    private JMenuItem ouvrir;
+    private JMenuItem quitter;
+    private JMenu outils;
+    private JMenuItem prefsMenuItem;
     
     //CONSTRUCTEUR
     public Fenetre() {
         super("Logiciel de gestion d'exercices");
-        setSize(new Dimension(800,500));
+        setSize(new Dimension(900,600));
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         initAll();
         setComponents();
+        setMenus();
         
         setLayout(new GridLayout(0,2));
         
+        setJMenuBar(menuBar);
         add(onglets);
         add(infosExoPanel);
         
@@ -67,13 +79,13 @@ public class Fenetre extends JFrame {
         initButtons();
         initTextFields();
         initTrees();
+        initMenus();
     }
     private void initPanels() {
         infosExoPanel = new JPanel(new BorderLayout());
         recherchePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     }
     private void initTabbedPane() {
-        matieres = new JTabbedPane();
         onglets = new JTabbedPane();
     }
     private void initButtons() {
@@ -83,6 +95,7 @@ public class Fenetre extends JFrame {
     private void initTextFields() {
         infosExoField = new JTextField("Informations sur l'exerice ou chapitre");
         rechercheField = new JTextField("Rechercher...");
+        rechercheField.setColumns(15);
     }
     private void initTrees() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Chapitres");
@@ -90,6 +103,15 @@ public class Fenetre extends JFrame {
         root.add(new DefaultMutableTreeNode("Chapitre 2"));
         treeChapPresentiels = new JTree(root);
         treeChapDistants = new JTree();
+    }
+    private void initMenus() {
+        menuBar = new JMenuBar();
+        fichier = new JMenu("Fichier");
+        nouveau = new JMenuItem("Nouveau");
+        ouvrir = new JMenuItem("Ouvrir");
+        quitter = new JMenuItem("Quitter");
+        outils = new JMenu("Outils");
+        prefsMenuItem = new JMenuItem("Préférences");
     }
     
     private void setComponents() {
@@ -104,7 +126,17 @@ public class Fenetre extends JFrame {
         infosExoPanel.add(infosExoField,BorderLayout.CENTER);
         infosExoPanel.add(recherchePanel,BorderLayout.NORTH);
         
+    }
+    
+    private void setMenus() {
+        fichier.add(nouveau);
+        fichier.add(ouvrir);
+        fichier.add(quitter);
         
+        outils.add(prefsMenuItem);
+        
+        menuBar.add(fichier);
+        menuBar.add(outils);
         
     }
     
