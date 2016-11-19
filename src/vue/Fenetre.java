@@ -20,6 +20,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  *
  * @author Robin
+ * @author Vincent
  */
 public class Fenetre extends JFrame {
     

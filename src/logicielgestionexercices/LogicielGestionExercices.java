@@ -10,6 +10,7 @@ import vue.Fenetre;
 /**
  *
  * @author Robin
+ * @author Vincent
  */
 public class LogicielGestionExercices {
 
