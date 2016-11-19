@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -19,7 +20,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
+import preferences.Preferences;
 
 /**
  *
@@ -47,6 +50,8 @@ public class Fenetre extends JFrame {
     private JMenuItem quitter;
     private JMenu outils;
     private JMenuItem prefsMenuItem;
+    
+    private Preferences preferences;
     
     //CONSTRUCTEUR
     public Fenetre() {
@@ -108,10 +113,13 @@ public class Fenetre extends JFrame {
         menuBar = new JMenuBar();
         fichier = new JMenu("Fichier");
         nouveau = new JMenuItem("Nouveau");
+        nouveau.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK));
         ouvrir = new JMenuItem("Ouvrir");
+        ouvrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_MASK));
         quitter = new JMenuItem("Quitter");
         outils = new JMenu("Outils");
         prefsMenuItem = new JMenuItem("Préférences");
+        prefsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_MASK));
     }
     
     private void setComponents() {
