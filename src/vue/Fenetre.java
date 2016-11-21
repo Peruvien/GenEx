@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -34,7 +35,7 @@ import preferences.PreferencesDialog;
  */
 public class Fenetre extends JFrame {
     
-    //ATTRIBUTS
+    //
     private JPanel listeExosPanel;
     private JPanel listeExosListePanel;
     private JPanel recherchePanel;
@@ -59,7 +60,9 @@ public class Fenetre extends JFrame {
     private JMenuItem nouveau;
     private JMenuItem ouvrir;
     private JMenuItem ajouterChapitre;
+    private JMenuItem supprimerChapitre;
     private JMenuItem ajouterExercice;
+    private JMenuItem supprimerExercice;
     private JMenuItem quitter;
     private JMenu outils;
     private JMenuItem prefsMenuItem;
@@ -116,7 +119,7 @@ public class Fenetre extends JFrame {
         listeExosBoutonsPanel = new JPanel(new FlowLayout());
     }
     private void initTabbedPane() {
-        onglets = new JTabbedPane();
+        onglets = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     }
     private void initButtons() {
         rechercheButton = new JButton("Rechercher");
@@ -133,10 +136,14 @@ public class Fenetre extends JFrame {
     }
     private void initTrees() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Chapitres");
+        
         DefaultMutableTreeNode chapitre1 = new DefaultMutableTreeNode("Chapitre 1");
         chapitre1.add(new DefaultMutableTreeNode("Exercice 1"));
+        DefaultMutableTreeNode chapitre2 = new DefaultMutableTreeNode("Chapitre 2");
+        chapitre2.add(new DefaultMutableTreeNode("Exercice 1"));
+        chapitre2.add(new DefaultMutableTreeNode("Exercice 2"));
         root.add(chapitre1);
-        root.add(new DefaultMutableTreeNode("Chapitre 2"));
+        root.add(chapitre2);
         treeChapPresentiels = new JTree(root);
         treeChapDistants = new JTree();
     }
@@ -173,6 +180,8 @@ public class Fenetre extends JFrame {
     private void setComponents() {
         onglets.addTab("Chapitres présentiels", treeChapPresentiels);
         onglets.addTab("Chapitre distants", treeChapDistants);
+        onglets.addTab("TDs",null);
+        onglets.addTab("Examens",null);
         onglets.addTab("Liste exercices",listeExosPanel);
         
         recherchePanel.add(rechercheField);
@@ -185,7 +194,12 @@ public class Fenetre extends JFrame {
         
         boutonsExoPanel.add(addExoListeButton);
         
+        listeExosPanel.add(listeExosListePanel);
         listeExosPanel.add(listeExosBoutonsPanel,BorderLayout.SOUTH);
+        
+        listeExosListePanel.add(new JCheckBox("Chapitre 3 Exercice 1"));
+        listeExosListePanel.add(new JCheckBox("Chapitre 3 Exercice 2"));
+        listeExosListePanel.add(new JCheckBox("Chapitre 3 Exercice 3"));
         
         listeExosBoutonsPanel.add(removeExoListeButton);
         listeExosBoutonsPanel.add(creerTDButton);
@@ -228,8 +242,7 @@ public class Fenetre extends JFrame {
                 
             }
             if (src.equals(quitter)) {
-                System.out.println("test");
-                //controleur.deconnecter();
+                controleur.deconnecter();
                 System.exit(0);
             }
         }

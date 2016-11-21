@@ -18,6 +18,7 @@ public class BDD {
     private ArrayList<Chapitre> chapitres;
     private ArrayList<Exercice> exercices;
     private ArrayList<TD> tds;
+    private ArrayList<Examen> examens;
     private ArrayList<ChapitreDeTD> chapitresDeTDs;
     private ArrayList<ChapitreDExercice> chapitresDExercices;
     

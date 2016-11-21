@@ -3,31 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package modele;
-
-import bdd.Connexion;
+package bdd;
 
 /**
  *
  * @author Robin
- * @author Vincent
  */
-public class Modele {
+public class Examen {
     
     //ATTRIBUTS
-    private final Connexion connexion;
+    private int idExamen;
+    
     
     //CONSTRUCTEUR
-    public Modele() {
-        connexion = new Connexion();
-    }
+    
     
     //ACCESSEURS
     
     
     //MUTATEURS
-    public void deconnecter() {
-        connexion.deconnecter();
-    }
-    
 }
