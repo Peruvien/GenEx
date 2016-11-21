@@ -24,7 +24,7 @@ public class Main {
         dossPrefs.mkdir();
         Preferences preferences = new Preferences(dossPrefs.getPath() + File.separator + "Preferences.ini");
         
-        Fenetre test = new Fenetre();
+        Fenetre test = new Fenetre(null, preferences);
     }
     
 }

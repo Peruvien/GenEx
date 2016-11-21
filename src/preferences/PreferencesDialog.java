@@ -5,9 +5,13 @@
  */
 package preferences;
 
+import controleur.Controleur;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import vue.FileChooser;
 
 /**
@@ -28,33 +32,47 @@ public class PreferencesDialog extends JDialog {
     
     
     //CONSTRUCTEUR
-    public PreferencesDialog(Preferences prefs) {
+    public PreferencesDialog(JFrame parent, String title, boolean modal, Controleur controleur, Preferences prefs) {        
+        super(parent,title,modal);
         this.preferences = prefs;
         
-        
+        initAll();
         
     }
     
     
     //ACCESSEURS
-    
+    public void showDialog() {
+        setVisible(true);
+    }
     
     
     //MUTATEURS
     private void initAll() {
-        
+        initButtons();
+        initFileChooser();
     }
     private void initFileChooser() {
         fileBDD = new FileChooser("Base de données","",JFileChooser.FILES_ONLY,JFileChooser.OPEN_DIALOG);
     }
     private void initButtons() {
-        //BoutonsListener boutonListener = new BoutonsListener();
+        BoutonsListener boutonListener = new BoutonsListener();
         
         ok = new JButton("OK");
-        //ok.addActionListener(boutonListener);
+        ok.addActionListener(boutonListener);
         annuler = new JButton("Annuler");
-        //annuler.addActionListener(boutonListener);
+        annuler.addActionListener(boutonListener);
         appliquer = new JButton("Applquer");
-        //appliquer.addActionListener(boutonListener);
+        appliquer.addActionListener(boutonListener);
+    }
+    
+    
+    class BoutonsListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+        
     }
 }

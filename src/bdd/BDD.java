@@ -5,14 +5,21 @@
  */
 package bdd;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author robin
+ * @author Vincent
  */
 public class BDD {
     
     //ATTRIBUTS
-    
+    private ArrayList<Chapitre> chapitres;
+    private ArrayList<Exercice> exercices;
+    private ArrayList<TD> tds;
+    private ArrayList<ChapitreDeTD> chapitresDeTDs;
+    private ArrayList<ChapitreDExercice> chapitresDExercices;
     
     //CONSTRUCTEUR
     

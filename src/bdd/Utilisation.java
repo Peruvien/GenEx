@@ -10,6 +10,7 @@ import java.util.Date;
 /**
  *
  * @author robin
+ * @author Vincent
  */
 public class Utilisation {
     

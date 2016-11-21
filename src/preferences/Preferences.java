@@ -98,8 +98,9 @@ public class Preferences {
         Section bdd = ini.add("Base de données");
         bdd.add("base_de_données", "");
         
-        //PreferencesDialog prefsDialog = new PreferencesDialog(null, "Initialisation des Préferences", true, null, this);
-        //prefsDialog.showDialog();
+        PreferencesDialog prefsDialog = new PreferencesDialog(null, "Initialisation des Préferences", true, null, this);
+        prefsDialog.showDialog();
+        
         try {
             ini.store();
         } catch (IOException ex) {

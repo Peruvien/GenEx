@@ -5,6 +5,7 @@
  */
 package vue;
 
+import controleur.Controleur;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -31,12 +32,20 @@ import preferences.Preferences;
 public class Fenetre extends JFrame {
     
     //ATTRIBUTS
+    private JPanel listeExosPanel;
+    private JPanel listeExosListePanel;
     private JPanel recherchePanel;
     private JPanel infosExoPanel;
+    private JPanel boutonsExoPanel;
+    private JPanel listeExosBoutonsPanel;
     private JTextField infosExoField;
     private JTextField rechercheField;
     private JButton rechercheButton;
     private JButton rechercheAvanceeButton;
+    private JButton addExoListeButton;
+    private JButton removeExoListeButton;
+    private JButton creerTDButton;
+    private JButton creerExamButton;
     private JTabbedPane onglets;
     private JTree treeChapDistants;
     private JTree treeChapPresentiels;
@@ -50,14 +59,20 @@ public class Fenetre extends JFrame {
     private JMenu outils;
     private JMenuItem prefsMenuItem;
     
-    private Preferences preferences;
+    //
+    private final Controleur controleur;
+    private final Preferences preferences;
+    
     
     //CONSTRUCTEUR
-    public Fenetre() {
+    public Fenetre(Controleur controleur, Preferences preferences) {
         super("Logiciel de gestion d'exercices");
         setSize(new Dimension(900,600));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        this.controleur = controleur;
+        this.preferences = preferences;
         
         initAll();
         setComponents();
@@ -86,8 +101,12 @@ public class Fenetre extends JFrame {
         initMenus();
     }
     private void initPanels() {
+        listeExosPanel = new JPanel(new BorderLayout());
+        listeExosListePanel = new JPanel(new ListeLayout());
         infosExoPanel = new JPanel(new BorderLayout());
         recherchePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        boutonsExoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        listeExosBoutonsPanel = new JPanel(new FlowLayout());
     }
     private void initTabbedPane() {
         onglets = new JTabbedPane();
@@ -95,6 +114,10 @@ public class Fenetre extends JFrame {
     private void initButtons() {
         rechercheButton = new JButton("Rechercher");
         rechercheAvanceeButton = new JButton("Recherche avancée");
+        addExoListeButton = new JButton("Ajouter à la liste");
+        removeExoListeButton = new JButton("Retirer de la liste");
+        creerTDButton = new JButton("Créer TD");
+        creerExamButton = new JButton("Créer Examen");
     }
     private void initTextFields() {
         infosExoField = new JTextField("Informations sur l'exerice ou chapitre");
@@ -103,7 +126,9 @@ public class Fenetre extends JFrame {
     }
     private void initTrees() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Chapitres");
-        root.add(new DefaultMutableTreeNode("Chapitre 1"));
+        DefaultMutableTreeNode chapitre1 = new DefaultMutableTreeNode("Chapitre 1");
+        chapitre1.add(new DefaultMutableTreeNode("Exercice 1"));
+        root.add(chapitre1);
         root.add(new DefaultMutableTreeNode("Chapitre 2"));
         treeChapPresentiels = new JTree(root);
         treeChapDistants = new JTree();
@@ -116,6 +141,7 @@ public class Fenetre extends JFrame {
         ouvrir = new JMenuItem("Ouvrir");
         ouvrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_MASK));
         quitter = new JMenuItem("Quitter");
+        quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK));
         outils = new JMenu("Outils");
         prefsMenuItem = new JMenuItem("Préférences");
         prefsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_MASK));
@@ -124,7 +150,7 @@ public class Fenetre extends JFrame {
     private void setComponents() {
         onglets.addTab("Chapitres présentiels", treeChapPresentiels);
         onglets.addTab("Chapitre distants", treeChapDistants);
-        onglets.addTab("Liste exercices",new JPanel());
+        onglets.addTab("Liste exercices",listeExosPanel);
         
         recherchePanel.add(rechercheField);
         recherchePanel.add(rechercheButton);
@@ -132,6 +158,16 @@ public class Fenetre extends JFrame {
         
         infosExoPanel.add(infosExoField,BorderLayout.CENTER);
         infosExoPanel.add(recherchePanel,BorderLayout.NORTH);
+        infosExoPanel.add(boutonsExoPanel,BorderLayout.SOUTH);
+        
+        boutonsExoPanel.add(addExoListeButton);
+        
+        
+        listeExosPanel.add(listeExosBoutonsPanel,BorderLayout.SOUTH);
+        
+        listeExosBoutonsPanel.add(removeExoListeButton);
+        listeExosBoutonsPanel.add(creerTDButton);
+        listeExosBoutonsPanel.add(creerExamButton);
         
     }
     
@@ -144,7 +180,6 @@ public class Fenetre extends JFrame {
         
         menuBar.add(fichier);
         menuBar.add(outils);
-        
     }
     
 }

@@ -5,16 +5,19 @@
  */
 package bdd;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author robin
+ * @authro Vincent
  */
 public class ChapitreDeTD {
     
     //ATTRIBUTS
     private Chapitre chapitre;
     private TD td;
-    private Utilisation dateUtilisation;
+    private ArrayList<Utilisation> datesUtilisations;
     
     //CONSTRUCTEUR
     
