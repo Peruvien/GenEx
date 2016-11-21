@@ -23,4 +23,13 @@ public class Controleur {
         this.modele = modele;
     }
     
+    
+    //ACCESSEURS
+    
+    
+    //MUTATEURS
+    public void deconnecter() {
+        modele.deconnecter();
+    }
+    
 }

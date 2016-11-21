@@ -22,5 +22,8 @@ public class Modele {
     
     
     //MUTATEURS
+    public void deconnecter() {
+        
+    }
     
 }

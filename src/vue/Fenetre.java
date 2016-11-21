@@ -10,6 +10,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,6 +25,7 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import preferences.Preferences;
+import preferences.PreferencesDialog;
 
 /**
  *
@@ -55,6 +58,8 @@ public class Fenetre extends JFrame {
     private JMenu fichier;
     private JMenuItem nouveau;
     private JMenuItem ouvrir;
+    private JMenuItem ajouterChapitre;
+    private JMenuItem ajouterExercice;
     private JMenuItem quitter;
     private JMenu outils;
     private JMenuItem prefsMenuItem;
@@ -62,6 +67,7 @@ public class Fenetre extends JFrame {
     //
     private final Controleur controleur;
     private final Preferences preferences;
+    private Preferences preferencesDialog;
     
     
     //CONSTRUCTEUR
@@ -73,6 +79,7 @@ public class Fenetre extends JFrame {
         
         this.controleur = controleur;
         this.preferences = preferences;
+        //preferencesDialog = new PreferencesDialog(null, "Préferences", true, this.controleur, this.preferences);
         
         initAll();
         setComponents();
@@ -134,17 +141,33 @@ public class Fenetre extends JFrame {
         treeChapDistants = new JTree();
     }
     private void initMenus() {
+        MenuListener menuListener = new MenuListener();
+        
         menuBar = new JMenuBar();
         fichier = new JMenu("Fichier");
+        
         nouveau = new JMenuItem("Nouveau");
         nouveau.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK));
+        nouveau.addActionListener(menuListener);
+        
         ouvrir = new JMenuItem("Ouvrir");
         ouvrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_MASK));
+        ouvrir.addActionListener(menuListener);
+        
+        ajouterChapitre = new JMenuItem("Ajouter chapitre");
+        ajouterChapitre.addActionListener(menuListener);
+        
+        ajouterExercice = new JMenuItem("Ajouter exercice");
+        ajouterExercice.addActionListener(menuListener);
+        
         quitter = new JMenuItem("Quitter");
         quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK));
+        quitter.addActionListener(menuListener);
+        
         outils = new JMenu("Outils");
         prefsMenuItem = new JMenuItem("Préférences");
         prefsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_MASK));
+        prefsMenuItem.addActionListener(menuListener);
     }
     
     private void setComponents() {
@@ -162,7 +185,6 @@ public class Fenetre extends JFrame {
         
         boutonsExoPanel.add(addExoListeButton);
         
-        
         listeExosPanel.add(listeExosBoutonsPanel,BorderLayout.SOUTH);
         
         listeExosBoutonsPanel.add(removeExoListeButton);
@@ -174,6 +196,8 @@ public class Fenetre extends JFrame {
     private void setMenus() {
         fichier.add(nouveau);
         fichier.add(ouvrir);
+        fichier.add(ajouterChapitre);
+        fichier.add(ajouterExercice);
         fichier.add(quitter);
         
         outils.add(prefsMenuItem);
@@ -182,4 +206,33 @@ public class Fenetre extends JFrame {
         menuBar.add(outils);
     }
     
+    
+    class MenuListener implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object src = e.getSource();
+            if (src.equals(nouveau)) {
+                
+            }
+            if (src.equals(ouvrir)) {
+                
+            }
+            if (src.equals(ajouterChapitre)) {
+                
+            }
+            if (src.equals(ajouterExercice)) {
+                
+            }
+            if (src.equals(prefsMenuItem)) {
+                
+            }
+            if (src.equals(quitter)) {
+                System.out.println("test");
+                //controleur.deconnecter();
+                System.exit(0);
+            }
+        }
+        
+    }
 }

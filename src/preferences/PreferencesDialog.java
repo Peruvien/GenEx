@@ -32,9 +32,9 @@ public class PreferencesDialog extends JDialog {
     
     
     //CONSTRUCTEUR
-    public PreferencesDialog(JFrame parent, String title, boolean modal, Controleur controleur, Preferences prefs) {        
-        super(parent,title,modal);
-        this.preferences = prefs;
+    public PreferencesDialog(JFrame parent, String title, boolean modal, Controleur controleur, Preferences preferences) {        
+        super(parent, title, modal);
+        this.preferences = preferences;
         
         initAll();
         

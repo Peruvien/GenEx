@@ -5,7 +5,9 @@
  */
 package main;
 
+import controleur.Controleur;
 import java.io.File;
+import modele.Modele;
 import preferences.Preferences;
 import vue.Fenetre;
 
@@ -24,7 +26,13 @@ public class Main {
         dossPrefs.mkdir();
         Preferences preferences = new Preferences(dossPrefs.getPath() + File.separator + "Preferences.ini");
         
-        Fenetre test = new Fenetre(null, preferences);
+        Modele modele = new Modele();
+        
+        Controleur controleur = new Controleur(modele);
+        
+        Fenetre test = new Fenetre(controleur, preferences);
+        
+        
     }
     
 }
