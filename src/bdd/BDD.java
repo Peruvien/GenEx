@@ -5,7 +5,7 @@
  */
 package bdd;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  *
@@ -15,12 +15,11 @@ import java.util.ArrayList;
 public class BDD {
     
     //ATTRIBUTS
-    private ArrayList<Chapitre> chapitres;
-    private ArrayList<Exercice> exercices;
-    private ArrayList<TD> tds;
-    private ArrayList<Examen> examens;
-    private ArrayList<ChapitreDeTD> chapitresDeTDs;
-    private ArrayList<ChapitreDExercice> chapitresDExercices;
+    private Set<Chapitre> chapitres;
+    private Set<Exercice> exercices;
+    private Set<TD> tds;
+    private Set<Examen> examens;
+    
     
     //CONSTRUCTEUR
     

@@ -10,10 +10,11 @@ package bdd;
  * @author robin
  * @author Vincent
  */
-public class TD {
+public class TD implements Comparable<TD> {
     
     //ATTRIBUTS
     private int idTD;
+    private Chapitre chapitre;
     private int numeroTD;
     
     
@@ -24,4 +25,15 @@ public class TD {
     
     
     //MUTATEURS
+    
+    
+    //COMPARABLE
+    @Override
+    public int compareTo(TD o) {
+        int res = chapitre.compareTo(o.chapitre);
+        if (res == 0) {
+            res = numeroTD - o.numeroTD;
+        }
+        return res;
+    }
 }

@@ -5,18 +5,22 @@
  */
 package bdd;
 
+import java.util.Set;
+
 /**
  *
  * @author robin
  * @author Vincent
  */
-public class Chapitre {
+public class Chapitre implements Comparable<Chapitre> {
     
     //ATTRIBUTS
     private int idChapitre;
     private int numeroChapitre;
     private boolean presentiel;
-    private String libelleChapitre;
+    private String libelle;
+    private Set<Exercice> exercices;
+    private Set<TD> tds;
     
     
     //CONSTRUCTEUR
@@ -26,4 +30,13 @@ public class Chapitre {
     
     
     //MUTATEURS
+    
+    
+    //COMPARABLE
+    @Override
+    public int compareTo(Chapitre o) {
+        int res = numeroChapitre - o.numeroChapitre;
+        
+        return res;
+    }
 }

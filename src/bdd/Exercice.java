@@ -13,14 +13,14 @@ import java.sql.Time;
  * @author robin
  * @author Vincent
  */
-public class Exercice {
+public class Exercice implements Comparable<Exercice> {
     
     //ATTRIBUTS
     private int idExercice;
     private int numeroExercice;
     private Time duree;
     private int points;
-    private String libelleExercice;
+    private String libelle;
     private File fichier;
     
     
@@ -33,4 +33,11 @@ public class Exercice {
     
     
     //MUTATEURS
+    
+    
+    //COMPARABLE
+    @Override
+    public int compareTo(Exercice o) {
+        return idExercice - o.idExercice;
+    }
 }
