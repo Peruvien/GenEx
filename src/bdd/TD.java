@@ -13,12 +13,15 @@ package bdd;
 public class TD implements Comparable<TD> {
     
     //ATTRIBUTS
-    private int idTD;
+    private final int idTD;
     private Chapitre chapitre;
-    private int numeroTD;
-    
+    private final int numeroTD;
     
     //CONSTRUCTEUR
+    public TD(int idTD, int numeroTD) {
+        this.idTD = idTD;
+        this.numeroTD = numeroTD;
+    }
     
     
     //ACCESSEURS

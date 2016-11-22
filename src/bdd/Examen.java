@@ -16,17 +16,22 @@ import java.sql.Time;
 public class Examen implements Comparable<Examen> {
     
     //ATTRIBUTS
-    private int idExamen;
+    private final int idExamen;
     private Chapitre chapitre;
-    private Date date;
-    private Time heure;
-    private Time duree;
-    private String libelle;
-    private File fichier;
+    private final Date date;
+    private final Time heure;
+    private final Time duree;
+    private final String libelle;
+    private final File fichier;
     
     //CONSTRUCTEUR
-    public Examen() {
-        
+    public Examen(int idExamen, Date date, Time heure, Time duree, String libelle, String fichier) {
+        this.idExamen = idExamen;
+        this.date = date;
+        this.heure = heure;
+        this.duree = duree;
+        this.libelle = libelle;
+        this.fichier = new File(fichier);
     }
     
     //ACCESSEURS
