@@ -26,6 +26,7 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import preferences.Preferences;
+import preferences.PreferencesDialog;
 
 /**
  *
@@ -66,10 +67,10 @@ public class Fenetre extends JFrame {
     private JMenu outils;
     private JMenuItem prefsMenuItem;
     
-    //
+    //CLASSES PERSOS
     private final Controleur controleur;
     private final Preferences preferences;
-    private Preferences preferencesDialog;
+    private final PreferencesDialog preferencesDialog;
     
     
     //CONSTRUCTEUR
@@ -81,7 +82,7 @@ public class Fenetre extends JFrame {
         
         this.controleur = controleur;
         this.preferences = preferences;
-        //preferencesDialog = new PreferencesDialog(null, "Préferences", true, this.controleur, this.preferences);
+        preferencesDialog = new PreferencesDialog(null, "Préferences", true, this.controleur, this.preferences);
         
         initAll();
         setComponents();
@@ -179,8 +180,8 @@ public class Fenetre extends JFrame {
     private void setComponents() {
         onglets.addTab("Chapitres présentiels", treeChapPresentiels);
         onglets.addTab("Chapitre distants", treeChapDistants);
-        onglets.addTab("TDs",null);
-        onglets.addTab("Examens",null);
+        onglets.addTab("TDs",new JPanel());
+        onglets.addTab("Examens",new JPanel());
         onglets.addTab("Liste exercices",listeExosPanel);
         
         recherchePanel.add(rechercheField);
@@ -238,7 +239,7 @@ public class Fenetre extends JFrame {
                 
             }
             if (src.equals(prefsMenuItem)) {
-                
+                preferencesDialog.showDialog();
             }
             if (src.equals(quitter)) {
                 controleur.deconnecter();
