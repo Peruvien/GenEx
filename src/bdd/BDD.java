@@ -22,21 +22,28 @@ public class BDD {
     
     //ATTRIBUTS
     private final ArrayList<Chapitre> chapitres;
-    private Map<Integer,Chapitre> chapitresMap;
+    private final Map<Integer,Chapitre> chapitresMap;
     private final ArrayList<Exercice> exercices;
+    private final Map<Integer,Exercice> exercicesMap;
     private final ArrayList<TD> tds;
+    private final Map<Integer,TD> tdsMap;
     private final ArrayList<Examen> examens;
-    
+    private final Map<Integer,Examen> examensMap;
+    private final Map<Integer,ExercicesDExamen> exercicesDExamenMap;
+    private final Map<Integer,ExercicesDeTD> exercicesDeTDMap;
     
     //CONSTRUCTEUR
     public BDD(Connexion connexion) {
         chapitres = new ArrayList();
         chapitresMap = new TreeMap();
         exercices = new ArrayList();
+        exercicesMap = new TreeMap();
         tds = new ArrayList();
+        tdsMap = new TreeMap();
         examens = new ArrayList();
-        
-        
+        examensMap = new TreeMap();
+        exercicesDExamenMap = new TreeMap();
+        exercicesDeTDMap = new TreeMap();
     }
     
     
@@ -76,7 +83,9 @@ public class BDD {
             dureeExamen = res2.getTime("dureeExamen");
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
-            examens.add(new Examen(idExamen,dateExamen,heureExamen,dureeExamen,libelleExamen,fichierExamenPath));
+            Examen examen = new Examen(idExamen,dateExamen,heureExamen,dureeExamen,libelleExamen,fichierExamenPath);
+            examens.add(examen);
+            examensMap.put(idExamen, examen);
         }
         
         int idExercice, numeroExercice, pointsExercice;
@@ -114,6 +123,40 @@ public class BDD {
             Chapitre chapitreTD = chapitresMap.get(idChapitre);
             TD td = new TD(idTD,numeroTD,fichierTDPath,chapitreTD);
         }
+        
+        String requete5 = "SELECT * FROM ExercicesDExamen GROUP BY idExamen";
+        ResultSet res5 = connexion.executerRequete(requete5);
+        while (res5.next()) {
+            idExamen = res5.getInt("idExamen");
+            idExercice = res5.getInt("idExercice");
+            Exercice exercice = exercicesMap.get(idExercice);
+            Examen examen = examensMap.get(idExamen);
+            ExercicesDExamen exosDexamen = exercicesDExamenMap.get(idExamen);
+            if (exosDexamen == null) {
+                exosDexamen = new ExercicesDExamen(examen);
+                exercicesDExamenMap.put(idExamen,exosDexamen);
+            }
+            exosDexamen.addExercice(exercice);
+        }
+        
+        String requete6 = "SELECT * FROM ExercicesDeTD GROUP BY idTD";
+        ResultSet res6 = connexion.executerRequete(requete6);
+        while (res6.next()) {
+            idTD = res6.getInt("idTD");
+            idExercice = res6.getInt("idExercice");
+            Date dateUtilisation = res6.getDate("dateUtilisation");
+            TD td = tdsMap.get(idTD);
+            Exercice exercice = exercicesMap.get(idExercice);
+            ExercicesDeTD exercicesDeTD = exercicesDeTDMap.get(idTD);
+            if (exercicesDeTD == null) {
+                exercicesDeTD = new ExercicesDeTD(td, dateUtilisation);
+                exercicesDeTDMap.put(idTD, exercicesDeTD);
+            }
+            exercicesDeTD.addExercice(exercice);
+            
+        }
+        
+        
         
     }
 }

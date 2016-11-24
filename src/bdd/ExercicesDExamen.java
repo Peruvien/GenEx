@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author robin
  * @author Vincent
  */
-public class ExerciceDExamen {
+public class ExercicesDExamen {
     
     //ATTRIBUTS
     private Examen examen;
@@ -20,11 +20,17 @@ public class ExerciceDExamen {
     //private Date dateUtilisation;
     
     //CONSTRUCTEUR
-    
+    public ExercicesDExamen(Examen examen) {
+        this.examen = examen;
+        exercices = new ArrayList();
+    }
     
     //ACCESSEURS
     
     
     //MUTATEURS
+    public void addExercice(Exercice exercice) {
+        exercices.add(exercice);
+    }
     
 }
