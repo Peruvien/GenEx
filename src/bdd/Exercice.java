@@ -16,6 +16,7 @@ import java.sql.Time;
 public class Exercice implements Comparable<Exercice> {
     
     //ATTRIBUTS
+    private Chapitre chapitreExercice;
     private final int idExercice;
     private final int numeroExercice;
     private final Time duree;
@@ -25,13 +26,17 @@ public class Exercice implements Comparable<Exercice> {
     
     
     //CONSTRUCTEUR
-    public Exercice(int idExercice, int numeroExercice, Time duree, int points, String libelle, String fichier) {
+    public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath) {
         this.idExercice = idExercice;
         this.numeroExercice = numeroExercice;
-        this.duree = duree;
-        this.points = points;
-        this.libelle = libelle;
-        this.fichier = new File(fichier);
+        this.duree = dureeExercice;
+        this.points = pointsExercice;
+        this.libelle = libelleExercice;
+        this.fichier = new File(fichierExercicePath);
+    }
+    public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, Chapitre chapitreExercice) {
+        this(idExercice, numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath);
+        this.chapitreExercice = chapitreExercice;
     }
     
     

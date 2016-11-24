@@ -5,7 +5,6 @@
  */
 package bdd;
 
-import java.sql.Date;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +17,7 @@ public class ExerciceDExamen {
     //ATTRIBUTS
     private Examen examen;
     private ArrayList<Exercice> exercices;
-    private Date dateUtilisation;
+    //private Date dateUtilisation;
     
     //CONSTRUCTEUR
     

@@ -61,8 +61,6 @@ public class Chapitre implements Comparable<Chapitre> {
     
     @Override
     public int compareTo(Chapitre o) {
-        int res = numeroChapitre - o.numeroChapitre;
-        
-        return res;
+        return idChapitre - o.idChapitre;
     }
 }

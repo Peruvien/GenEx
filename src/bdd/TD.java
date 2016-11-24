@@ -5,6 +5,8 @@
  */
 package bdd;
 
+import java.io.File;
+
 /**
  *
  * @author robin
@@ -16,11 +18,17 @@ public class TD implements Comparable<TD> {
     private final int idTD;
     private Chapitre chapitre;
     private final int numeroTD;
+    private final File fichier;
     
     //CONSTRUCTEUR
-    public TD(int idTD, int numeroTD) {
+    public TD(int idTD, int numeroTD, String fichierTDPath) {
         this.idTD = idTD;
         this.numeroTD = numeroTD;
+        this.fichier = new File(fichierTDPath);
+    }
+    public TD(int idTD, int numeroTD, String fichierTDPath, Chapitre chapitreTD) {
+        this(idTD,numeroTD,fichierTDPath);
+        this.chapitre = chapitreTD;
     }
     
     
