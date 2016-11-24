@@ -10,6 +10,7 @@ import java.awt.*;
 /**
  *
  * @author Robin
+ * @author Vincent
  */
 public class ListeLayout implements LayoutManager {
     

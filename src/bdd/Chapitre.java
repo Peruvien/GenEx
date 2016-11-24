@@ -10,7 +10,7 @@ import java.util.TreeSet;
 
 /**
  *
- * @author robin
+ * @author Robin
  * @author Vincent
  */
 public class Chapitre implements Comparable<Chapitre> {

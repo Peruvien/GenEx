@@ -12,6 +12,7 @@ import java.sql.Time;
 /**
  *
  * @author Robin
+ * @author Vincent
  */
 public class Examen implements Comparable<Examen> {
     

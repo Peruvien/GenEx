@@ -10,7 +10,7 @@ import java.sql.Time;
 
 /**
  *
- * @author robin
+ * @author Robin
  * @author Vincent
  */
 public class Exercice implements Comparable<Exercice> {

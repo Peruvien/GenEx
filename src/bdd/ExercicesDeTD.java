@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author robin
+ * @author Robin
  * @author Vincent
  */
 public class ExercicesDeTD {

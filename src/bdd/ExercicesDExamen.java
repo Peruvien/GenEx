@@ -9,14 +9,14 @@ import java.util.ArrayList;
 
 /**
  *
- * @author robin
+ * @author Robin
  * @author Vincent
  */
 public class ExercicesDExamen {
     
     //ATTRIBUTS
-    private Examen examen;
-    private ArrayList<Exercice> exercices;
+    private final Examen examen;
+    private final ArrayList<Exercice> exercices;
     //private Date dateUtilisation;
     
     //CONSTRUCTEUR

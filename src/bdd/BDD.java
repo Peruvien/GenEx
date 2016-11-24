@@ -15,7 +15,7 @@ import java.util.TreeMap;
 
 /**
  *
- * @author robin
+ * @author Robin
  * @author Vincent
  */
 public class BDD {

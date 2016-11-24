@@ -26,7 +26,6 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import preferences.Preferences;
-import preferences.PreferencesDialog;
 
 /**
  *

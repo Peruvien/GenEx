@@ -9,7 +9,7 @@ import java.io.File;
 
 /**
  *
- * @author robin
+ * @author Robin
  * @author Vincent
  */
 public class TD implements Comparable<TD> {
