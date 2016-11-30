@@ -21,26 +21,18 @@ import java.util.TreeMap;
 public class BDD {
     
     //ATTRIBUTS
-    private final ArrayList<Chapitre> chapitres;
     private final Map<Integer,Chapitre> chapitresMap;
-    private final ArrayList<Exercice> exercices;
     private final Map<Integer,Exercice> exercicesMap;
-    private final ArrayList<TD> tds;
     private final Map<Integer,TD> tdsMap;
-    private final ArrayList<Examen> examens;
     private final Map<Integer,Examen> examensMap;
     private final Map<Integer,ExercicesDExamen> exercicesDExamenMap;
     private final Map<Integer,ExercicesDeTD> exercicesDeTDMap;
     
     //CONSTRUCTEUR
     public BDD(Connexion connexion) {
-        chapitres = new ArrayList();
         chapitresMap = new TreeMap();
-        exercices = new ArrayList();
         exercicesMap = new TreeMap();
-        tds = new ArrayList();
         tdsMap = new TreeMap();
-        examens = new ArrayList();
         examensMap = new TreeMap();
         exercicesDExamenMap = new TreeMap();
         exercicesDeTDMap = new TreeMap();
@@ -64,7 +56,6 @@ public class BDD {
             presentiel = res1.getBoolean("presentielChapitre");
             libelleChapitre = res1.getString("libelleChapitre");
             Chapitre chapitre = new Chapitre(idChapitre,numeroChapitre,presentiel,libelleChapitre);
-            chapitres.add(chapitre);
             chapitresMap.put(idChapitre, chapitre);
         }
         
@@ -84,7 +75,6 @@ public class BDD {
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
             Examen examen = new Examen(idExamen,dateExamen,heureExamen,dureeExamen,libelleExamen,fichierExamenPath);
-            examens.add(examen);
             examensMap.put(idExamen, examen);
         }
         
@@ -102,8 +92,6 @@ public class BDD {
             libelleExercice = res3.getString("libelleExercice");
             fichierExercicePath = res3.getString("fichierExercice");
             idChapitre = res3.getInt("idChapitre");
-            //int indexChapitre = chapitres.indexOf(new Chapitre(idChapitre,0,false,null));
-            //Chapitre chapitreExercice = chapitres.get(indexChapitre);
             Chapitre chapitreExercice = chapitresMap.get(idChapitre);
             Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercicePath,chapitreExercice);
         }
@@ -118,8 +106,6 @@ public class BDD {
             numeroTD = res4.getInt("numeroTD");
             fichierTDPath = res4.getString("fichierTD");
             idChapitre = res4.getInt("idChapitre");
-            //int indexChapitre = chapitres.indexOf(new Chapitre(idChapitre,0,false,null));
-            //Chapitre chapitreTD = chapitres.get(indexChapitre);
             Chapitre chapitreTD = chapitresMap.get(idChapitre);
             TD td = new TD(idTD,numeroTD,fichierTDPath,chapitreTD);
         }
