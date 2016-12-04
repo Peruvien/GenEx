@@ -22,9 +22,7 @@ public class Exercice implements Comparable<Exercice> {
     private final Time duree;
     private final int points;
     private final String libelle;
-    private final File fichier;
-    
-    
+    //private final
     //CONSTRUCTEUR
     public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath) {
         this.idExercice = idExercice;
@@ -44,8 +42,10 @@ public class Exercice implements Comparable<Exercice> {
     
     
     //MUTATEURS
-    
-    
+
+    File fichier;
+
+
     //COMPARABLE
     @Override
     public int compareTo(Exercice o) {
