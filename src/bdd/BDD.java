@@ -53,7 +53,7 @@ public class BDD {
 
         connexion.executerUpdate(requete1);
 
-        String requete2 = "CREATE TABLE \"Cours\" " +
+        String requete2 = "CREATE TABLE \"COURS\" " +
                 "(`idCours` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "`numeroCours` INTEGER," +
                 "`FichierCours` TEXT," +
@@ -76,27 +76,28 @@ public class BDD {
 
         String requete4 = "CREATE TABLE \"EXERCICEDECOURS\" " +
                 "(`dateUtilisation` INTEGER," +
-                "`idCours` INTEGER NOT NULL PRIMARY KEY," +
-                "`idExercice` INTEGER NOT NULL PRIMARY KEY," +
+                "`idCours` INTEGER NOT NULL," +
+                "`idExercice` INTEGER NOT NULL," +
+                "PRIMARY KEY(idCours, idExercice)," +
                 "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
 
         connexion.executerUpdate(requete4);
         //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type INTEGER
-        String requete5 = "CREATE TABLE \"EXERCICE\" " +
+        String requete5 = "CREATE TABLE \"EXAMEN\" " +
                 "(`idExamen` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "`boolExamen` INTEGER NOT NULL," +
                 "`dateExamen` INTEGER," +
                 "`dureeExamen` INTEGER," +
                 "`libelleExamen` TEXT," +
-                "`fichierExamen` INTEGER," +
-                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
+                "`fichierExamen` INTEGER);";
 
         connexion.executerUpdate(requete5);
 
         String requete6 = "CREATE TABLE \"EXERCICEEXAMEN\" " +
-                "(`idExamen` INTEGER NOT NULL PRIMARY KEY," +
-                "`idExercice` INTEGER NOT NULL PRIMARY KEY," +
+                "(`idExamen` INTEGER NOT NULL," +
+                "`idExercice` INTEGER NOT NULL," +
+                "PRIMARY KEY(idExamen, idExercice)," +
                 "FOREIGN KEY(idExamen) REFERENCES COURS(idExamen)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
 

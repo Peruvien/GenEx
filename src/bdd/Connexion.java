@@ -71,7 +71,7 @@ public class Connexion {
             setDatabase("jdbc:ucanaccess://" + path + ";newdatabaseversion=V2007");
         }
         if (isSQLite) {
-            setDatabase("jdbc:sqlite:/" + path);
+            setDatabase("jdbc:sqlite:" + path);
         }
         
         if (isAccess) {

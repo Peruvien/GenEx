@@ -5,11 +5,14 @@
  */
 package main;
 
+import bdd.*;
 import controleur.Controleur;
-import java.io.File;
 import modele.Modele;
 import preferences.Preferences;
 import vue.Fenetre;
+
+import java.io.File;
+import java.sql.SQLException;
 
 /**
  *
@@ -27,6 +30,17 @@ public class Main {
         Preferences preferences = new Preferences(dossPrefs.getPath() + File.separator + "Preferences.ini");
         
         Modele modele = new Modele();
+        Connexion c = new Connexion();
+        //Si la table n'existe pas, elle est automatiquement créée
+        c.connecter("C:/Users/Hamor/Desktop/Projet/sqlite/cuisine2.db");
+        try {
+            BDD.createBDD(c);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //Remplie la bdd avec les tables.
+        BDD bdd = new BDD(c);
+        c.deconnecter();
         
         Controleur controleur = new Controleur(modele);
         
