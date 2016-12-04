@@ -31,7 +31,7 @@ public class Main {
         
         Modele modele = new Modele();
         Connexion c = new Connexion();
-        //Si la table n'existe pas, elle est automatiquement créée
+        //Si la bdd n'existe pas, elle est automatiquement créée
         c.connecter("C:/Users/Hamor/Desktop/Projet/sqlite/cuisine2.db");
         try {
             BDD.createBDD(c);
