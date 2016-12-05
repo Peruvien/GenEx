@@ -5,7 +5,6 @@
  */
 package vue;
 
-import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 import controleur.Controleur;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -81,7 +80,7 @@ public class Fenetre extends JFrame {
     //CONSTRUCTEUR
     public Fenetre(Controleur controleur, Preferences preferences) {
         super("Logiciel de gestion d'exercices");
-        setSize(new Dimension(900,600));
+        setSize(new Dimension(950,600));
         setLocationRelativeTo(null);
         
         WindowListener exitListener = new WindowAdapter() {
