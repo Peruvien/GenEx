@@ -157,84 +157,67 @@ public class BDD {
     
     //STATIC
     //Fonction a utiliser lors de la création d'une nouvelle BDD
-    public static BDD createBDD(Connexion connexion, String chemin) throws SQLException{
-        File file = new File(chemin);
-        boolean creation = false;
-        try {
-            creation = file.createNewFile();
-        } catch (IOException ex) {
-            Logger.getLogger(BDD.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        BDD res;
-        
-        //si le fichier a bien été créé alors on créé la base de données
-        if (creation) {
-            file.delete();
-            
-            connexion.connecter(chemin);
-            String requete1 = "CREATE TABLE CHAPITRE " +
-                    "('idChapitre' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    "'numeroChapitre' INTEGER," +
-                    "'presentielChapitre' BOOLEAN," +
-                    "'libelleChapitre' TEXT);";
+    public static void createBDD(Connexion connexion) throws SQLException{
+        String requete1 = "CREATE TABLE CHAPITRE " +
+                "('idChapitre' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "'numeroChapitre' INTEGER," +
+                "'presentielChapitre' BOOLEAN," +
+                "'libelleChapitre' TEXT);";
 
-            connexion.executerUpdate(requete1);
+        connexion.executerUpdate(requete1);
 
-            String requete2 = "CREATE TABLE COURS " +
-                    "('idCours' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    "'numeroCours' INTEGER," +
-                    "'FichierCours' TEXT," +
-                    "'idChapitre' INTEGER," +
-                    "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
+        String requete2 = "CREATE TABLE COURS " +
+                "('idCours' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "'numeroCours' INTEGER," +
+                "'FichierCours' TEXT," +
+                "'idChapitre' INTEGER," +
+                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
 
-            connexion.executerUpdate(requete2);
+        connexion.executerUpdate(requete2);
 
-            String requete3 = "CREATE TABLE EXERCICE " +
-                    "('idExercice' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    "'numeroExercice' INTEGER," +
-                    "'dureeExercice' TIME," +
-                    "'pointsExercice' INTEGER," +
-                    "'libelleExercice' TEXT," +
-                    "'fichierExercice' TEXT," +
-                    "'idChapitre' INTEGER," +
-                    "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
+        String requete3 = "CREATE TABLE EXERCICE " +
+                "('idExercice' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "'numeroExercice' INTEGER," +
+                "'dureeExercice' TIME," +
+                "'pointsExercice' INTEGER," +
+                "'libelleExercice' TEXT," +
+                "'fichierExercice' TEXT," +
+                "'idChapitre' INTEGER," +
+                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
 
-            connexion.executerUpdate(requete3);
+        connexion.executerUpdate(requete3);
 
-            String requete4 = "CREATE TABLE EXERCICEDECOURS " +
-                    "('dateUtilisation' DATE," +
-                    "'idCours' INTEGER NOT NULL," +
-                    "'idExercice' INTEGER NOT NULL," +
-                    "PRIMARY KEY(idCours, idExercice)," +
-                    "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
-                    "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
+        String requete4 = "CREATE TABLE EXERCICEDECOURS " +
+                "('dateUtilisation' DATE," +
+                "'idCours' INTEGER NOT NULL," +
+                "'idExercice' INTEGER NOT NULL," +
+                "PRIMARY KEY(idCours, idExercice)," +
+                "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
+                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
 
-            connexion.executerUpdate(requete4);
-            //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type INTEGER
-            String requete5 = "CREATE TABLE EXAMEN " +
-                    "('idExamen' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                    "'boolExamen' BOOLEAN NOT NULL," +
-                    "'dateExamen' DATE," +
-                    "'dureeExamen' TIME," +
-                    "'libelleExamen' TEXT," +
-                    "'fichierExamen' TEXT);";
+        connexion.executerUpdate(requete4);
+        //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type INTEGER
+        String requete5 = "CREATE TABLE EXAMEN " +
+                "('idExamen' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "'boolExamen' BOOLEAN NOT NULL," +
+                "'dateExamen' DATE," +
+                "'dureeExamen' TIME," +
+                "'libelleExamen' TEXT," +
+                "'fichierExamen' TEXT);";
 
-            connexion.executerUpdate(requete5);
+        connexion.executerUpdate(requete5);
 
-            String requete6 = "CREATE TABLE EXERCICEEXAMEN " +
-                    "('idExamen' INTEGER NOT NULL," +
-                    "'idExercice' INTEGER NOT NULL," +
-                    "PRIMARY KEY(idExamen, idExercice)," +
-                    "FOREIGN KEY(idExamen) REFERENCES COURS(idExamen)," +
-                    "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
+        String requete6 = "CREATE TABLE EXERCICEEXAMEN " +
+                "('idExamen' INTEGER NOT NULL," +
+                "'idExercice' INTEGER NOT NULL," +
+                "PRIMARY KEY(idExamen, idExercice)," +
+                "FOREIGN KEY(idExamen) REFERENCES COURS(idExamen)," +
+                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
 
-            connexion.executerUpdate(requete6);
-            
-            //Faire un petit message comme quoi la création de table s'est bien passée :)
-            
-        }
-        res = new BDD(connexion, chemin);
-        return res;
+        connexion.executerUpdate(requete6);
+
+        //Faire un petit message comme quoi la création de table s'est bien passée :)
+
     }
     
 }

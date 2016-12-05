@@ -35,6 +35,7 @@ public class Modele {
         */
     }
     
+    
     //ACCESSEURS
     
     
@@ -45,7 +46,7 @@ public class Modele {
     
     public void creerBDD(String chemin) {
         try {
-            bdd = BDD.createBDD(connexion, chemin);
+            BDD.createBDD(connexion);
         } catch (SQLException ex) {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
         }
