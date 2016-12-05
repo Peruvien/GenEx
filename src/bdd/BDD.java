@@ -5,12 +5,16 @@
  */
 package bdd;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,13 +32,19 @@ public class BDD {
     private final Map<Integer,ExercicesDeTD> exercicesDeTDMap;
     
     //CONSTRUCTEUR
-    public BDD(Connexion connexion) {
+    public BDD(Connexion connexion, String chemin) {
         chapitresMap = new TreeMap();
         exercicesMap = new TreeMap();
         tdsMap = new TreeMap();
         examensMap = new TreeMap();
         exercicesDExamenMap = new TreeMap();
         exercicesDeTDMap = new TreeMap();
+        
+        try {
+            initBDD(connexion,chemin);
+        } catch (SQLException ex) {
+            Logger.getLogger(BDD.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     
@@ -42,72 +52,9 @@ public class BDD {
     
     
     //MUTATEURS
-
-    //Fonction a utiliser lors de la création d'une nouvelle BDD
-    public static void createBDD(Connexion connexion) throws SQLException{
-        String requete1 = "CREATE TABLE \"CHAPITRE\" " +
-                "(`idChapitre` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "`numeroChapitre` INTEGER," +
-                "`presentielChapitre` INTEGER," +
-                "`libelleChapitre` TEXT);";
-
-        connexion.executerUpdate(requete1);
-
-        String requete2 = "CREATE TABLE \"COURS\" " +
-                "(`idCours` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "`numeroCours` INTEGER," +
-                "`FichierCours` TEXT," +
-                "`idChapitre` INTEGER," +
-                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
-
-        connexion.executerUpdate(requete2);
-
-        String requete3 = "CREATE TABLE \"EXERCICE\" " +
-                "(`idExercice` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "`numeroExercice` INTEGER," +
-                "`dureeExercice` INTEGER," +
-                "`pointsExercice` INTEGER," +
-                "`libelleExercice` TEXT," +
-                "`fichierExercice` INTEGER," +
-                "`idChapitre` INTEGER," +
-                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
-
-        connexion.executerUpdate(requete3);
-
-        String requete4 = "CREATE TABLE \"EXERCICEDECOURS\" " +
-                "(`dateUtilisation` INTEGER," +
-                "`idCours` INTEGER NOT NULL," +
-                "`idExercice` INTEGER NOT NULL," +
-                "PRIMARY KEY(idCours, idExercice)," +
-                "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
-                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
-
-        connexion.executerUpdate(requete4);
-        //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type INTEGER
-        String requete5 = "CREATE TABLE \"EXAMEN\" " +
-                "(`idExamen` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "`boolExamen` INTEGER NOT NULL," +
-                "`dateExamen` INTEGER," +
-                "`dureeExamen` INTEGER," +
-                "`libelleExamen` TEXT," +
-                "`fichierExamen` INTEGER);";
-
-        connexion.executerUpdate(requete5);
-
-        String requete6 = "CREATE TABLE \"EXERCICEEXAMEN\" " +
-                "(`idExamen` INTEGER NOT NULL," +
-                "`idExercice` INTEGER NOT NULL," +
-                "PRIMARY KEY(idExamen, idExercice)," +
-                "FOREIGN KEY(idExamen) REFERENCES COURS(idExamen)," +
-                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
-
-        connexion.executerUpdate(requete6);
-
-        //Faire un petit message comme quoi la création de table s'est bien passée :)
-
-    }
-
-    private void initBDD(Connexion connexion) throws SQLException {
+    private void initBDD(Connexion connexion, String chemin) throws SQLException {
+        connexion.connecter(chemin);
+        
         int idChapitre, numeroChapitre;
         boolean presentiel;
         String libelleChapitre;
@@ -205,8 +152,89 @@ public class BDD {
             exercicesDeTD.addExercice(exercice);
             
         }
-        
-        
-        
     }
+    
+    
+    //STATIC
+    //Fonction a utiliser lors de la création d'une nouvelle BDD
+    public static BDD createBDD(Connexion connexion, String chemin) throws SQLException{
+        File file = new File(chemin);
+        boolean creation = false;
+        try {
+            creation = file.createNewFile();
+        } catch (IOException ex) {
+            Logger.getLogger(BDD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        BDD res;
+        
+        //si le fichier a bien été créé alors on créé la base de données
+        if (creation) {
+            file.delete();
+            
+            connexion.connecter(chemin);
+            String requete1 = "CREATE TABLE CHAPITRE " +
+                    "(idChapitre INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                    "numeroChapitre INTEGER," +
+                    "presentielChapitre BOOLEAN," +
+                    "libelleChapitre TEXT);";
+
+            connexion.executerUpdate(requete1);
+
+            String requete2 = "CREATE TABLE COURS " +
+                    "(idCours INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                    "numeroCours INTEGER," +
+                    "FichierCours TEXT," +
+                    "idChapitre INTEGER," +
+                    "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
+
+            connexion.executerUpdate(requete2);
+
+            String requete3 = "CREATE TABLE EXERCICE " +
+                    "(idExercice INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                    "numeroExercice INTEGER," +
+                    "dureeExercice TIME," +
+                    "pointsExercice INTEGER," +
+                    "libelleExercice TEXT," +
+                    "fichierExercice TEXT," +
+                    "idChapitre INTEGER," +
+                    "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
+
+            connexion.executerUpdate(requete3);
+
+            String requete4 = "CREATE TABLE EXERCICEDECOURS " +
+                    "(dateUtilisation DATE," +
+                    "idCours INTEGER NOT NULL," +
+                    "idExercice INTEGER NOT NULL," +
+                    "PRIMARY KEY(idCours, idExercice)," +
+                    "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
+                    "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
+
+            connexion.executerUpdate(requete4);
+            //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type INTEGER
+            String requete5 = "CREATE TABLE EXAMEN " +
+                    "(idExamen INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                    "boolExamen BOOLEAN NOT NULL," +
+                    "dateExamen DATE," +
+                    "dureeExamen TIME," +
+                    "libelleExamen TEXT," +
+                    "fichierExamen TEXT);";
+
+            connexion.executerUpdate(requete5);
+
+            String requete6 = "CREATE TABLE EXERCICEEXAMEN " +
+                    "(idExamen INTEGER NOT NULL," +
+                    "idExercice INTEGER NOT NULL," +
+                    "PRIMARY KEY(idExamen, idExercice)," +
+                    "FOREIGN KEY(idExamen) REFERENCES COURS(idExamen)," +
+                    "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice));";
+
+            connexion.executerUpdate(requete6);
+            
+            //Faire un petit message comme quoi la création de table s'est bien passée :)
+            
+        }
+        res = new BDD(connexion, chemin);
+        return res;
+    }
+    
 }

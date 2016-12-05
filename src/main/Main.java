@@ -30,18 +30,19 @@ public class Main {
         Preferences preferences = new Preferences(dossPrefs.getPath() + File.separator + "Preferences.ini");
         
         Modele modele = new Modele();
+        /*
         Connexion c = new Connexion();
         //Si la bdd n'existe pas, elle est automatiquement créée
-        c.connecter("C:/Users/Hamor/Desktop/Projet/sqlite/cuisine2.db");
+        //c.connecter("C:/Users/Hamor/Desktop/Projet/sqlite/cuisine2.db");
         try {
-            BDD.createBDD(c);
+            BDD.createBDD(c,"C:/Users/Hamor/Desktop/Projet/sqlite/cuisine2.db");
         } catch (SQLException e) {
             e.printStackTrace();
         }
         //Remplie la bdd avec les tables.
         BDD bdd = new BDD(c);
         c.deconnecter();
-        
+        */
         Controleur controleur = new Controleur(modele);
         
         Fenetre test = new Fenetre(controleur, preferences);

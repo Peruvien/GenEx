@@ -5,6 +5,7 @@
  */
 package vue;
 
+import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 import controleur.Controleur;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -13,6 +14,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -51,6 +55,7 @@ public class Fenetre extends JFrame {
     private JButton creerTDButton;
     private JButton creerExamButton;
     private JTabbedPane onglets;
+    
     private JTree treeChapDistants;
     private JTree treeChapPresentiels;
     
@@ -78,7 +83,16 @@ public class Fenetre extends JFrame {
         super("Logiciel de gestion d'exercices");
         setSize(new Dimension(900,600));
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        WindowListener exitListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                controleur.deconnecter();
+                System.exit(0);
+            }
+        };
+        
+        addWindowListener(exitListener);
         
         this.controleur = controleur;
         this.preferences = preferences;

@@ -28,6 +28,10 @@ public class Controleur {
     
     
     //MUTATEURS
+    public void ouvrirBDD(String chemin) {
+        modele.ouvrirBDD(chemin);
+    }
+    
     public void deconnecter() {
         modele.deconnecter();
     }

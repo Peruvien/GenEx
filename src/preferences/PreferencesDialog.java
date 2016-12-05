@@ -7,7 +7,6 @@ package preferences;
 
 import controleur.Controleur;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +15,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import vue.FileChooser;
 
 /**
@@ -27,12 +27,15 @@ public class PreferencesDialog extends JDialog {
     
     //ATTRIBUTS
     private final Preferences preferences;
+    private final Controleur controleur;
+    
     
     private JPanel panelBoutons;
     private FileChooser fileBDD;
     private JButton ok;
     private JButton appliquer;
     private JButton annuler;
+    private boolean stateChanged;
     
     
     //CONSTRUCTEUR
@@ -42,10 +45,11 @@ public class PreferencesDialog extends JDialog {
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
         
+        this.controleur = controleur;
         this.preferences = preferences;
+        stateChanged = false;
         
         initAll();
-        
         setComponents();
         
         add(fileBDD,BorderLayout.CENTER);
@@ -70,6 +74,7 @@ public class PreferencesDialog extends JDialog {
     }
     private void initFileChooser() {
         fileBDD = new FileChooser("Base de données","",JFileChooser.FILES_ONLY,JFileChooser.OPEN_DIALOG);
+        fileBDD.setFilter(new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"));
     }
     private void initButtons() {
         BoutonsListener boutonListener = new BoutonsListener();
@@ -84,8 +89,10 @@ public class PreferencesDialog extends JDialog {
     
     private void setComponents() {
         panelBoutons.add(ok);
-        panelBoutons.add(annuler);
-        panelBoutons.add(appliquer);
+        if (controleur != null) {
+            panelBoutons.add(annuler);
+            panelBoutons.add(appliquer);
+        }
     }
     
     
@@ -95,13 +102,32 @@ public class PreferencesDialog extends JDialog {
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();            
             if (src.equals(ok)) {
+                stateChanged = true;
+                appliquer();
+                preferences.savePreferences();
+                stateChanged = false;
                 setVisible(false);
             }
             if (src.equals(annuler)) {
+                preferences.load();
+                
+                stateChanged = false;
                 setVisible(false);
             }
             if (src.equals(appliquer)) {
-                
+                stateChanged = true;
+                appliquer();
+            }
+        }
+        
+        private void appliquer() {
+            String pathBDD = fileBDD.getPath();
+            boolean bddChanged = !pathBDD.equals(preferences.getBDD());
+            preferences.setBDD(pathBDD);
+            if (bddChanged) {
+                if (controleur != null) {
+                    controleur.ouvrirBDD(pathBDD);
+                }
             }
         }
         

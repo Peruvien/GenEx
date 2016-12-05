@@ -102,11 +102,7 @@ public class FileChooser extends JPanel{
                 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    /*boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory());
-                    boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile());
-                    if (correctDir || correctFile) {*/
-                        textField.setText(file.getAbsolutePath());
-                    //}
+                    textField.setText(file.getAbsolutePath());
                 }
             }
         }
