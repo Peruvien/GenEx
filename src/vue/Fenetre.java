@@ -10,23 +10,33 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Map;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import preferences.Preferences;
 import preferences.PreferencesDialog;
@@ -38,10 +48,11 @@ import preferences.PreferencesDialog;
  */
 public class Fenetre extends JFrame {
     
-    //
+    //ATTRIBUTS
     private JPanel listeExosPanel;
     private JPanel listeExosListePanel;
     private JPanel recherchePanel;
+    private JPanel dropPanel;
     private JPanel infosExoPanel;
     private JPanel boutonsExoPanel;
     private JPanel listeExosBoutonsPanel;
@@ -53,10 +64,18 @@ public class Fenetre extends JFrame {
     private JButton removeExoListeButton;
     private JButton creerTDButton;
     private JButton creerExamButton;
-    private JTabbedPane onglets;
+    private JTabbedPane ongletsTabbedPane;
+    private JSplitPane splitPaneCentral;
+    private JSplitPane splitPaneDroit;
     
-    private JTree treeChapDistants;
+    private DefaultMutableTreeNode rootPresentiels;
+    private DefaultMutableTreeNode rootDistants;
+    
+    private Map<Integer,DefaultMutableTreeNode> chapitresPresentiels;
+    private Map<Integer,DefaultMutableTreeNode> chapitresDistants;
+    
     private JTree treeChapPresentiels;
+    private JTree treeChapDistants;
     
     //MENU
     private JMenuBar menuBar;
@@ -75,6 +94,7 @@ public class Fenetre extends JFrame {
     private final Controleur controleur;
     private final Preferences preferences;
     private final PreferencesDialog preferencesDialog;
+    private final RechercheAvanceePanel rechercheAvanceeDialog;
     
     
     //CONSTRUCTEUR
@@ -96,16 +116,16 @@ public class Fenetre extends JFrame {
         this.controleur = controleur;
         this.preferences = preferences;
         preferencesDialog = new PreferencesDialog(null, "Préferences", true, this.controleur, this.preferences);
+        rechercheAvanceeDialog = new RechercheAvanceePanel();
         
         initAll();
         setComponents();
         setMenus();
         
-        setLayout(new GridLayout(0,2));
+        setLayout(new GridLayout(1,1));
         
         setJMenuBar(menuBar);
-        add(onglets);
-        add(infosExoPanel);
+        add(splitPaneCentral);
         
         setVisible(true);
     }
@@ -117,6 +137,7 @@ public class Fenetre extends JFrame {
     //MUTATEURS
     private void initAll() {
         initPanels();
+        initSplitPane();
         initTabbedPane();
         initButtons();
         initTextFields();
@@ -126,17 +147,23 @@ public class Fenetre extends JFrame {
     private void initPanels() {
         listeExosPanel = new JPanel(new BorderLayout());
         listeExosListePanel = new JPanel(new ListeLayout());
+        dropPanel = new JPanel(new BorderLayout());
         infosExoPanel = new JPanel(new BorderLayout());
         recherchePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         boutonsExoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         listeExosBoutonsPanel = new JPanel(new FlowLayout());
     }
+    private void initSplitPane() {
+        splitPaneCentral = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPaneDroit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+    }
     private void initTabbedPane() {
-        onglets = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+        ongletsTabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     }
     private void initButtons() {
         rechercheButton = new JButton("Rechercher");
         rechercheAvanceeButton = new JButton("Recherche avancée");
+        rechercheAvanceeButton.addActionListener(new RechercheListener());
         addExoListeButton = new JButton("Ajouter à la liste");
         removeExoListeButton = new JButton("Retirer de la liste");
         creerTDButton = new JButton("Créer TD");
@@ -148,17 +175,20 @@ public class Fenetre extends JFrame {
         rechercheField.setColumns(15);
     }
     private void initTrees() {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Chapitres");
+        rootPresentiels = new DefaultMutableTreeNode("Chapitres");
+        rootDistants = new DefaultMutableTreeNode("Chapitres");
         
         DefaultMutableTreeNode chapitre1 = new DefaultMutableTreeNode("Chapitre 1");
         chapitre1.add(new DefaultMutableTreeNode("Exercice 1"));
         DefaultMutableTreeNode chapitre2 = new DefaultMutableTreeNode("Chapitre 2");
         chapitre2.add(new DefaultMutableTreeNode("Exercice 1"));
         chapitre2.add(new DefaultMutableTreeNode("Exercice 2"));
-        root.add(chapitre1);
-        root.add(chapitre2);
-        treeChapPresentiels = new JTree(root);
-        treeChapDistants = new JTree();
+        
+        rootPresentiels.add(chapitre1);
+        rootPresentiels.add(chapitre2);
+        treeChapPresentiels = new JTree(rootPresentiels);
+        treeChapPresentiels.setDragEnabled(true);
+        treeChapDistants = new JTree(rootDistants);
     }
     private void initMenus() {
         MenuListener menuListener = new MenuListener();
@@ -191,18 +221,25 @@ public class Fenetre extends JFrame {
     }
     
     private void setComponents() {
-        onglets.addTab("Chapitres présentiels", treeChapPresentiels);
-        onglets.addTab("Chapitre distants", treeChapDistants);
-        onglets.addTab("TDs",new JPanel());
-        onglets.addTab("Examens",new JPanel());
-        onglets.addTab("Liste exercices",listeExosPanel);
+        splitPaneCentral.add(ongletsTabbedPane);
+        splitPaneCentral.add(infosExoPanel);
+        
+        ongletsTabbedPane.addTab("Chapitres présentiels", treeChapPresentiels);
+        ongletsTabbedPane.addTab("Chapitre distants", treeChapDistants);
+        ongletsTabbedPane.addTab("TDs",new JPanel());
+        ongletsTabbedPane.addTab("Examens",new JPanel());
+        ongletsTabbedPane.addTab("Liste exercices",listeExosPanel);
         
         recherchePanel.add(rechercheField);
         recherchePanel.add(rechercheButton);
         recherchePanel.add(rechercheAvanceeButton);
         
-        infosExoPanel.add(infosExoField,BorderLayout.CENTER);
+        
+        splitPaneDroit.add(dropPanel);
+        splitPaneDroit.add(infosExoField);
+        
         infosExoPanel.add(recherchePanel,BorderLayout.NORTH);
+        infosExoPanel.add(splitPaneDroit,BorderLayout.CENTER);
         infosExoPanel.add(boutonsExoPanel,BorderLayout.SOUTH);
         
         boutonsExoPanel.add(addExoListeButton);
@@ -234,6 +271,36 @@ public class Fenetre extends JFrame {
     }
     
     
+    //OBSERVER
+    public void addChapitre(boolean distant) {
+        if (distant) {
+            DefaultMutableTreeNode chapitreAdd = new DefaultMutableTreeNode();
+            chapitresDistants.put(WIDTH, chapitreAdd);
+            rootDistants.add(chapitreAdd);
+        }
+        else {
+            DefaultMutableTreeNode chapitreAdd = new DefaultMutableTreeNode();
+            chapitresPresentiels.put(WIDTH, chapitreAdd);
+            rootPresentiels.add(chapitreAdd);
+        }
+    }
+    
+    public void addExercice(int chapitre, boolean distant) {
+        if (distant) {
+            DefaultMutableTreeNode exerciceAdd = new DefaultMutableTreeNode();
+            exerciceAdd.setAllowsChildren(false);
+            chapitresDistants.get(chapitre).add(exerciceAdd);
+        }
+        else {
+            DefaultMutableTreeNode exerciceAdd = new DefaultMutableTreeNode();
+            exerciceAdd.setAllowsChildren(false);
+            chapitresPresentiels.get(chapitre).add(exerciceAdd);
+        }
+    }
+    
+    
+    
+    //CLASSES INTERNES
     class MenuListener implements ActionListener {
         
         @Override
@@ -257,6 +324,20 @@ public class Fenetre extends JFrame {
             if (src.equals(quitter)) {
                 controleur.deconnecter();
                 System.exit(0);
+            }
+        }
+        
+    }
+    
+    class RechercheListener implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object src = e.getSource();
+            if (src.equals(rechercheAvanceeButton)) {
+                RechercheAvanceePanel panelOptions = new RechercheAvanceePanel();
+                
+                int res = JOptionPane.showConfirmDialog(panelOptions,panelOptions,"Recherche avancée",JOptionPane.OK_CANCEL_OPTION);
             }
         }
         

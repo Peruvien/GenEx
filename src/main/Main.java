@@ -35,7 +35,7 @@ public class Main {
         //Si la bdd n'existe pas, elle est automatiquement créée
         //c.connecter("C:/Users/Hamor/Desktop/Projet/sqlite/cuisine2.db");
         try {
-            BDD.createBDD(c,"C:/Users/Hamor/Desktop/Projet/sqlite/cuisine2.db");
+            BDD.createBDD(c);
         } catch (SQLException e) {
             e.printStackTrace();
         }
