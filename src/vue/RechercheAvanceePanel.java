@@ -7,8 +7,6 @@ package vue;
 
 import java.awt.GridLayout;
 import java.util.Properties;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -24,17 +22,18 @@ public class RechercheAvanceePanel extends JPanel {
     //ATTRIBUTS
     private JTextField textField;
     private CheckBoxComponent texteCheckBox;
-    private CheckBoxComponent datesCheckBox;
-    //private JButton rechercherButton;
+    private CheckBoxComponent dateDebutCheckBox;
+    private CheckBoxComponent dateFinCheckBox;
     
     
     //CONSTRUCTEUR
     public RechercheAvanceePanel() {
-        super(new GridLayout(2,0));
+        super(new GridLayout(3,0,5,5));
         initAll();
         
         add(texteCheckBox);
-        add(datesCheckBox);
+        add(dateDebutCheckBox);
+        add(dateFinCheckBox);
     }
     
     //ACCESSEURS
@@ -46,14 +45,21 @@ public class RechercheAvanceePanel extends JPanel {
     }
     private void initCheckBoxes() {
         textField = new JTextField();
-        texteCheckBox = new CheckBoxComponent("Titre",textField);
+        texteCheckBox = new CheckBoxComponent("Texte",textField);
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
         p.put("text.today", "Aujourd'hui");
         p.put("text.month", "Mois");
         p.put("text.year", "Année");
         JDatePickerImpl datePicker = new JDatePickerImpl(new JDatePanelImpl(model,p),new DateLabelFormatter());
-        datesCheckBox = new CheckBoxComponent("Date",datePicker);
+        dateDebutCheckBox = new CheckBoxComponent("Date début",datePicker);
+        model = new UtilDateModel();
+        p = new Properties();
+        p.put("text.today", "Aujourd'hui");
+        p.put("text.month", "Mois");
+        p.put("text.year", "Année");
+        datePicker = new JDatePickerImpl(new JDatePanelImpl(model,p),new DateLabelFormatter());
+        dateFinCheckBox = new CheckBoxComponent("Date fin",datePicker);
     }
     
     private void setComponenets() {

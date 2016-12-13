@@ -23,7 +23,7 @@ public class CheckBoxComponent extends JPanel{
     
     //CONSTRUCTEUR
     public CheckBoxComponent(String titre, Component component) {
-        super(new BorderLayout());
+        super(new BorderLayout(5,5));
         checkBox = new JCheckBox(titre);
         this.component = component;
         
