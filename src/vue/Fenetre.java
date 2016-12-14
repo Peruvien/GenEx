@@ -19,6 +19,7 @@ import java.awt.event.WindowListener;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -30,6 +31,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import preferences.Preferences;
 import preferences.PreferencesDialog;
@@ -299,11 +301,36 @@ public class Fenetre extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
-            if (src.equals(nouveau)) {
+            if (src.equals(nouveau) || src.equals(ouvrir)) {
+                int dialogType;
+                String message;
+                if (src.equals(nouveau)) {
+                    dialogType = JFileChooser.SAVE_DIALOG;
+                    message = "Créer";
+                }
+                else {
+                    dialogType = JFileChooser.OPEN_DIALOG;
+                    message = "Ouvrir";
+                }
+                FileChooser fileBDD = new FileChooser("Base de données","",JFileChooser.FILES_ONLY,dialogType);
+                FileNameExtensionFilter fileFilter;
+                if (src.equals(nouveau)) {
+                    fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
+                }
+                else {
+                    fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.kexi,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","kexi","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
+                }
                 
-            }
-            if (src.equals(ouvrir)) {
-                
+                fileBDD.setFilter(fileFilter);
+                int res = JOptionPane.showConfirmDialog(null,fileBDD,message + " la base de données",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+                if (res == JOptionPane.YES_OPTION) {
+                    if (src.equals(nouveau)) {
+                        controleur.creerBDD(fileBDD.getPath());
+                    }
+                    else {
+                        controleur.ouvrirBDD(fileBDD.getPath());
+                    }
+                }
             }
             if (src.equals(ajouterChapitre)) {
                 

@@ -28,8 +28,31 @@ public class Controleur {
     
     
     //MUTATEURS
+    public void creerBDD(String chemin) {
+        String lowerCase = chemin.toLowerCase();
+        if (lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
+         || lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
+         || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db2")
+         || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
+         || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
+         || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
+         || lowerCase.endsWith(".sl3")) {
+            modele.creerBDD(chemin);
+        }
+    }
+    
+    
     public void ouvrirBDD(String chemin) {
-        modele.ouvrirBDD(chemin);
+        String lowerCase = chemin.toLowerCase();
+        if (lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
+         || lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
+         || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db2")
+         || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
+         || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
+         || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
+         || lowerCase.endsWith(".sl3") || lowerCase.endsWith(".kexi")) {
+            modele.ouvrirBDD(chemin);
+        }
     }
     
     public void deconnecter() {
