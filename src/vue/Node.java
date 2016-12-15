@@ -11,36 +11,43 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author robin
  */
-public class ChapitreNode extends DefaultMutableTreeNode {
+public class Node  extends DefaultMutableTreeNode{
     
     //ATTRIBUTS
-    private final boolean presentiel;
     private final int id;
+    private final boolean isPresentiel;
+    private final boolean isChapitre;
     private final int numero;
     private final String titre;
     
+    
     //CONSTRUCTEUR
-    public ChapitreNode(boolean presentiel, int id, int numero, String titre) {
-        super(titre);
-        this.presentiel = presentiel;
+    public Node(int id, boolean isPresentiel, boolean isChapitre, int numero, String titre) {
         this.id = id;
+        this.isPresentiel = isPresentiel;
+        this.isChapitre = isChapitre;
         this.numero = numero;
         this.titre = titre;
     }
     
+    
     //ACCESSEURS
-    public boolean isPresentiel() {
-        return presentiel;
-    }
-
     public int getID() {
         return id;
     }
-
+    
+    public boolean isPresentiel() {
+        return isPresentiel;
+    }
+    
+    public boolean isChapitre() {
+        return isChapitre;
+    }
+    
     public int getNumero() {
         return numero;
     }
-
+    
     public String getTitre() {
         return titre;
     }
@@ -52,5 +59,6 @@ public class ChapitreNode extends DefaultMutableTreeNode {
     
     
     //MUTATEURS
+    
     
 }

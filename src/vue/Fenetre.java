@@ -10,17 +10,29 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -31,6 +43,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import preferences.Preferences;
@@ -48,6 +61,8 @@ public class Fenetre extends JFrame {
     private JPanel listeExosListePanel;
     private JPanel recherchePanel;
     private JPanel dropPanel;
+    private DefaultListModel modelList;
+    private JList dropList;
     private JPanel infosExoPanel;
     private JPanel boutonsExoPanel;
     private JPanel listeExosBoutonsPanel;
@@ -72,6 +87,8 @@ public class Fenetre extends JFrame {
     private JTree treeChapPresentiels;
     private JTree treeChapDistants;
     
+    private DataFlavor nodeFlavor;
+    
     //MENU
     private JMenuBar menuBar;
     private JMenu fichier;
@@ -95,6 +112,11 @@ public class Fenetre extends JFrame {
     //CONSTRUCTEUR
     public Fenetre(Controleur controleur, Preferences preferences) {
         super("Logiciel de gestion d'exercices");
+        try {
+            this.nodeFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + DefaultMutableTreeNode.class.getName());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+        }
         setSize(new Dimension(950,600));
         setLocationRelativeTo(null);
         
@@ -132,6 +154,7 @@ public class Fenetre extends JFrame {
     //MUTATEURS
     private void initAll() {
         initPanels();
+        initList();
         initSplitPane();
         initTabbedPane();
         initButtons();
@@ -142,11 +165,19 @@ public class Fenetre extends JFrame {
     private void initPanels() {
         listeExosPanel = new JPanel(new BorderLayout());
         listeExosListePanel = new JPanel(new ListeLayout());
+        
         dropPanel = new JPanel(new BorderLayout());
+        
         infosExoPanel = new JPanel(new BorderLayout());
         recherchePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         boutonsExoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         listeExosBoutonsPanel = new JPanel(new FlowLayout());
+    }
+    private void initList() {
+        modelList = new DefaultListModel();
+        dropList = new JList(modelList);
+        dropList.setDropMode(DropMode.INSERT);
+        dropList.setDropTarget(new DropTarget(dropList,new DropListTarget()));
     }
     private void initSplitPane() {
         splitPaneCentral = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -173,16 +204,19 @@ public class Fenetre extends JFrame {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
         
-        DefaultMutableTreeNode chapitre1 = new DefaultMutableTreeNode("Chapitre 1");
-        chapitre1.add(new DefaultMutableTreeNode("Exercice 1"));
-        DefaultMutableTreeNode chapitre2 = new DefaultMutableTreeNode("Chapitre 2");
-        chapitre2.add(new DefaultMutableTreeNode("Exercice 1"));
-        chapitre2.add(new DefaultMutableTreeNode("Exercice 2"));
+        ChapitreNode chapitre1 = new ChapitreNode(true,1,1,"Chapitre 1");
+        chapitre1.add(new ExerciceNode(true,1,1,1,"Exercice 1"));
+        chapitre1.add(new ExerciceNode(true,2,1,2,"Exercice 2"));
+        
+        ChapitreNode chapitre2 = new ChapitreNode(true,2,2,"Chapitre 2");
+        chapitre2.add(new ExerciceNode(true,3,2,1,"Exercice 1"));
+        chapitre2.add(new ExerciceNode(true,4,2,2,"Exercice 2"));
         
         rootPresentiels.add(chapitre1);
         rootPresentiels.add(chapitre2);
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
+        treeChapPresentiels.setTransferHandler(new MyTransferHandler());
         treeChapDistants = new JTree(rootDistants);
     }
     private void initMenus() {
@@ -229,9 +263,9 @@ public class Fenetre extends JFrame {
         recherchePanel.add(rechercheButton);
         recherchePanel.add(rechercheAvanceeButton);
         
-        
-        splitPaneDroit.add(dropPanel);
+        splitPaneDroit.add(dropList);
         splitPaneDroit.add(infosExoField);
+        splitPaneDroit.setDividerLocation(250);
         
         infosExoPanel.add(recherchePanel,BorderLayout.NORTH);
         infosExoPanel.add(splitPaneDroit,BorderLayout.CENTER);
@@ -296,6 +330,25 @@ public class Fenetre extends JFrame {
     
     
     //CLASSES INTERNES
+    class DropListTarget extends DropTargetAdapter {
+
+        @Override
+        public void drop(DropTargetDropEvent dtde) {
+            
+            try {
+                ExerciceNode node = (ExerciceNode)dtde.getTransferable().getTransferData(nodeFlavor);
+                if (!modelList.contains(node)) {
+                    modelList.addElement(node);
+                }
+            } catch (UnsupportedFlavorException | IOException ex) {
+                Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+        
+    }
+    
+    
     class MenuListener implements ActionListener {
         
         @Override
