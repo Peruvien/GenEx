@@ -15,7 +15,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import vue.FileChooser;
 
 /**
@@ -121,8 +120,8 @@ public class PreferencesDialog extends JDialog {
         
         private void appliquer() {
             String pathBDD = fileBDD.getPath();
-            boolean bddChanged = !pathBDD.equals(preferences.getBDD());
-            preferences.setBDD(pathBDD);
+            boolean bddChanged = !pathBDD.equals(preferences.getDossierBDD());
+            preferences.setDossierBDD(pathBDD);
             if (bddChanged) {
                 if (controleur != null) {
                     controleur.ouvrirBDD(pathBDD);

@@ -22,9 +22,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -87,12 +87,14 @@ public class Fenetre extends JFrame {
     //PREFS BDD
     private DefaultListModel bddModelList;
     private JList bddList;
+    private String dossierBDD;
     
     //MENU
     private JMenuBar menuBar;
     private JMenu fichier;
     private JMenuItem nouveau;
-    private JMenuItem ouvrir;
+    private JMenuItem ouvrirBDD;
+    private JMenuItem ouvrirDossier;
     private JMenuItem ajouterChapitre;
     private JMenuItem supprimerChapitre;
     private JMenuItem ajouterExercice;
@@ -142,7 +144,7 @@ public class Fenetre extends JFrame {
         add(splitPaneCentral);
         
         setVisible(true);
-        ouvrirDossierBDD();
+        ouvrirDossierBDD(preferences.getDossierBDD());
     }
     
     
@@ -184,24 +186,6 @@ public class Fenetre extends JFrame {
         
         bddModelList = new DefaultListModel();
         bddList = new JList(bddModelList);
-        File fileBDD = new File(preferences.getBDD());
-        java.io.FilenameFilter fileFilter = new java.io.FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                String lowerCase = name.toLowerCase();
-                return lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
-                    || lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
-                    || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db2")
-                    || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
-                    || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
-                    || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
-                    || lowerCase.endsWith(".sl3");
-            }
-        };
-        File[] filesBDD = fileBDD.listFiles(fileFilter);
-        for (File file : filesBDD) {
-            bddModelList.addElement(file.getName());
-        }
     }
     private void initSplitPane() {
         splitPaneCentral = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -250,6 +234,10 @@ public class Fenetre extends JFrame {
         treeChapDistants = new JTree(rootDistants);
         treeChapDistants.setDragEnabled(true);
         treeChapDistants.setTransferHandler(new TransferNodeHandler());
+        
+        chapitresPresentiels = new TreeMap<Integer,ChapitreNode>();
+        chapitresDistants = new TreeMap<Integer,ChapitreNode>();
+        
     }
     private void initMenus() {
         MenuListener menuListener = new MenuListener();
@@ -261,9 +249,12 @@ public class Fenetre extends JFrame {
         nouveau.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK));
         nouveau.addActionListener(menuListener);
         
-        ouvrir = new JMenuItem("Ouvrir");
-        ouvrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_MASK));
-        ouvrir.addActionListener(menuListener);
+        ouvrirBDD = new JMenuItem("Ouvrir");
+        ouvrirBDD.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_MASK));
+        ouvrirBDD.addActionListener(menuListener);
+        
+        ouvrirDossier = new JMenuItem("Ouvrir dossier");
+        ouvrirDossier.addActionListener(menuListener);
         
         ajouterChapitre = new JMenuItem("Ajouter chapitre");
         ajouterChapitre.addActionListener(menuListener);
@@ -312,7 +303,8 @@ public class Fenetre extends JFrame {
     
     private void setMenus() {
         fichier.add(nouveau);
-        fichier.add(ouvrir);
+        fichier.add(ouvrirBDD);
+        fichier.add(ouvrirDossier);
         fichier.add(ajouterChapitre);
         fichier.add(ajouterExercice);
         fichier.add(quitter);
@@ -323,21 +315,46 @@ public class Fenetre extends JFrame {
         menuBar.add(outils);
     }
     
-    private void ouvrirDossierBDD() {
-        Object[] options = { "Ouvrir", "Créer" };
-        JPanel test = new JPanel(new BorderLayout());
-        test.add(bddList);
-        int res = JOptionPane.showOptionDialog(this, bddList, "Choisir une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
-        if (res == JOptionPane.YES_OPTION) {
-            System.out.println(bddList.getSelectedValue());
-            controleur.ouvrirBDD(bddList.getSelectedValue().toString());
-        }
-        else {
-            this.creerBDD();
+    public void remplirBDDList(String chemin) {
+        dossierBDD = chemin;
+        File fileBDD = new File(dossierBDD);
+        java.io.FilenameFilter fileFilter = new java.io.FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                String lowerCase = name.toLowerCase();
+                return lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
+                    || lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
+                    || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db2")
+                    || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
+                    || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
+                    || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
+                    || lowerCase.endsWith(".sl3");
+            }
+        };
+        File[] filesBDD = fileBDD.listFiles(fileFilter);
+        bddModelList.clear();
+        for (File file : filesBDD) {
+            bddModelList.addElement(file.getName());
         }
     }
     
-    private void creerBDD() {
+    private void ouvrirDossierBDD(String chemin) {
+        int res;
+        int res2 = JOptionPane.CANCEL_OPTION;
+        Object[] options = { "Ouvrir", "Créer" };
+        remplirBDDList(chemin);
+        do {
+            res = JOptionPane.showOptionDialog(this, bddList, "Choisir une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+            if (res == JOptionPane.YES_OPTION) {
+                controleur.ouvrirBDD(dossierBDD + bddList.getSelectedValue());
+            }
+            else {
+                res2 = this.creerBDD();
+            }
+        } while ((res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) && (res2 == JOptionPane.CANCEL_OPTION || res2 == JOptionPane.CLOSED_OPTION));
+    }
+    
+    private int creerBDD() {
         FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
         FileChooser fileBDD = new FileChooser("Base de données","",JFileChooser.FILES_ONLY,JFileChooser.SAVE_DIALOG);
         fileBDD.setFilter(fileFilter);
@@ -346,6 +363,7 @@ public class Fenetre extends JFrame {
         if (res == JOptionPane.YES_OPTION) {
             controleur.creerBDD(fileBDD.getPath());
         }
+        return res;
     }
     
     
@@ -378,7 +396,6 @@ public class Fenetre extends JFrame {
         
         @Override
         public void drop(DropTargetDropEvent dtde) {
-            
             try {
                 ExerciceNode node = (ExerciceNode)dtde.getTransferable().getTransferData(nodeFlavor);
                 if (!exosModelList.contains(node)) {
@@ -387,7 +404,6 @@ public class Fenetre extends JFrame {
             } catch (UnsupportedFlavorException | IOException ex) {
                 Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
         }
         
     }
@@ -401,14 +417,14 @@ public class Fenetre extends JFrame {
             if (src.equals(nouveau)) {
                 creerBDD();
             }
-            if (src.equals(ouvrir)) {
-                FileChooser fileBDD = new FileChooser("Base de données",preferences.getBDD(),JFileChooser.FILES_ONLY,JFileChooser.OPEN_DIALOG);
-                FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.kexi,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","kexi","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
-                fileBDD.setFilter(fileFilter);
-                
-                int res = JOptionPane.showConfirmDialog(null,fileBDD,"Ouvrir la base de données",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
-                if (res == JOptionPane.YES_OPTION) {
-                    controleur.ouvrirBDD(fileBDD.getPath());
+            if (src.equals(ouvrirBDD)) {
+                ouvrirDossierBDD(preferences.getDossierBDD());
+            }
+            if (src.equals(ouvrirDossier)) {
+                FileChooser fileDossier = new FileChooser("Ouvrir dosiser",preferences.getDossierBDD(),JFileChooser.DIRECTORIES_ONLY,JFileChooser.OPEN_DIALOG);
+                int res = JOptionPane.showConfirmDialog(null, fileDossier, "Ouvrir dossier de base de données", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (res == JOptionPane.OK_OPTION) {
+                    ouvrirDossierBDD(fileDossier.getPath());
                 }
             }
             if (src.equals(ajouterChapitre)) {

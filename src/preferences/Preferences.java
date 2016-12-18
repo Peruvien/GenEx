@@ -59,12 +59,12 @@ public class Preferences {
     //ACCESSEURS
     @Override
     public String toString() {
-        String res = "Base de données : " + getBDD() + "\n";
+        String res = "Dossier bases de données : " + getDossierBDD() + "\n";
         return res;
     }
     
-    public String getBDD() {
-        return ini.fetch("Base de données", "base_de_données");
+    public String getDossierBDD() {
+        return ini.fetch("Bases de données", "bases_de_données");
     }
     
     
@@ -77,8 +77,8 @@ public class Preferences {
         }
     }
     
-    public void setBDD(String path) {
-        ini.put("Base de données", "base_de_données", path);
+    public void setDossierBDD(String path) {
+        ini.put("Bases de données", "bases_de_données", path);
     }
     
     
@@ -95,8 +95,8 @@ public class Preferences {
         ini.clear();
         ini.setFile(filePreferences);
         
-        Section bdd = ini.add("Base de données");
-        bdd.add("base_de_données", "");
+        Section bdd = ini.add("Bases de données");
+        bdd.add("bases_de_données", "");
         
         PreferencesDialog prefsDialog = new PreferencesDialog(null, "Initialisation des Préferences", true, null, this);
         prefsDialog.showDialog();

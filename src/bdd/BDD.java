@@ -31,12 +31,12 @@ public class BDD {
     
     //CONSTRUCTEUR
     public BDD(Connexion connexion, String chemin) {
-        chapitresMap = new TreeMap();
-        exercicesMap = new TreeMap();
-        tdsMap = new TreeMap();
-        examensMap = new TreeMap();
-        exercicesDExamenMap = new TreeMap();
-        exercicesDeTDMap = new TreeMap();
+        chapitresMap = new TreeMap<Integer,Chapitre>();
+        exercicesMap = new TreeMap<Integer,Exercice>();
+        tdsMap = new TreeMap<Integer,TD>();
+        examensMap = new TreeMap<Integer,Examen>();
+        exercicesDExamenMap = new TreeMap<Integer,ExercicesDExamen>();
+        exercicesDeTDMap = new TreeMap<Integer,ExercicesDeTD>();
         
         try {
             initBDD(connexion,chemin);
