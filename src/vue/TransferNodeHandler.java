@@ -7,11 +7,6 @@ package vue;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JTree;
@@ -21,7 +16,7 @@ import javax.swing.TransferHandler;
  *
  * @author robin
  */
-public class MyTransferHandler extends TransferHandler {
+public class TransferNodeHandler extends TransferHandler {
     
     /**
     * Méthode permettant à l'objet de savoir si les données reçues
@@ -62,7 +57,7 @@ public class MyTransferHandler extends TransferHandler {
         try {
             df = new DataFlavor(mimeType);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MyTransferHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TransferNodeHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         JList list = (JList)support.getComponent();
         DefaultListModel model = (DefaultListModel)list.getModel();
@@ -70,7 +65,7 @@ public class MyTransferHandler extends TransferHandler {
         try {
             model.addElement(data.getTransferData(df));
         } catch (UnsupportedFlavorException | IOException ex) {
-            Logger.getLogger(MyTransferHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TransferNodeHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         */
         return true;

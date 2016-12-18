@@ -73,8 +73,7 @@ public class PreferencesDialog extends JDialog {
         panelBoutons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     }
     private void initFileChooser() {
-        fileBDD = new FileChooser("Base de données","",JFileChooser.FILES_ONLY,JFileChooser.OPEN_DIALOG);
-        fileBDD.setFilter(new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"));
+        fileBDD = new FileChooser("Dossier des bases de données","",JFileChooser.DIRECTORIES_ONLY,JFileChooser.OPEN_DIALOG);
     }
     private void initButtons() {
         BoutonsListener boutonListener = new BoutonsListener();

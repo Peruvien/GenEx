@@ -15,21 +15,20 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
-import javax.swing.DropMode;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -41,9 +40,9 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import preferences.Preferences;
@@ -57,37 +56,37 @@ import preferences.PreferencesDialog;
 public class Fenetre extends JFrame {
     
     //ATTRIBUTS
-    private JPanel listeExosPanel;
-    private JPanel listeExosListePanel;
+    //INTERFACE PRINCIPALE
     private JPanel recherchePanel;
     private JPanel dropPanel;
-    private DefaultListModel modelList;
-    private JList dropList;
     private JPanel infosExoPanel;
     private JPanel boutonsExoPanel;
-    private JPanel listeExosBoutonsPanel;
-    private JTextField infosExoField;
+    private DefaultListModel tdModelList;
+    private JList tdList;
+    private DefaultListModel examModelList;
+    private JList examList;
+    private DefaultListModel exosModelList;
+    private JList exosList;
+    private JTextPane infosTextPane;
     private JTextField rechercheField;
     private JButton rechercheButton;
     private JButton rechercheAvanceeButton;
-    private JButton addExoListeButton;
-    private JButton removeExoListeButton;
     private JButton creerTDButton;
     private JButton creerExamButton;
     private JTabbedPane ongletsTabbedPane;
     private JSplitPane splitPaneCentral;
     private JSplitPane splitPaneDroit;
-    
-    private DefaultMutableTreeNode rootPresentiels;
-    private DefaultMutableTreeNode rootDistants;
-    
-    private Map<Integer,DefaultMutableTreeNode> chapitresPresentiels;
-    private Map<Integer,DefaultMutableTreeNode> chapitresDistants;
-    
+    //ARBRES
     private JTree treeChapPresentiels;
     private JTree treeChapDistants;
-    
+    private DefaultMutableTreeNode rootPresentiels;
+    private DefaultMutableTreeNode rootDistants;
+    private Map<Integer,ChapitreNode> chapitresPresentiels;
+    private Map<Integer,ChapitreNode> chapitresDistants;
     private DataFlavor nodeFlavor;
+    //PREFS BDD
+    private DefaultListModel bddModelList;
+    private JList bddList;
     
     //MENU
     private JMenuBar menuBar;
@@ -105,8 +104,8 @@ public class Fenetre extends JFrame {
     //CLASSES PERSOS
     private final Controleur controleur;
     private final Preferences preferences;
-    private final PreferencesDialog preferencesDialog;
-    private final RechercheAvanceePanel rechercheAvanceeDialog;
+    private PreferencesDialog preferencesDialog;
+    private RechercheAvanceePanel rechercheAvanceePanel;
     
     
     //CONSTRUCTEUR
@@ -132,8 +131,6 @@ public class Fenetre extends JFrame {
         
         this.controleur = controleur;
         this.preferences = preferences;
-        preferencesDialog = new PreferencesDialog(null, "Préferences", true, this.controleur, this.preferences);
-        rechercheAvanceeDialog = new RechercheAvanceePanel();
         
         initAll();
         setComponents();
@@ -145,6 +142,7 @@ public class Fenetre extends JFrame {
         add(splitPaneCentral);
         
         setVisible(true);
+        ouvrirDossierBDD();
     }
     
     
@@ -153,8 +151,9 @@ public class Fenetre extends JFrame {
     
     //MUTATEURS
     private void initAll() {
+        initPreferences();
         initPanels();
-        initList();
+        initLists();
         initSplitPane();
         initTabbedPane();
         initButtons();
@@ -162,22 +161,47 @@ public class Fenetre extends JFrame {
         initTrees();
         initMenus();
     }
+    private void initPreferences() {
+        preferencesDialog = new PreferencesDialog(null, "Préferences", true, this.controleur, this.preferences);
+        rechercheAvanceePanel = new RechercheAvanceePanel();
+    }
     private void initPanels() {
-        listeExosPanel = new JPanel(new BorderLayout());
-        listeExosListePanel = new JPanel(new ListeLayout());
-        
         dropPanel = new JPanel(new BorderLayout());
-        
         infosExoPanel = new JPanel(new BorderLayout());
         recherchePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         boutonsExoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        listeExosBoutonsPanel = new JPanel(new FlowLayout());
     }
-    private void initList() {
-        modelList = new DefaultListModel();
-        dropList = new JList(modelList);
-        dropList.setDropMode(DropMode.INSERT);
-        dropList.setDropTarget(new DropTarget(dropList,new DropListTarget()));
+    private void initLists() {
+        tdModelList = new DefaultListModel();
+        tdList = new JList(tdModelList);
+        
+        examModelList = new DefaultListModel();
+        examList = new JList(examModelList);
+        
+        exosModelList = new DefaultListModel();
+        exosList = new JList(exosModelList);
+        exosList.setDropTarget(new DropTarget(exosList,new DropListTarget()));
+        
+        bddModelList = new DefaultListModel();
+        bddList = new JList(bddModelList);
+        File fileBDD = new File(preferences.getBDD());
+        java.io.FilenameFilter fileFilter = new java.io.FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                String lowerCase = name.toLowerCase();
+                return lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
+                    || lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
+                    || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db2")
+                    || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
+                    || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
+                    || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
+                    || lowerCase.endsWith(".sl3");
+            }
+        };
+        File[] filesBDD = fileBDD.listFiles(fileFilter);
+        for (File file : filesBDD) {
+            bddModelList.addElement(file.getName());
+        }
     }
     private void initSplitPane() {
         splitPaneCentral = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -190,13 +214,12 @@ public class Fenetre extends JFrame {
         rechercheButton = new JButton("Rechercher");
         rechercheAvanceeButton = new JButton("Recherche avancée");
         rechercheAvanceeButton.addActionListener(new RechercheListener());
-        addExoListeButton = new JButton("Ajouter à la liste");
-        removeExoListeButton = new JButton("Retirer de la liste");
         creerTDButton = new JButton("Créer TD");
         creerExamButton = new JButton("Créer Examen");
     }
     private void initTextFields() {
-        infosExoField = new JTextField("Informations sur l'exerice ou chapitre");
+        infosTextPane = new JTextPane();
+        infosTextPane.setText("Informations sur l'exerice ou chapitre");
         rechercheField = new JTextField("Rechercher...");
         rechercheField.setColumns(15);
     }
@@ -212,12 +235,21 @@ public class Fenetre extends JFrame {
         chapitre2.add(new ExerciceNode(true,3,2,1,"Exercice 1"));
         chapitre2.add(new ExerciceNode(true,4,2,2,"Exercice 2"));
         
+        ChapitreNode chapitre1Distant = new ChapitreNode(false,3,1,"Chapitre 1");
+        chapitre1Distant.add(new ExerciceNode(false,5,1,1,"Exercice 1"));
+        
         rootPresentiels.add(chapitre1);
         rootPresentiels.add(chapitre2);
+        
+        rootDistants.add(chapitre1Distant);
+        
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
-        treeChapPresentiels.setTransferHandler(new MyTransferHandler());
+        treeChapPresentiels.setTransferHandler(new TransferNodeHandler());
+        
         treeChapDistants = new JTree(rootDistants);
+        treeChapDistants.setDragEnabled(true);
+        treeChapDistants.setTransferHandler(new TransferNodeHandler());
     }
     private void initMenus() {
         MenuListener menuListener = new MenuListener();
@@ -253,37 +285,29 @@ public class Fenetre extends JFrame {
         splitPaneCentral.add(ongletsTabbedPane);
         splitPaneCentral.add(infosExoPanel);
         
+        splitPaneCentral.setDividerLocation(400);
+        
         ongletsTabbedPane.addTab("Chapitres présentiels", treeChapPresentiels);
         ongletsTabbedPane.addTab("Chapitre distants", treeChapDistants);
-        ongletsTabbedPane.addTab("TDs",new JPanel());
-        ongletsTabbedPane.addTab("Examens",new JPanel());
-        ongletsTabbedPane.addTab("Liste exercices",listeExosPanel);
+        ongletsTabbedPane.addTab("TDs",tdList);
+        ongletsTabbedPane.addTab("Examens",examList);
         
         recherchePanel.add(rechercheField);
         recherchePanel.add(rechercheButton);
         recherchePanel.add(rechercheAvanceeButton);
         
-        splitPaneDroit.add(dropList);
-        splitPaneDroit.add(infosExoField);
+        boutonsExoPanel.add(creerTDButton);
+        boutonsExoPanel.add(creerExamButton);
+        
+        dropPanel.add(exosList,BorderLayout.CENTER);
+        dropPanel.add(boutonsExoPanel,BorderLayout.SOUTH);
+        
+        splitPaneDroit.add(dropPanel);
+        splitPaneDroit.add(infosTextPane);
         splitPaneDroit.setDividerLocation(250);
         
         infosExoPanel.add(recherchePanel,BorderLayout.NORTH);
         infosExoPanel.add(splitPaneDroit,BorderLayout.CENTER);
-        infosExoPanel.add(boutonsExoPanel,BorderLayout.SOUTH);
-        
-        boutonsExoPanel.add(addExoListeButton);
-        
-        listeExosPanel.add(listeExosListePanel);
-        listeExosPanel.add(listeExosBoutonsPanel,BorderLayout.SOUTH);
-        
-        listeExosListePanel.add(new JCheckBox("Chapitre 3 Exercice 1"));
-        listeExosListePanel.add(new JCheckBox("Chapitre 3 Exercice 2"));
-        listeExosListePanel.add(new JCheckBox("Chapitre 3 Exercice 3"));
-        
-        listeExosBoutonsPanel.add(removeExoListeButton);
-        listeExosBoutonsPanel.add(creerTDButton);
-        listeExosBoutonsPanel.add(creerExamButton);
-        
     }
     
     private void setMenus() {
@@ -299,46 +323,66 @@ public class Fenetre extends JFrame {
         menuBar.add(outils);
     }
     
-    
-    //OBSERVER
-    public void addChapitre(boolean distant) {
-        if (distant) {
-            DefaultMutableTreeNode chapitreAdd = new DefaultMutableTreeNode();
-            chapitresDistants.put(WIDTH, chapitreAdd);
-            rootDistants.add(chapitreAdd);
+    private void ouvrirDossierBDD() {
+        Object[] options = { "Ouvrir", "Créer" };
+        JPanel test = new JPanel(new BorderLayout());
+        test.add(bddList);
+        int res = JOptionPane.showOptionDialog(this, bddList, "Choisir une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+        if (res == JOptionPane.YES_OPTION) {
+            System.out.println(bddList.getSelectedValue());
+            controleur.ouvrirBDD(bddList.getSelectedValue().toString());
         }
         else {
-            DefaultMutableTreeNode chapitreAdd = new DefaultMutableTreeNode();
-            chapitresPresentiels.put(WIDTH, chapitreAdd);
-            rootPresentiels.add(chapitreAdd);
+            this.creerBDD();
         }
     }
     
-    public void addExercice(int chapitre, boolean distant) {
-        if (distant) {
-            DefaultMutableTreeNode exerciceAdd = new DefaultMutableTreeNode();
-            exerciceAdd.setAllowsChildren(false);
+    private void creerBDD() {
+        FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
+        FileChooser fileBDD = new FileChooser("Base de données","",JFileChooser.FILES_ONLY,JFileChooser.SAVE_DIALOG);
+        fileBDD.setFilter(fileFilter);
+        
+        int res = JOptionPane.showConfirmDialog(null,fileBDD,"Créer la base de données",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+        if (res == JOptionPane.YES_OPTION) {
+            controleur.creerBDD(fileBDD.getPath());
+        }
+    }
+    
+    
+    //OBSERVER
+    public void addChapitre(boolean presentiel) {
+        ChapitreNode chapitreAdd = new ChapitreNode(presentiel,1,1,"Chapitre 1");
+        if (presentiel) {
+            chapitresPresentiels.put(1, chapitreAdd);
+            rootPresentiels.add(chapitreAdd);
+        }
+        else {
+            chapitresDistants.put(1, chapitreAdd);
+            rootDistants.add(chapitreAdd);
+        }
+    }
+    
+    public void addExercice( boolean presentiel, int chapitre) {
+        ExerciceNode exerciceAdd = new ExerciceNode(presentiel,1,chapitre,1,"Exercice 1");
+        if (presentiel) {
             chapitresDistants.get(chapitre).add(exerciceAdd);
         }
         else {
-            DefaultMutableTreeNode exerciceAdd = new DefaultMutableTreeNode();
-            exerciceAdd.setAllowsChildren(false);
             chapitresPresentiels.get(chapitre).add(exerciceAdd);
         }
     }
     
     
-    
     //CLASSES INTERNES
     class DropListTarget extends DropTargetAdapter {
-
+        
         @Override
         public void drop(DropTargetDropEvent dtde) {
             
             try {
                 ExerciceNode node = (ExerciceNode)dtde.getTransferable().getTransferData(nodeFlavor);
-                if (!modelList.contains(node)) {
-                    modelList.addElement(node);
+                if (!exosModelList.contains(node)) {
+                    exosModelList.addElement(node);
                 }
             } catch (UnsupportedFlavorException | IOException ex) {
                 Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
@@ -354,35 +398,17 @@ public class Fenetre extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
-            if (src.equals(nouveau) || src.equals(ouvrir)) {
-                int dialogType;
-                String message;
-                if (src.equals(nouveau)) {
-                    dialogType = JFileChooser.SAVE_DIALOG;
-                    message = "Créer";
-                }
-                else {
-                    dialogType = JFileChooser.OPEN_DIALOG;
-                    message = "Ouvrir";
-                }
-                FileChooser fileBDD = new FileChooser("Base de données","",JFileChooser.FILES_ONLY,dialogType);
-                FileNameExtensionFilter fileFilter;
-                if (src.equals(nouveau)) {
-                    fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
-                }
-                else {
-                    fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.kexi,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","kexi","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
-                }
-                
+            if (src.equals(nouveau)) {
+                creerBDD();
+            }
+            if (src.equals(ouvrir)) {
+                FileChooser fileBDD = new FileChooser("Base de données",preferences.getBDD(),JFileChooser.FILES_ONLY,JFileChooser.OPEN_DIALOG);
+                FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.kexi,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","kexi","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
                 fileBDD.setFilter(fileFilter);
-                int res = JOptionPane.showConfirmDialog(null,fileBDD,message + " la base de données",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+                
+                int res = JOptionPane.showConfirmDialog(null,fileBDD,"Ouvrir la base de données",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
                 if (res == JOptionPane.YES_OPTION) {
-                    if (src.equals(nouveau)) {
-                        controleur.creerBDD(fileBDD.getPath());
-                    }
-                    else {
-                        controleur.ouvrirBDD(fileBDD.getPath());
-                    }
+                    controleur.ouvrirBDD(fileBDD.getPath());
                 }
             }
             if (src.equals(ajouterChapitre)) {
@@ -408,9 +434,11 @@ public class Fenetre extends JFrame {
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
             if (src.equals(rechercheAvanceeButton)) {
-                RechercheAvanceePanel panelInputs = new RechercheAvanceePanel();
                 Object[] options = {"Rechercher","Annuler"};
-                int res = JOptionPane.showOptionDialog(panelInputs,panelInputs,"Recherche avancée",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,null);
+                int res = JOptionPane.showOptionDialog(rechercheAvanceePanel,rechercheAvanceePanel,"Recherche avancée",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,null);
+                if (res == JOptionPane.YES_OPTION) {
+                    
+                }
             }
         }
         

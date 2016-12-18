@@ -45,6 +45,7 @@ public class Modele {
     }
     
     public void creerBDD(String chemin) {
+        connexion.connecter(chemin);
         try {
             BDD.createBDD(connexion);
         } catch (SQLException ex) {
