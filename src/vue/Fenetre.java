@@ -144,7 +144,7 @@ public class Fenetre extends JFrame {
         add(splitPaneCentral);
         
         setVisible(true);
-        ouvrirDossierBDD(preferences.getDossierBDD());
+        ouvrirDossierBDD(JOptionPane.YES_NO_OPTION,preferences.getDossierBDD());
     }
     
     
@@ -338,17 +338,28 @@ public class Fenetre extends JFrame {
         }
     }
     
-    private void ouvrirDossierBDD(String chemin) {
+    private void ouvrirDossierBDD(int optionType, String chemin) {
         int res;
         int res2 = JOptionPane.CANCEL_OPTION;
-        Object[] options = { "Ouvrir", "Créer" };
+        Object[] options;
+        if (optionType == JOptionPane.YES_NO_OPTION) {
+            options = new Object[2];
+            options[0] = "Ouvrir";
+            options[1] = "Créer";
+        }
+        else {
+            options = new Object[3];
+            options[0] = "Ouvrir";
+            options[1] = "Créer";
+            options[2] = "Annuler";
+        }
         remplirBDDList(chemin);
         do {
-            res = JOptionPane.showOptionDialog(this, bddList, "Choisir une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+            res = JOptionPane.showOptionDialog(this, bddList, "Choisir une base de données", optionType, JOptionPane.PLAIN_MESSAGE, null, options, null);
             if (res == JOptionPane.YES_OPTION) {
                 controleur.ouvrirBDD(dossierBDD + bddList.getSelectedValue());
             }
-            else {
+            if (res == JOptionPane.NO_OPTION) {
                 res2 = this.creerBDD();
             }
         } while ((res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) && (res2 == JOptionPane.CANCEL_OPTION || res2 == JOptionPane.CLOSED_OPTION));
@@ -418,13 +429,13 @@ public class Fenetre extends JFrame {
                 creerBDD();
             }
             if (src.equals(ouvrirBDD)) {
-                ouvrirDossierBDD(preferences.getDossierBDD());
+                ouvrirDossierBDD(JOptionPane.YES_NO_CANCEL_OPTION,preferences.getDossierBDD());
             }
             if (src.equals(ouvrirDossier)) {
                 FileChooser fileDossier = new FileChooser("Ouvrir dosiser",preferences.getDossierBDD(),JFileChooser.DIRECTORIES_ONLY,JFileChooser.OPEN_DIALOG);
                 int res = JOptionPane.showConfirmDialog(null, fileDossier, "Ouvrir dossier de base de données", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (res == JOptionPane.OK_OPTION) {
-                    ouvrirDossierBDD(fileDossier.getPath());
+                    ouvrirDossierBDD(JOptionPane.YES_NO_CANCEL_OPTION,fileDossier.getPath());
                 }
             }
             if (src.equals(ajouterChapitre)) {
