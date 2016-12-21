@@ -57,23 +57,30 @@ public class Fenetre extends JFrame {
     
     //ATTRIBUTS
     //INTERFACE PRINCIPALE
+    //PANELS
     private JPanel recherchePanel;
     private JPanel dropPanel;
     private JPanel infosExoPanel;
     private JPanel boutonsExoPanel;
-    private DefaultListModel tdModelList;
+    //LISTS
+    private DefaultListModel<String> tdModelList;
     private JList tdList;
-    private DefaultListModel examModelList;
+    private DefaultListModel<String> examModelList;
     private JList examList;
-    private DefaultListModel exosModelList;
+    private DefaultListModel<ExerciceNode> exosModelList;
     private JList exosList;
+    //TEXTPANE
     private JTextPane infosTextPane;
+    //TEXTFIELD
     private JTextField rechercheField;
+    //BUTTONS
     private JButton rechercheButton;
     private JButton rechercheAvanceeButton;
     private JButton creerTDButton;
     private JButton creerExamButton;
+    //TABBEDPANE
     private JTabbedPane ongletsTabbedPane;
+    //SPLITPANES
     private JSplitPane splitPaneCentral;
     private JSplitPane splitPaneDroit;
     //ARBRES
@@ -85,7 +92,7 @@ public class Fenetre extends JFrame {
     private Map<Integer,ChapitreNode> chapitresDistants;
     private DataFlavor nodeFlavor;
     //PREFS BDD
-    private DefaultListModel bddModelList;
+    private DefaultListModel<String> bddModelList;
     private JList bddList;
     private String dossierBDD;
     
@@ -152,6 +159,9 @@ public class Fenetre extends JFrame {
     
     
     //MUTATEURS
+    /**
+     * Initialise tous les éléments graphiques.
+     */
     private void initAll() {
         initPreferences();
         initPanels();
@@ -163,37 +173,55 @@ public class Fenetre extends JFrame {
         initTrees();
         initMenus();
     }
+    /**
+     * Initialise le dialogue des préférences.
+     */
     private void initPreferences() {
-        preferencesDialog = new PreferencesDialog(null, "Préferences", true, this.controleur, this.preferences);
-        rechercheAvanceePanel = new RechercheAvanceePanel();
+        preferencesDialog = new PreferencesDialog(this, "Préferences", true, this.controleur, this.preferences);
     }
+    /**
+     * Initialise les panels.
+     */
     private void initPanels() {
         dropPanel = new JPanel(new BorderLayout());
         infosExoPanel = new JPanel(new BorderLayout());
         recherchePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         boutonsExoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        rechercheAvanceePanel = new RechercheAvanceePanel();
     }
+    /**
+     * Initialise les listes et leurs modèles.
+     */
     private void initLists() {
-        tdModelList = new DefaultListModel();
-        tdList = new JList(tdModelList);
+        tdModelList = new DefaultListModel<>();
+        tdList = new JList<>(tdModelList);
         
-        examModelList = new DefaultListModel();
-        examList = new JList(examModelList);
+        examModelList = new DefaultListModel<>();
+        examList = new JList<>(examModelList);
         
-        exosModelList = new DefaultListModel();
-        exosList = new JList(exosModelList);
+        exosModelList = new DefaultListModel<>();
+        exosList = new JList<>(exosModelList);
         exosList.setDropTarget(new DropTarget(exosList,new DropListTarget()));
         
-        bddModelList = new DefaultListModel();
-        bddList = new JList(bddModelList);
+        bddModelList = new DefaultListModel<>();
+        bddList = new JList<>(bddModelList);
     }
+    /**
+     * Initialise les splitPanes.
+     */
     private void initSplitPane() {
         splitPaneCentral = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPaneDroit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     }
+    /**
+     * Initialise le tabbedPane.
+     */
     private void initTabbedPane() {
         ongletsTabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     }
+    /**
+     * Initialise les boutons.
+     */
     private void initButtons() {
         rechercheButton = new JButton("Rechercher");
         rechercheAvanceeButton = new JButton("Recherche avancée");
@@ -201,12 +229,18 @@ public class Fenetre extends JFrame {
         creerTDButton = new JButton("Créer TD");
         creerExamButton = new JButton("Créer Examen");
     }
+    /**
+     * Initialise les textPanes et textFields;
+     */
     private void initTextFields() {
         infosTextPane = new JTextPane();
         infosTextPane.setText("Informations sur l'exerice ou chapitre");
         rechercheField = new JTextField("Rechercher...");
         rechercheField.setColumns(15);
     }
+    /**
+     * Initialise les arbres.
+     */
     private void initTrees() {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
@@ -239,6 +273,9 @@ public class Fenetre extends JFrame {
         chapitresDistants = new TreeMap<Integer,ChapitreNode>();
         
     }
+    /**
+     * Initialise tous les menus et menuItems.
+     */
     private void initMenus() {
         MenuListener menuListener = new MenuListener();
         
@@ -271,7 +308,9 @@ public class Fenetre extends JFrame {
         prefsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_MASK));
         prefsMenuItem.addActionListener(menuListener);
     }
-    
+    /**
+     * Met les composants les uns dans les autres pour mettre en place l'interface.
+     */
     private void setComponents() {
         splitPaneCentral.add(ongletsTabbedPane);
         splitPaneCentral.add(infosExoPanel);
@@ -300,7 +339,9 @@ public class Fenetre extends JFrame {
         infosExoPanel.add(recherchePanel,BorderLayout.NORTH);
         infosExoPanel.add(splitPaneDroit,BorderLayout.CENTER);
     }
-    
+    /**
+     * Met les menuItems dans les menus correspondants.
+     */
     private void setMenus() {
         fichier.add(nouveau);
         fichier.add(ouvrirBDD);
@@ -315,6 +356,10 @@ public class Fenetre extends JFrame {
         menuBar.add(outils);
     }
     
+    /**
+     * Remplit la liste de bases de données avec les fichiers compatibles dans le répertoire 'chemin'.
+     * @param chemin Le chemin du répertoire dans lequel chercher les bases de données.
+     */
     public void remplirBDDList(String chemin) {
         dossierBDD = chemin;
         File fileBDD = new File(dossierBDD);
@@ -338,6 +383,11 @@ public class Fenetre extends JFrame {
         }
     }
     
+    /**
+     * Demande l'ouverture d'une base de données dans une liste de fichiers dans le dossier dont le chemin complet est 'chemin'.
+     * @param optionType Le type de dialogue, doit YES_NO_OPTION ou YES_NO_CANCEL_OPTION
+     * @param chemin Le chemin du dossier dans lequels sont les bases de données
+     */
     private void ouvrirDossierBDD(int optionType, String chemin) {
         int res;
         int res2 = JOptionPane.CANCEL_OPTION;
@@ -360,19 +410,36 @@ public class Fenetre extends JFrame {
                 controleur.ouvrirBDD(dossierBDD + bddList.getSelectedValue());
             }
             if (res == JOptionPane.NO_OPTION) {
-                res2 = this.creerBDD();
+                res2 = this.creerBDD(chemin);
             }
-        } while ((res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) && (res2 == JOptionPane.CANCEL_OPTION || res2 == JOptionPane.CLOSED_OPTION));
+        } while ((res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) && (res2 == JOptionPane.NO_OPTION || res2 == JOptionPane.CANCEL_OPTION || res2 == JOptionPane.CLOSED_OPTION));
     }
     
-    private int creerBDD() {
+    /**
+     * Ouvre un dialogue pour demander à l'utilisateur le chemin pour créer une nouvelle base de données. Si le fichier existe : demande confirmation d'écrasement.
+     * @return Un entier qui représente l'option choisie, peut être JOptionPane.OK_OPTION, JOptionPane.CANCEL_OPTION, JOptionPane.NO_OPTION ou JOptionPane.CLOSED_OPTION
+     */
+    private int creerBDD(String chemin) {
         FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
-        FileChooser fileBDD = new FileChooser("Base de données","",JFileChooser.FILES_ONLY,JFileChooser.SAVE_DIALOG);
+        FileChooser fileBDD = new FileChooser("Base de données",chemin,JFileChooser.FILES_ONLY,JFileChooser.SAVE_DIALOG);
         fileBDD.setFilter(fileFilter);
         
-        int res = JOptionPane.showConfirmDialog(null,fileBDD,"Créer la base de données",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
-        if (res == JOptionPane.YES_OPTION) {
-            controleur.creerBDD(fileBDD.getPath());
+        int res = JOptionPane.showConfirmDialog(this,fileBDD,"Créer la base de données",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+        if (res == JOptionPane.OK_OPTION) {
+            File file = new File(fileBDD.getPath());
+            if (file.exists()) {
+                int res2 = JOptionPane.showConfirmDialog(this, "Voulez-vous écraser le fichier ?", "Fichier déjà existant", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (res2 == JOptionPane.YES_OPTION) {
+                    file.delete();
+                    controleur.creerBDD(fileBDD.getPath());
+                }
+                else {
+                    return res2;
+                }
+            }
+            else {
+                controleur.creerBDD(fileBDD.getPath());
+            }
         }
         return res;
     }
@@ -426,7 +493,7 @@ public class Fenetre extends JFrame {
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
             if (src.equals(nouveau)) {
-                creerBDD();
+                creerBDD(preferences.getDossierBDD());
             }
             if (src.equals(ouvrirBDD)) {
                 ouvrirDossierBDD(JOptionPane.YES_NO_CANCEL_OPTION,preferences.getDossierBDD());

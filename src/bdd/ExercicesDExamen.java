@@ -17,12 +17,11 @@ public class ExercicesDExamen {
     //ATTRIBUTS
     private final Examen examen;
     private final ArrayList<Exercice> exercices;
-    //private Date dateUtilisation;
     
     //CONSTRUCTEUR
     public ExercicesDExamen(Examen examen) {
         this.examen = examen;
-        exercices = new ArrayList();
+        exercices = new ArrayList<>();
     }
     
     //ACCESSEURS

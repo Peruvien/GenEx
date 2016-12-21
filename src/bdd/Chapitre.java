@@ -31,8 +31,8 @@ public class Chapitre implements Comparable<Chapitre> {
         this.presentiel = presentiel;
         this.libelle = libelle;
         
-        exercices = new TreeSet();
-        tds = new TreeSet();
+        exercices = new TreeSet<>();
+        tds = new TreeSet<>();
     }
     
     

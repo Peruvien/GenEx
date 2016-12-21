@@ -25,7 +25,7 @@ public class ExercicesDeTD {
     public ExercicesDeTD(TD td, Date dateUtilisation) {
         this.td = td;
         this.dateUtilisation = dateUtilisation;
-        exercices = new ArrayList();
+        exercices = new ArrayList<>();
     }
     
     //ACCESSEURS
