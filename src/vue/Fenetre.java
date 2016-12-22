@@ -18,11 +18,15 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -43,6 +47,8 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import preferences.Preferences;
@@ -202,6 +208,7 @@ public class Fenetre extends JFrame {
         exosModelList = new DefaultListModel<>();
         exosList = new JList<>(exosModelList);
         exosList.setDropTarget(new DropTarget(exosList,new DropListTarget()));
+        exosList.addListSelectionListener(new InfoListener());
         
         bddModelList = new DefaultListModel<>();
         bddList = new JList<>(bddModelList);
@@ -269,8 +276,8 @@ public class Fenetre extends JFrame {
         treeChapDistants.setDragEnabled(true);
         treeChapDistants.setTransferHandler(new TransferNodeHandler());
         
-        chapitresPresentiels = new TreeMap<Integer,ChapitreNode>();
-        chapitresDistants = new TreeMap<Integer,ChapitreNode>();
+        chapitresPresentiels = new TreeMap<>();
+        chapitresDistants = new TreeMap<>();
         
     }
     /**
@@ -533,6 +540,22 @@ public class Fenetre extends JFrame {
                 if (res == JOptionPane.YES_OPTION) {
                     
                 }
+            }
+        }
+        
+    }
+    
+    class InfoListener implements ListSelectionListener {
+        
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            if (e.getValueIsAdjusting()) {
+                List<ExerciceNode> exosSelected = exosList.getSelectedValuesList();
+                String infos = "";
+                for (ExerciceNode exo : exosSelected) {
+                    infos += exo.getInformations() + "\n";
+                }
+                infosTextPane.setText(infos);
             }
         }
         

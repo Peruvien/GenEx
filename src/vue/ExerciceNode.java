@@ -57,6 +57,13 @@ public class ExerciceNode extends DefaultMutableTreeNode {
         return titre;
     }
     
+    public String getInformations() {
+        String res = "Chapitre " + nbChapitre;
+        res += presentiel ? " présentiel " : " distant ";
+        res += " Exercice n°" + numero;
+        return res;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (o instanceof ExerciceNode) {
