@@ -14,11 +14,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class ExerciceNode extends DefaultMutableTreeNode {
     
     //ATTRIBUTS
-    private final boolean presentiel;
-    private final int id;
-    private final int nbChapitre;
-    private final int numero;
-    private final String titre;
+    protected final boolean presentiel;
+    protected final int id;
+    protected final int nbChapitre;
+    protected final int numero;
+    protected final String titre;
     
     //CONSTRUCTEUR
     public ExerciceNode(boolean presentiel, int id, int nbChapitre, int numero, String titre) {

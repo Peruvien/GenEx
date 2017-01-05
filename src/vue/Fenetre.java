@@ -18,9 +18,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -465,13 +462,13 @@ public class Fenetre extends JFrame {
         }
     }
     
-    public void addExercice( boolean presentiel, int chapitre) {
+    public void addExercice(boolean presentiel, int chapitre) {
         ExerciceNode exerciceAdd = new ExerciceNode(presentiel,1,chapitre,1,"Exercice 1");
         if (presentiel) {
-            chapitresDistants.get(chapitre).add(exerciceAdd);
+            chapitresPresentiels.get(chapitre).add(exerciceAdd);
         }
         else {
-            chapitresPresentiels.get(chapitre).add(exerciceAdd);
+            chapitresDistants.get(chapitre).add(exerciceAdd);
         }
     }
     

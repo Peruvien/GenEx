@@ -21,7 +21,7 @@ public class TransferableNode implements Transferable {
     
     //ATTRIBUTS
     public static DataFlavor nodeFlavor;
-    private ExerciceNode node;
+    private ExerciceNodeList node;
     
     
     //CONSTRUCTEURS
@@ -30,14 +30,14 @@ public class TransferableNode implements Transferable {
         String mimeType = DataFlavor.javaJVMLocalObjectMimeType + ";class=" + DefaultMutableTreeNode.class.getName();
         try {
             nodeFlavor = new DataFlavor(mimeType);
-            this.node = node;
+            this.node = ExerciceNodeList.getExerciceNodeList(node);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TransferableNode.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public TransferableNode(boolean isPresentiel, int id, int nbChapitre, int numero, String titre) {
-        this(new ExerciceNode(isPresentiel, id, nbChapitre, numero, titre));
+        this(new ExerciceNodeList(isPresentiel, id, nbChapitre, numero, titre));
     }
     
     
