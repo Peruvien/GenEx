@@ -5,8 +5,9 @@
  */
 package modele;
 
-import bdd.BDD;
+import bdd.Database;
 import bdd.Connexion;
+
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,14 +22,14 @@ public class Modele {
     //ATTRIBUTS
     private final Connexion connexion;
     
-    private BDD bdd;
+    private Database database;
     
     //CONSTRUCTEUR
     public Modele() {
         connexion = new Connexion();
         /*
         try {
-            BDD.createBDD(connexion,"/shared/test.sqlite3");
+            Database.create(connexion,"/shared/test.sqlite3");
         } catch (SQLException ex) {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -41,13 +42,13 @@ public class Modele {
     
     //MUTATEURS
     public void ouvrirBDD(String chemin) {
-        bdd = new BDD(connexion, chemin);
+        database = new Database(connexion);
     }
     
     public void creerBDD(String chemin) {
         connexion.connecter(chemin);
         try {
-            BDD.createBDD(connexion);
+            Database.create(connexion);
         } catch (SQLException ex) {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
         }

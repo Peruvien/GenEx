@@ -35,12 +35,12 @@ public class Main {
         //Si la bdd n'existe pas, elle est automatiquement créée
         //c.connecter("C:/Users/Hamor/Desktop/Projet/sqlite/cuisine2.db");
         try {
-            BDD.createBDD(c);
+            Database.create(c);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         //Remplie la bdd avec les tables.
-        BDD bdd = new BDD(c);
+        Database bdd = new Database(c);
         c.deconnecter();
         */
         Controleur controleur = new Controleur(modele);

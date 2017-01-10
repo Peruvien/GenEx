@@ -17,13 +17,12 @@ public class Chapitre implements Comparable<Chapitre> {
     
     //ATTRIBUTS
     private final int idChapitre;
-    private final int numeroChapitre;
-    private final boolean presentiel;
-    private final String libelle;
-    private final Set<Exercice> exercices;
-    private final Set<TD> tds;
-    
-    
+    private int numeroChapitre;
+    private boolean presentiel;
+    private String libelle;
+    private Set<Exercice> exercices;
+    private Set<TD> tds;
+
     //CONSTRUCTEUR
     public Chapitre(int idChapitre, int numeroChapitre, boolean presentiel, String libelle) {
         this.idChapitre = idChapitre;
@@ -37,11 +36,51 @@ public class Chapitre implements Comparable<Chapitre> {
     
     
     //ACCESSEURS
-    
+    public int getIdChapitre() {
+        return idChapitre;
+    }
+
+    public int getNumeroChapitre() {
+        return numeroChapitre;
+    }
+
+    public boolean isPresentiel() {
+        return presentiel;
+    }
+
+    public String getLibelle() {
+        return libelle;
+    }
+
+    public Set<Exercice> getExercices() {
+        return exercices;
+    }
+
+    public Set<TD> getTds() {
+        return tds;
+    }
     
     //MUTATEURS
-    
-    
+    public void setNumeroChapitre(int numeroChapitre) {
+        this.numeroChapitre = numeroChapitre;
+    }
+
+    public void setPresentiel(boolean presentiel) {
+        this.presentiel = presentiel;
+    }
+
+    public void setLibelle(String libelle) {
+        this.libelle = libelle;
+    }
+
+    public void setExercices(Set<Exercice> exercices) {
+        this.exercices = exercices;
+    }
+
+    public void setTds(Set<TD> tds) {
+        this.tds = tds;
+    }
+
     //COMPARABLE
     @Override
     public boolean equals(Object o) {
