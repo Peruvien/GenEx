@@ -103,6 +103,7 @@ public class BDD {
             idChapitre = res3.getInt("idChapitre");
             Chapitre chapitreExercice = chapitresMap.get(idChapitre);
             Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercicePath,chapitreExercice);
+            exercicesMap.put(idExercice, exercice);
         }
         
         int idTD, numeroTD;
@@ -117,6 +118,7 @@ public class BDD {
             idChapitre = res4.getInt("idChapitre");
             Chapitre chapitreTD = chapitresMap.get(idChapitre);
             TD td = new TD(idTD,numeroTD,fichierTDPath,chapitreTD);
+            tdsMap.put(idTD, td);
         }
         
         String requete5 = "SELECT * FROM ExercicesDExamen GROUP BY idExamen";
