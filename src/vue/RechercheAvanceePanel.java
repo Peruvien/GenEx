@@ -15,7 +15,8 @@ import org.jdatepicker.impl.UtilDateModel;
 
 /**
  *
- * @author robin
+ * @author Robin
+ * @author Vincent
  */
 public class RechercheAvanceePanel extends JPanel {
     

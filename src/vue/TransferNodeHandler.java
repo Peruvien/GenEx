@@ -7,6 +7,11 @@ package vue;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JTree;
@@ -14,7 +19,8 @@ import javax.swing.TransferHandler;
 
 /**
  *
- * @author robin
+ * @author Robin
+ * @author Vincent
  */
 public class TransferNodeHandler extends TransferHandler {
     
@@ -28,11 +34,11 @@ public class TransferNodeHandler extends TransferHandler {
     public boolean canImport(TransferHandler.TransferSupport info) {
         if (info.getComponent() instanceof JList) {
             DataFlavor[] dfs = info.getDataFlavors();
-            for (int i = 0; i < dfs.length; i++) {
-                if (dfs[i].equals(TransferableNode.nodeFlavor)) {
+            for (DataFlavor df : dfs) {
+                if (df.equals(TransferableNode.nodeFlavor)) {
                     return true;
                 }
-                if (dfs[i].equals(DataFlavor.stringFlavor)) {
+                if (df.equals(DataFlavor.stringFlavor)) {
                     return true;
                 }
             }
@@ -50,9 +56,9 @@ public class TransferNodeHandler extends TransferHandler {
         if (!canImport(support)) {
             return false;
         }
-        /*
+        
         Transferable data = support.getTransferable();
-        String mimeType = DataFlavor.javaJVMLocalObjectMimeType + ";class=" + Node.class.getName();
+        String mimeType = DataFlavor.javaJVMLocalObjectMimeType + ";class=" + ExerciceNode.class.getName();
         DataFlavor df = null;
         try {
             df = new DataFlavor(mimeType);
@@ -67,7 +73,7 @@ public class TransferNodeHandler extends TransferHandler {
         } catch (UnsupportedFlavorException | IOException ex) {
             Logger.getLogger(TransferNodeHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        */
+        
         return true;
     }
     
@@ -86,7 +92,6 @@ public class TransferNodeHandler extends TransferHandler {
     /**
     * Dans cette méthode, nous allons créer l'objet utilisé par le système de drag'n drop
     * afin de faire circuler les données entre les composants
-    * Vous pouvez voir qu'il s'agit d'un objet de type Transferable
     * @param c
     * @return
     */

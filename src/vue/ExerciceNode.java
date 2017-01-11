@@ -9,7 +9,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
- * @author robin
+ * @author Robin
+ * @author Vincent
  */
 public class ExerciceNode extends DefaultMutableTreeNode {
     

@@ -12,7 +12,8 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author robin
+ * @author Robin
+ * @author Vincent
  */
 public class CheckBoxComponent extends JPanel{
     
