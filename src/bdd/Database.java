@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,7 +58,7 @@ public class Database {
         boolean presentiel;
         String libelleChapitre;
         
-        String requete1 = "SELECT * FROM Chapitres";
+        String requete1 = "SELECT * FROM CHAPITRE";
         ResultSet res1 = this.connexion.executerRequete(requete1);
         while (res1.next()) {
             idChapitre = res1.getInt("idChapitre");
@@ -74,7 +75,7 @@ public class Database {
         Time heureExamen, dureeExamen;
         String libelleExamen, fichierExamenPath;
         
-        String requete2 = "SELECT * FROM Examens";
+        String requete2 = "SELECT * FROM EXAMEN";
         ResultSet res2 = connexion.executerRequete(requete2);
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
@@ -91,7 +92,7 @@ public class Database {
         Time dureeExercice;
         String libelleExercice, fichierExercicePath;
         
-        String requete3 = "SELECT * FROM Exercices";
+        String requete3 = "SELECT * FROM EXERCICE";
         ResultSet res3 = connexion.executerRequete(requete3);
         while (res3.next()) {
             idExercice = res3.getInt("idExercice");
@@ -156,15 +157,17 @@ public class Database {
     }
 
     //Toutes les fonctions ci dessous peuvent renvoyer un entier pour vérifier si l'ajout à bien été fait
-    public void add(Chapitre c){
+    public void addChapitre(int numero, boolean presentiel, String libelle, Set<Exercice> exercices, Set<TD> tds){
         String request = "INSERT INTO CHAPITRE (numeroChapitre, presentielChapitre, libelleChapitre) ( VALUES (";
-        request += "'" + c.getNumeroChapitre() + "', ";
-        if (c.isPresentiel())
+        request += "'" + numero + "', ";
+        if (presentiel)
             request += "1";
         else
             request += "0";
         request += ", ";
-        request += c.getLibelle();
+        request += "'" + libelle + "', ";
+        request += ");";
+        //connexion.executerPreparedRequete()
         connexion.executerUpdate(request);
     }
 

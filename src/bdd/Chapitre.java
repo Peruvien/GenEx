@@ -81,6 +81,14 @@ public class Chapitre implements Comparable<Chapitre> {
         this.tds = tds;
     }
 
+    public void addTd(TD td){
+        this.tds.add(td);
+    }
+
+    public void resetTd(){
+        this.tds.clear();
+    }
+
     //COMPARABLE
     @Override
     public boolean equals(Object o) {
