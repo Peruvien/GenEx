@@ -8,6 +8,7 @@ package vue;
 /**
  *
  * @author Robin
+ * @author Vincent
  */
 public class ExerciceNodeList extends ExerciceNode {
     
