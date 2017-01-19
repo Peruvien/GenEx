@@ -96,7 +96,7 @@ public class Fenetre extends JFrame implements Observer {
     private Map<Integer,ChapitreNode> chapitresPresentiels;
     private Map<Integer,ChapitreNode> chapitresDistants;
     private DataFlavor nodeFlavor;
-    //PREFS BDD
+    //PREFS Database
     private DefaultListModel<String> bddModelList;
     private JList bddList;
     private String dossierBDD;
@@ -123,7 +123,7 @@ public class Fenetre extends JFrame implements Observer {
     
     
     //CONSTRUCTEUR
-    public Fenetre(Controleur controleur, Preferences preferences) {
+    public Fenetre(final Controleur controleur, Preferences preferences) {
         super("Logiciel de gestion d'exercices");
         try {
             this.nodeFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + DefaultMutableTreeNode.class.getName());

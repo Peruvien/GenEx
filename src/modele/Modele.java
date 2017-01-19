@@ -5,10 +5,11 @@
  */
 package modele;
 
+import bdd.Database;
 import bdd.BDD;
 import bdd.Chapitre;
 import bdd.Connexion;
-import bdd.Exercice;
+
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Map;
@@ -27,15 +28,14 @@ import observer.Observer;
 public class Modele implements Observable {
     
     //ATTRIBUTS
-    private final Connexion connexion;   
-    private BDD bdd;
+    private final Connexion connexion;
     private Observer observer;
+    private Database database;
+    
     
     //CONSTRUCTEUR
     public Modele() {
         connexion = new Connexion();
-        
-        
     }
     
     
@@ -46,13 +46,13 @@ public class Modele implements Observable {
     
     //MUTATEURS
     public void ouvrirBDD(String chemin) {
-        bdd = new BDD(connexion, chemin);
+        database = new Database(connexion);
     }
     
     public void creerBDD(String chemin) {
         connexion.connecter(chemin);
         try {
-            BDD.createBDD(connexion);
+            Database.create(connexion);
         } catch (SQLException ex) {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
         }

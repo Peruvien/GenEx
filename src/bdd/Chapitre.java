@@ -17,10 +17,11 @@ public class Chapitre implements Comparable<Chapitre> {
     
     //ATTRIBUTS
     private final int idChapitre;
-    private final int numeroChapitre;
-    private final boolean presentiel;
+    private int numeroChapitre;
+    private boolean presentiel;
     private String libelle;
-    private final Set<Exercice> exercices;
+    private Set<Exercice> exercices;
+    private Set<TD> tds;
     
     
     //CONSTRUCTEUR
@@ -50,11 +51,52 @@ public class Chapitre implements Comparable<Chapitre> {
     public Set<Exercice> getExercices() {
         return exercices;
     }
+    public int getIdChapitre() {
+        return idChapitre;
+    }
+
+    public int getNumeroChapitre() {
+        return numeroChapitre;
+    }
+    
+    public String getLibelle() {
+        return libelle;
+    }
+    
     
     //MUTATEURS
     public void addExercice(Exercice exercice) {
         exercices.add(exercice);
     }
+    
+    public void setNumeroChapitre(int numeroChapitre) {
+        this.numeroChapitre = numeroChapitre;
+    }
+
+    public void setPresentiel(boolean presentiel) {
+        this.presentiel = presentiel;
+    }
+
+    public void setLibelle(String libelle) {
+        this.libelle = libelle;
+    }
+
+    public void setExercices(Set<Exercice> exercices) {
+        this.exercices = exercices;
+    }
+
+    public void setTds(Set<TD> tds) {
+        this.tds = tds;
+    }
+
+    public void addTd(TD td){
+        this.tds.add(td);
+    }
+
+    public void resetTd(){
+        this.tds.clear();
+    }
+    
     
     //COMPARABLE
     @Override

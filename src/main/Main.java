@@ -5,14 +5,12 @@
  */
 package main;
 
-import bdd.*;
 import controleur.Controleur;
 import modele.Modele;
 import preferences.Preferences;
 import vue.Fenetre;
 
 import java.io.File;
-import java.sql.SQLException;
 
 /**
  *

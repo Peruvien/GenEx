@@ -33,8 +33,24 @@ public class TD implements Comparable<TD> {
     
     
     //ACCESSEURS
-    
-    
+
+    public int getIdTD() {
+        return idTD;
+    }
+
+    public Chapitre getChapitre() {
+        return chapitre;
+    }
+
+    public int getNumeroTD() {
+        return numeroTD;
+    }
+
+    public File getFichier() {
+        return fichier;
+    }
+
+
     //MUTATEURS
     
     

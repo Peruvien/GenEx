@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,9 +20,10 @@ import java.util.logging.Logger;
  * @author Robin
  * @author Vincent
  */
-public class BDD {
+public class Database {
     
     //ATTRIBUTS
+    private final Connexion connexion;
     private final Map<Integer,Chapitre> chapitresMap;
     private final Map<Integer,Exercice> exercicesMap;
     private final Map<Integer,TD> tdsMap;
@@ -30,7 +32,8 @@ public class BDD {
     private final Map<Integer,ExercicesDeTD> exercicesDeTDMap;
     
     //CONSTRUCTEUR
-    public BDD(Connexion connexion, String chemin) {
+    public Database(Connexion connexion) {
+        this.connexion = connexion;
         chapitresMap = new TreeMap<Integer,Chapitre>();
         exercicesMap = new TreeMap<Integer,Exercice>();
         tdsMap = new TreeMap<Integer,TD>();
@@ -39,28 +42,24 @@ public class BDD {
         exercicesDeTDMap = new TreeMap<Integer,ExercicesDeTD>();
         
         try {
-            initBDD(connexion,chemin);
+            getDatabase();
         } catch (SQLException ex) {
-            Logger.getLogger(BDD.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     
     //ACCESSEURS
-    public Map<Integer,Chapitre> getChapitres() {
-        return chapitresMap;
-    }
+    
     
     //MUTATEURS
-    private void initBDD(Connexion connexion, String chemin) throws SQLException {
-        connexion.connecter(chemin);
-        
+    private void getDatabase() throws SQLException {
         int idChapitre, numeroChapitre;
         boolean presentiel;
         String libelleChapitre;
         
-        String requete1 = "SELECT * FROM Chapitres";
-        ResultSet res1 = connexion.executerRequete(requete1);
+        String requete1 = "SELECT * FROM CHAPITRE";
+        ResultSet res1 = this.connexion.executerRequete(requete1);
         while (res1.next()) {
             idChapitre = res1.getInt("idChapitre");
             numeroChapitre = res1.getInt("numeroChapitre");
@@ -76,11 +75,12 @@ public class BDD {
         Time heureExamen, dureeExamen;
         String libelleExamen, fichierExamenPath;
         
-        String requete2= "SELECT * FROM Examens";
+        String requete2 = "SELECT * FROM EXAMEN";
         ResultSet res2 = connexion.executerRequete(requete2);
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
             dateExamen = res2.getDate("dateExamen");
+            heureExamen = res2.getTime("heureExamen");
             dureeExamen = res2.getTime("dureeExamen");
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
@@ -92,7 +92,7 @@ public class BDD {
         Time dureeExercice;
         String libelleExercice, fichierExercicePath;
         
-        String requete3 = "SELECT * FROM Exercices";
+        String requete3 = "SELECT * FROM EXERCICE";
         ResultSet res3 = connexion.executerRequete(requete3);
         while (res3.next()) {
             idExercice = res3.getInt("idExercice");
@@ -103,9 +103,10 @@ public class BDD {
             fichierExercicePath = res3.getString("fichierExercice");
             idChapitre = res3.getInt("idChapitre");
             Chapitre chapitreExercice = chapitresMap.get(idChapitre);
-            Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercicePath,chapitreExercice);
+            Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,
+                    fichierExercicePath,chapitreExercice);
             exercicesMap.put(idExercice, exercice);
-            chapitreExercice.addExercice(exercice);
+
         }
         
         int idTD, numeroTD;
@@ -154,36 +155,54 @@ public class BDD {
             exercicesDeTD.addExercice(exercice);
         }
     }
-    
-    
+
+    //Toutes les fonctions ci dessous peuvent renvoyer un entier pour vérifier si l'ajout à bien été fait
+    public void addChapitre(int numero, boolean presentiel, String libelle, Set<Exercice> exercices, Set<TD> tds){
+        String request = "INSERT INTO CHAPITRE (numeroChapitre, presentielChapitre, libelleChapitre) ( VALUES (";
+        request += "'" + numero + "', ";
+        if (presentiel)
+            request += "1";
+        else
+            request += "0";
+        request += ", ";
+        request += "'" + libelle + "', ";
+        request += ");";
+        //connexion.executerPreparedRequete()
+        connexion.executerUpdate(request);
+    }
+
+//    public void add(TD td){
+//        String request = "INSERT INTO COURS (numeroCours, FichierCours, idChapitre) ( VALUES (";
+//    }
+//
     //STATIC
-    //Fonction a utiliser lors de la création d'une nouvelle BDD
-    public static void createBDD(Connexion connexion) throws SQLException{
+    //Fonction a utiliser lors de la création d'une nouvelle Database
+    public static void create(Connexion connexion) throws SQLException{
         String requete1 = "CREATE TABLE CHAPITRE " +
-                "('idChapitre' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "'numeroChapitre' INTEGER," +
-                "'presentielChapitre' BOOLEAN," +
-                "'libelleChapitre' TEXT);";
+                "(idChapitre INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "numeroChapitre INTEGER," +
+                "presentielChapitre BOOLEAN," +
+                "libelleChapitre TEXT);";
         
         connexion.executerUpdate(requete1);
         
         String requete2 = "CREATE TABLE COURS " +
-                "('idCours' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "'numeroCours' INTEGER," +
-                "'FichierCours' TEXT," +
-                "'idChapitre' INTEGER," +
+                "(idCours INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "numeroCours INTEGER," +
+                "FichierCours TEXT," +
+                "idChapitre INTEGER," +
                 "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
         
         connexion.executerUpdate(requete2);
         
         String requete3 = "CREATE TABLE EXERCICE " +
-                "('idExercice' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "'numeroExercice' INTEGER," +
-                "'dureeExercice' TIME," +
-                "'pointsExercice' INTEGER," +
-                "'libelleExercice' TEXT," +
-                "'fichierExercice' TEXT," +
-                "'idChapitre' INTEGER," +
+                "(idExercice INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "numeroExercice INTEGER," +
+                "dureeExercice TIME," +
+                "pointsExercice INTEGER," +
+                "libelleExercice TEXT," +
+                "fichierExercice TEXT," +
+                "idChapitre INTEGER," +
                 "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre));";
         
         connexion.executerUpdate(requete3);
@@ -218,7 +237,11 @@ public class BDD {
         connexion.executerUpdate(requete6);
         
         //Faire un petit message comme quoi la création de table s'est bien passée :)
-
+        System.out.println("La table a bien été créée !");
+        //Je pense que faire une fenetre info pour le dire peut être cool aussi ^^
+        //Techniquement, je peux te renvoyer un boolean pour dire si ça été créer ou non
     }
+
+
     
 }
