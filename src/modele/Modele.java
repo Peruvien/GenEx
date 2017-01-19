@@ -9,7 +9,6 @@ import bdd.Database;
 import bdd.Chapitre;
 import bdd.Connexion;
 import bdd.Exercice;
-
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Map;
@@ -79,8 +78,9 @@ public class Modele implements Observable {
             int idChapitre = chapitreValue.getID();
             int numeroChapitre = chapitreValue.getNumero();
             boolean presentiel = chapitreValue.isPresentiel();
+            String libelle = chapitreValue.getLibelle():
             
-            observer.addChapitre(idChapitre, numeroChapitre, presentiel, "Chapitre ");
+            observer.addChapitre(idChapitre, numeroChapitre, presentiel,libelle);
             
             Set<Exercice> exercices = chapitreValue.getExercices();
             for (Exercice exercice : exercices) {
