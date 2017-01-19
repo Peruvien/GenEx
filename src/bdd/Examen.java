@@ -26,6 +26,7 @@ public class Examen implements Comparable<Examen> {
     private final File fichier;
     private final Set<Exercice> exercices;
     
+    
     //CONSTRUCTEUR
     public Examen(int idExamen, Date date, Time duree, String libelle, String fichier) {
         this.idExamen = idExamen;
@@ -36,6 +37,7 @@ public class Examen implements Comparable<Examen> {
         this.exercices = new TreeSet();
     }
     
+    
     //ACCESSEURS
     
     
@@ -43,6 +45,7 @@ public class Examen implements Comparable<Examen> {
     public void addExercice(Exercice exercice) {
         exercices.add(exercice);
     }
+    
     
     //COMPARABLE
     @Override

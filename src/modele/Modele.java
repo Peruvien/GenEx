@@ -46,7 +46,7 @@ public class Modele implements Observable {
     
     //MUTATEURS
     public void ouvrirBDD(String chemin) {
-        database = new Database(connexion);
+        database = new Database(connexion,chemin);
     }
     
     public void creerBDD(String chemin) {

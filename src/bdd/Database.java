@@ -32,7 +32,7 @@ public class Database {
     private final Map<Integer,ExercicesDeTD> exercicesDeTDMap;
     
     //CONSTRUCTEUR
-    public Database(Connexion connexion) {
+    public Database(Connexion connexion, String path) {
         this.connexion = connexion;
         chapitresMap = new TreeMap<Integer,Chapitre>();
         exercicesMap = new TreeMap<Integer,Exercice>();
@@ -41,6 +41,7 @@ public class Database {
         exercicesDExamenMap = new TreeMap<Integer,ExercicesDExamen>();
         exercicesDeTDMap = new TreeMap<Integer,ExercicesDeTD>();
         
+        connexion.connecter(path);
         try {
             getDatabase();
         } catch (SQLException ex) {
@@ -107,7 +108,7 @@ public class Database {
             Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,
                     fichierExercicePath,chapitreExercice);
             exercicesMap.put(idExercice, exercice);
-
+            chapitresMap.get(idChapitre).addExercice(exercice);
         }
         
         int idTD, numeroTD;
