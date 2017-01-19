@@ -8,6 +8,7 @@ package bdd;
 import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
 
 /**
  *
@@ -18,10 +19,11 @@ public class Examen implements Comparable<Examen> {
     
     //ATTRIBUTS
     private final int idExamen;
-    private Chapitre chapitre;
     private final Date date;
     private final Time heure;
     private final Time duree;
+    private ArrayList<Exercice> exercices;
+
     private final String libelle;
     private final File fichier;
     
@@ -44,10 +46,6 @@ public class Examen implements Comparable<Examen> {
     //COMPARABLE
     @Override
     public int compareTo(Examen o) {
-        int res = chapitre.compareTo(o.chapitre);
-        if (res == 0) {
-            res = idExamen - o.idExamen;
-        }
-        return res;
+        return idExamen - o.idExamen;
     }
 }
