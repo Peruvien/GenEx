@@ -6,6 +6,8 @@
 package bdd;
 
 import java.io.File;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -19,12 +21,14 @@ public class TD implements Comparable<TD> {
     private Chapitre chapitre;
     private final int numeroTD;
     private final File fichier;
+    private final Set<Exercice> exercices;
     
     //CONSTRUCTEUR
     public TD(int idTD, int numeroTD, String fichierTDPath) {
         this.idTD = idTD;
         this.numeroTD = numeroTD;
         this.fichier = new File(fichierTDPath);
+        exercices = new TreeSet();
     }
     public TD(int idTD, int numeroTD, String fichierTDPath, Chapitre chapitreTD) {
         this(idTD,numeroTD,fichierTDPath);
@@ -33,7 +37,6 @@ public class TD implements Comparable<TD> {
     
     
     //ACCESSEURS
-
     public int getIdTD() {
         return idTD;
     }
@@ -52,7 +55,9 @@ public class TD implements Comparable<TD> {
 
 
     //MUTATEURS
-    
+    public void addExercice(Exercice exercice) {
+        exercices.add(exercice);
+    }
     
     //COMPARABLE
     @Override
