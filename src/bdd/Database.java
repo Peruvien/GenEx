@@ -138,6 +138,7 @@ public class Database {
                 exosDexamen = new ExercicesDExamen(examen);
                 exercicesDExamenMap.put(idExamen,exosDexamen);
             }
+            examen.addExercice(exercice);
             exosDexamen.addExercice(exercice);
         }
         
@@ -155,6 +156,7 @@ public class Database {
                 exercicesDeTDMap.put(idTD, exercicesDeTD);
             }
             exercicesDeTD.addExercice(exercice);
+            td.addExercice(exercice);
         }
     }
 
