@@ -493,12 +493,10 @@ public class Fenetre extends JFrame implements Observer {
     public void addExercice(int idChapitre, boolean presentiel, int idExercice, int numeroExercice, Time duree, int points, String libelle) {
         ExerciceNode exerciceAdd = new ExerciceNode(presentiel, idExercice, idChapitre, numeroExercice, "Exercice " + numeroExercice);
         if (presentiel) {
-            ChapitreNode chapitre = chapitresPresentiels.get(idChapitre);
-            chapitre.add(exerciceAdd);
+            chapitresPresentiels.get(idChapitre).add(exerciceAdd);
         }
         else {
-            ChapitreNode chapitre = chapitresDistants.get(idChapitre);
-            chapitre.add(exerciceAdd);
+            chapitresDistants.get(idChapitre).add(exerciceAdd);
         }
     }
     
