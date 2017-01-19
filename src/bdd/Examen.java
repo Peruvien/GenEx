@@ -8,6 +8,8 @@ package bdd;
 import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -20,26 +22,28 @@ public class Examen implements Comparable<Examen> {
     private final int idExamen;
     private Chapitre chapitre;
     private final Date date;
-    private final Time heure;
     private final Time duree;
     private final String libelle;
     private final File fichier;
+    private final Set<Exercice> exercices;
     
     //CONSTRUCTEUR
-    public Examen(int idExamen, Date date, Time heure, Time duree, String libelle, String fichier) {
+    public Examen(int idExamen, Date date, Time duree, String libelle, String fichier) {
         this.idExamen = idExamen;
         this.date = date;
-        this.heure = heure;
         this.duree = duree;
         this.libelle = libelle;
         this.fichier = new File(fichier);
+        exercices = new TreeSet();
     }
     
     //ACCESSEURS
     
     
     //MUTATEURS
-    
+    public void addExercice(Exercice exercice) {
+        exercices.add(exercice);
+    }
     
     //COMPARABLE
     @Override

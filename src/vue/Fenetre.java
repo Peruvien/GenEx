@@ -23,6 +23,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Time;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,6 +49,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
+import observer.Observer;
 import preferences.Preferences;
 import preferences.PreferencesDialog;
 
@@ -56,7 +58,7 @@ import preferences.PreferencesDialog;
  * @author Robin
  * @author Vincent
  */
-public class Fenetre extends JFrame {
+public class Fenetre extends JFrame implements Observer {
     
     //ATTRIBUTS
     //INTERFACE PRINCIPALE
@@ -248,7 +250,7 @@ public class Fenetre extends JFrame {
     private void initTrees() {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
-        
+        /*
         ChapitreNode chapitre1 = new ChapitreNode(true,1,1,"Chapitre 1");
         chapitre1.add(new ExerciceNode(true,1,1,1,"Exercice 1"));
         chapitre1.add(new ExerciceNode(true,2,1,2,"Exercice 2"));
@@ -264,7 +266,7 @@ public class Fenetre extends JFrame {
         rootPresentiels.add(chapitre2);
         
         rootDistants.add(chapitre1Distant);
-        
+        */
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
         treeChapPresentiels.setTransferHandler(new TransferNodeHandler());
@@ -411,7 +413,7 @@ public class Fenetre extends JFrame {
         do {
             res = JOptionPane.showOptionDialog(this, bddList, "Choisir une base de données", optionType, JOptionPane.PLAIN_MESSAGE, null, options, null);
             if (res == JOptionPane.YES_OPTION) {
-                controleur.ouvrirBDD(dossierBDD + bddList.getSelectedValue());
+                controleur.ouvrirBDD(dossierBDD + File.separator + bddList.getSelectedValue());
             }
             if (res == JOptionPane.NO_OPTION) {
                 res2 = this.creerBDD(chemin);
@@ -450,6 +452,7 @@ public class Fenetre extends JFrame {
     
     
     //OBSERVER
+    /*
     public void addChapitre(boolean presentiel) {
         ChapitreNode chapitreAdd = new ChapitreNode(presentiel,1,1,"Chapitre 1");
         if (presentiel) {
@@ -469,6 +472,33 @@ public class Fenetre extends JFrame {
         }
         else {
             chapitresDistants.get(chapitre).add(exerciceAdd);
+        }
+    }
+    */
+    @Override
+    public void addChapitre(int idChapitre, int numeroChapitre, boolean presentiel, String libelle) {
+        ChapitreNode chapitreAdd = new ChapitreNode(presentiel, idChapitre, numeroChapitre, "Chapitre " + numeroChapitre);
+        if (presentiel) {
+            chapitresPresentiels.put(idChapitre, chapitreAdd);
+            rootPresentiels.add(chapitreAdd);
+        }
+        else {
+            chapitresDistants.put(idChapitre, chapitreAdd);
+            rootDistants.add(chapitreAdd);
+        }
+        this.repaint();
+    }
+    
+    @Override
+    public void addExercice(int idChapitre, boolean presentiel, int idExercice, int numeroExercice, Time duree, int points, String libelle) {
+        ExerciceNode exerciceAdd = new ExerciceNode(presentiel, idExercice, idChapitre, numeroExercice, "Exercice " + numeroExercice);
+        if (presentiel) {
+            ChapitreNode chapitre = chapitresPresentiels.get(idChapitre);
+            chapitre.add(exerciceAdd);
+        }
+        else {
+            ChapitreNode chapitre = chapitresDistants.get(idChapitre);
+            chapitre.add(exerciceAdd);
         }
     }
     

@@ -47,7 +47,9 @@ public class BDD {
     
     
     //ACCESSEURS
-    
+    public Map<Integer,Chapitre> getChapitres() {
+        return chapitresMap;
+    }
     
     //MUTATEURS
     private void initBDD(Connexion connexion, String chemin) throws SQLException {
@@ -79,11 +81,10 @@ public class BDD {
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
             dateExamen = res2.getDate("dateExamen");
-            heureExamen = res2.getTime("heureExamen");
             dureeExamen = res2.getTime("dureeExamen");
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
-            Examen examen = new Examen(idExamen,dateExamen,heureExamen,dureeExamen,libelleExamen,fichierExamenPath);
+            Examen examen = new Examen(idExamen,dateExamen,dureeExamen,libelleExamen,fichierExamenPath);
             examensMap.put(idExamen, examen);
         }
         
@@ -104,6 +105,7 @@ public class BDD {
             Chapitre chapitreExercice = chapitresMap.get(idChapitre);
             Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercicePath,chapitreExercice);
             exercicesMap.put(idExercice, exercice);
+            chapitreExercice.addExercice(exercice);
         }
         
         int idTD, numeroTD;

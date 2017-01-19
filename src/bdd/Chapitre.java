@@ -19,9 +19,8 @@ public class Chapitre implements Comparable<Chapitre> {
     private final int idChapitre;
     private final int numeroChapitre;
     private final boolean presentiel;
-    private final String libelle;
+    private String libelle;
     private final Set<Exercice> exercices;
-    private final Set<TD> tds;
     
     
     //CONSTRUCTEUR
@@ -32,15 +31,30 @@ public class Chapitre implements Comparable<Chapitre> {
         this.libelle = libelle;
         
         exercices = new TreeSet<>();
-        tds = new TreeSet<>();
     }
     
     
     //ACCESSEURS
+    public int getID() {
+        return idChapitre;
+    }
     
+    public int getNumero() {
+        return numeroChapitre;
+    }
+    
+    public boolean isPresentiel() {
+        return presentiel;
+    }
+    
+    public Set<Exercice> getExercices() {
+        return exercices;
+    }
     
     //MUTATEURS
-    
+    public void addExercice(Exercice exercice) {
+        exercices.add(exercice);
+    }
     
     //COMPARABLE
     @Override

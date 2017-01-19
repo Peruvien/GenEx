@@ -22,7 +22,9 @@ public class Exercice implements Comparable<Exercice> {
     private final Time duree;
     private final int points;
     private final String libelle;
-    //private final
+    private final File fichier;
+    
+    
     //CONSTRUCTEUR
     public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath) {
         this.idExercice = idExercice;
@@ -39,13 +41,33 @@ public class Exercice implements Comparable<Exercice> {
     
     
     //ACCESSEURS
+    public Chapitre getChapitre() {
+        return chapitreExercice;
+    }
     
+    public int getID() {
+        return idExercice;
+    }
+    
+    public int getNumero() {
+        return numeroExercice;
+    }
+    
+    public Time getDuree() {
+        return duree;
+    }
+    
+    public int getPoints() {
+        return points;
+    }
+    
+    public String getLibelle() {
+        return libelle;
+    }
     
     //MUTATEURS
-
-    File fichier;
-
-
+    
+    
     //COMPARABLE
     @Override
     public int compareTo(Exercice o) {
