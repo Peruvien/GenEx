@@ -50,7 +50,9 @@ public class Database {
     
     
     //ACCESSEURS
-    
+    public Map<Integer,Chapitre> getChapitres() {
+        return chapitresMap;
+    }
     
     //MUTATEURS
     private void getDatabase() throws SQLException {
