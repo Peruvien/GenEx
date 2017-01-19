@@ -20,7 +20,6 @@ public class Examen implements Comparable<Examen> {
     
     //ATTRIBUTS
     private final int idExamen;
-    private Chapitre chapitre;
     private final Date date;
     private final Time duree;
     private final String libelle;
@@ -34,7 +33,7 @@ public class Examen implements Comparable<Examen> {
         this.duree = duree;
         this.libelle = libelle;
         this.fichier = new File(fichier);
-        exercices = new TreeSet();
+        this.exercices = new TreeSet();
     }
     
     //ACCESSEURS
@@ -48,10 +47,6 @@ public class Examen implements Comparable<Examen> {
     //COMPARABLE
     @Override
     public int compareTo(Examen o) {
-        int res = chapitre.compareTo(o.chapitre);
-        if (res == 0) {
-            res = idExamen - o.idExamen;
-        }
-        return res;
+        return idExamen - o.idExamen;
     }
 }

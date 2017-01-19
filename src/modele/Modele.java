@@ -6,9 +6,9 @@
 package modele;
 
 import bdd.Database;
-import bdd.BDD;
 import bdd.Chapitre;
 import bdd.Connexion;
+import bdd.Exercice;
 
 import java.sql.SQLException;
 import java.sql.Time;
@@ -71,7 +71,7 @@ public class Modele implements Observable {
     
     @Override
     public void notifyObserverChapitres() {
-        Map<Integer,Chapitre> chapitres = bdd.getChapitres();
+        Map<Integer,Chapitre> chapitres = database.getChapitres();
         Set<Entry<Integer,Chapitre>> chapitresSet = chapitres.entrySet();
         
         for (Entry<Integer,Chapitre> chapitre : chapitresSet) {
