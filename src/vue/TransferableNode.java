@@ -5,6 +5,7 @@
  */
 package vue;
 
+import bdd.Exercice;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -36,8 +37,8 @@ public class TransferableNode implements Transferable {
         }
     }
     
-    public TransferableNode(boolean isPresentiel, int id, int nbChapitre, int numero, String titre) {
-        this(new ExerciceNodeList(isPresentiel, id, nbChapitre, numero, titre));
+    public TransferableNode(Exercice exercice, String titre) {
+        this(new ExerciceNodeList(exercice, titre));
     }
     
     

@@ -75,12 +75,13 @@ public class Modele implements Observable {
         
         for (Entry<Integer,Chapitre> chapitre : chapitresSet) {
             Chapitre chapitreValue = chapitre.getValue();
+            /*
             int idChapitre = chapitreValue.getID();
             int numeroChapitre = chapitreValue.getNumero();
             boolean presentiel = chapitreValue.isPresentiel();
-            String libelle = chapitreValue.getLibelle():
-            
-            observer.addChapitre(idChapitre, numeroChapitre, presentiel,libelle);
+            String libelle = chapitreValue.getLibelle();
+            */
+            observer.addChapitre(chapitreValue);
             
             Set<Exercice> exercices = chapitreValue.getExercices();
             for (Exercice exercice : exercices) {
@@ -89,14 +90,14 @@ public class Modele implements Observable {
                 Time dureeExercice = exercice.getDuree();
                 int pointsExercice = exercice.getPoints();
                 String libelleExercice = exercice.getLibelle();
-                notifyObserverExercice(idChapitre, presentiel, idExercice, numeroExercice, dureeExercice, pointsExercice, libelleExercice);
+                notifyObserverExercice(exercice);
             }
         }
     }
     
     @Override
-    public void notifyObserverExercice(int idChapitre, boolean presentiel, int idExercice, int numeroExercice, Time duree, int points, String libelle) {
-        observer.addExercice(idChapitre, presentiel, idExercice, numeroExercice, duree, points, libelle);
+    public void notifyObserverExercice(Exercice exercice) {
+        observer.addExercice(exercice);
     }
     
 }

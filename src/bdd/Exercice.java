@@ -65,6 +65,16 @@ public class Exercice implements Comparable<Exercice> {
         return libelle;
     }
     
+    @Override
+    public String toString() {
+        String res = "Présentiel : " + chapitreExercice.isPresentiel() + "\n";
+        res += "Numéro de chapitre : " + chapitreExercice.getNumeroChapitre() + "\n";
+        res += "Numéro d'exercice : " + numeroExercice + "\n";
+        res += "Libellé : " + libelle + "\n";
+        return res;
+    }
+    
+    
     //MUTATEURS
     
     

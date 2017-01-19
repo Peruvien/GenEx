@@ -5,6 +5,7 @@
  */
 package vue;
 
+import bdd.Chapitre;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -12,36 +13,20 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author Robin
  * @author Vincent
  */
-public class ChapitreNode extends DefaultMutableTreeNode {
+public class ChapitreNode extends DefaultMutableTreeNode implements NodeInformations {
     
     //ATTRIBUTS
-    private final boolean presentiel;
-    private final int id;
-    private final int numero;
+    private final Chapitre chapitre;
     private final String titre;
     
     //CONSTRUCTEUR
-    public ChapitreNode(boolean presentiel, int id, int numero, String titre) {
+    public ChapitreNode(Chapitre chapitre, String titre) {
         super(titre);
-        this.presentiel = presentiel;
-        this.id = id;
-        this.numero = numero;
+        this.chapitre = chapitre;
         this.titre = titre;
     }
     
     //ACCESSEURS
-    public boolean isPresentiel() {
-        return presentiel;
-    }
-
-    public int getID() {
-        return id;
-    }
-
-    public int getNumero() {
-        return numero;
-    }
-
     public String getTitre() {
         return titre;
     }
@@ -53,5 +38,12 @@ public class ChapitreNode extends DefaultMutableTreeNode {
     
     
     //MUTATEURS
+    
+    
+    //NODEINFORMATIONS
+    @Override
+    public String getInformations() {
+        return chapitre.toString();
+    }
     
 }

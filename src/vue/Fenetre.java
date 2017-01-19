@@ -5,6 +5,8 @@
  */
 package vue;
 
+import bdd.Chapitre;
+import bdd.Exercice;
 import controleur.Controleur;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -18,12 +20,13 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,6 +52,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import observer.Observer;
 import preferences.Preferences;
 import preferences.PreferencesDialog;
@@ -250,30 +254,18 @@ public class Fenetre extends JFrame implements Observer {
     private void initTrees() {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
-        /*
-        ChapitreNode chapitre1 = new ChapitreNode(true,1,1,"Chapitre 1");
-        chapitre1.add(new ExerciceNode(true,1,1,1,"Exercice 1"));
-        chapitre1.add(new ExerciceNode(true,2,1,2,"Exercice 2"));
         
-        ChapitreNode chapitre2 = new ChapitreNode(true,2,2,"Chapitre 2");
-        chapitre2.add(new ExerciceNode(true,3,2,1,"Exercice 1"));
-        chapitre2.add(new ExerciceNode(true,4,2,2,"Exercice 2"));
+        InfoTreeListener listener = new InfoTreeListener();
         
-        ChapitreNode chapitre1Distant = new ChapitreNode(false,3,1,"Chapitre 1");
-        chapitre1Distant.add(new ExerciceNode(false,5,1,1,"Exercice 1"));
-        
-        rootPresentiels.add(chapitre1);
-        rootPresentiels.add(chapitre2);
-        
-        rootDistants.add(chapitre1Distant);
-        */
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
         treeChapPresentiels.setTransferHandler(new TransferNodeHandler());
+        treeChapPresentiels.addMouseListener(listener);
         
         treeChapDistants = new JTree(rootDistants);
         treeChapDistants.setDragEnabled(true);
         treeChapDistants.setTransferHandler(new TransferNodeHandler());
+        treeChapDistants.addMouseListener(listener);
         
         chapitresPresentiels = new TreeMap<>();
         chapitresDistants = new TreeMap<>();
@@ -452,32 +444,11 @@ public class Fenetre extends JFrame implements Observer {
     
     
     //OBSERVER
-    /*
-    public void addChapitre(boolean presentiel) {
-        ChapitreNode chapitreAdd = new ChapitreNode(presentiel,1,1,"Chapitre 1");
-        if (presentiel) {
-            chapitresPresentiels.put(1, chapitreAdd);
-            rootPresentiels.add(chapitreAdd);
-        }
-        else {
-            chapitresDistants.put(1, chapitreAdd);
-            rootDistants.add(chapitreAdd);
-        }
-    }
-    
-    public void addExercice(boolean presentiel, int chapitre) {
-        ExerciceNode exerciceAdd = new ExerciceNode(presentiel,1,chapitre,1,"Exercice 1");
-        if (presentiel) {
-            chapitresPresentiels.get(chapitre).add(exerciceAdd);
-        }
-        else {
-            chapitresDistants.get(chapitre).add(exerciceAdd);
-        }
-    }
-    */
     @Override
-    public void addChapitre(int idChapitre, int numeroChapitre, boolean presentiel, String libelle) {
-        ChapitreNode chapitreAdd = new ChapitreNode(presentiel, idChapitre, numeroChapitre, "Chapitre " + numeroChapitre);
+    public void addChapitre(Chapitre chapitre) {
+        ChapitreNode chapitreAdd = new ChapitreNode(chapitre, "Chapitre " + chapitre.getNumeroChapitre());
+        boolean presentiel = chapitre.isPresentiel();
+        int idChapitre = chapitre.getIdChapitre();
         if (presentiel) {
             chapitresPresentiels.put(idChapitre, chapitreAdd);
             rootPresentiels.add(chapitreAdd);
@@ -490,8 +461,10 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addExercice(int idChapitre, boolean presentiel, int idExercice, int numeroExercice, Time duree, int points, String libelle) {
-        ExerciceNode exerciceAdd = new ExerciceNode(presentiel, idExercice, idChapitre, numeroExercice, "Exercice " + numeroExercice);
+    public void addExercice(Exercice exercice) {
+        ExerciceNode exerciceAdd = new ExerciceNode(exercice, "Exercice " + exercice.getNumero());
+        boolean presentiel = exercice.getChapitre().isPresentiel();
+        int idChapitre = exercice.getChapitre().getIdChapitre();
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(exerciceAdd);
         }
@@ -584,5 +557,25 @@ public class Fenetre extends JFrame implements Observer {
             }
         }
         
+    }
+    
+    class InfoTreeListener extends MouseAdapter {
+        
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            TreePath path = null;
+            if (treeChapPresentiels.equals(e.getComponent())) {
+                path = treeChapPresentiels.getSelectionPath();
+            }
+            if (treeChapDistants.equals(e.getComponent())) {
+                path = treeChapDistants.getSelectionPath();
+            }
+            Object node = path.getLastPathComponent();
+            if (node instanceof NodeInformations) {
+                String informations = ((NodeInformations)node).getInformations();
+                infosTextPane.setText(informations);
+            }
+            
+        }
     }
 }

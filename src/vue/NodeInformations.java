@@ -3,18 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package observer;
-
-import bdd.Chapitre;
-import bdd.Exercice;
+package vue;
 
 /**
  *
  * @author robin
  */
-public interface Observer {
+public interface NodeInformations {
     
-    public void addChapitre(Chapitre exercice);
-    public void addExercice(Exercice exercice);
-    
+    public String getInformations();
 }

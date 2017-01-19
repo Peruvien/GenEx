@@ -5,6 +5,7 @@
  */
 package vue;
 
+import bdd.Exercice;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -12,41 +13,35 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author Robin
  * @author Vincent
  */
-public class ExerciceNode extends DefaultMutableTreeNode {
+public class ExerciceNode extends DefaultMutableTreeNode implements NodeInformations {
     
     //ATTRIBUTS
-    protected final boolean presentiel;
-    protected final int id;
-    protected final int nbChapitre;
-    protected final int numero;
+    protected Exercice exercice;
     protected final String titre;
     
     //CONSTRUCTEUR
-    public ExerciceNode(boolean presentiel, int id, int nbChapitre, int numero, String titre) {
+    public ExerciceNode(Exercice exercice, String titre) {
         super(titre,false);
-        this.presentiel = presentiel;
-        this.id = id;
-        this.nbChapitre = nbChapitre;
-        this.numero = numero;
+        this.exercice =  exercice;
         this.titre = titre;
     }
     
     
     //ACCESSEURS
     public boolean isPresentiel() {
-        return presentiel;
+        return exercice.getChapitre().isPresentiel();
     }
 
     public int getId() {
-        return id;
+        return exercice.getID();
     }
 
     public int getNbChapitre() {
-        return nbChapitre;
+        return exercice.getChapitre().getNumeroChapitre();
     }
 
     public int getNumero() {
-        return numero;
+        return exercice.getNumero();
     }
 
     public String getTitre() {
@@ -58,18 +53,16 @@ public class ExerciceNode extends DefaultMutableTreeNode {
         return titre;
     }
     
+    @Override
     public String getInformations() {
-        String res = "Chapitre " + nbChapitre;
-        res += presentiel ? " présentiel " : " distant ";
-        res += " Exercice n°" + numero;
-        return res;
+        return exercice.toString();
     }
     
     @Override
     public boolean equals(Object o) {
         if (o instanceof ExerciceNode) {
             ExerciceNode other = (ExerciceNode)o;
-            return other.id == id;
+            return this.exercice.equals(other.exercice);
         }
         return false;
     }

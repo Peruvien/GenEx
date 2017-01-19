@@ -36,14 +36,6 @@ public class Chapitre implements Comparable<Chapitre> {
     
     
     //ACCESSEURS
-    public int getID() {
-        return idChapitre;
-    }
-    
-    public int getNumero() {
-        return numeroChapitre;
-    }
-    
     public boolean isPresentiel() {
         return presentiel;
     }
@@ -63,6 +55,13 @@ public class Chapitre implements Comparable<Chapitre> {
         return libelle;
     }
     
+    @Override
+    public String toString() {
+        String res = "Présentiel : " + presentiel + "\n";
+        res += "Numéro de chapitre : " + numeroChapitre + "\n";
+        res += "Libellé : " + libelle;
+        return res;
+    }
     
     //MUTATEURS
     public void addExercice(Exercice exercice) {

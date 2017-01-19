@@ -5,6 +5,7 @@
  */
 package observer;
 
+import bdd.Exercice;
 import java.sql.Time;
 
 /**
@@ -15,6 +16,6 @@ public interface Observable {
     
     public void setObserver(Observer obs);
     public void notifyObserverChapitres();
-    public void notifyObserverExercice(int idChapitre, boolean presentiel, int idExercice, int numeroExercice, Time duree, int points, String libelle);
+    public void notifyObserverExercice(Exercice exercice);
     
 }
