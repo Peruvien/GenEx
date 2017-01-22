@@ -55,6 +55,7 @@ public class Modele implements Observable {
         } catch (SQLException ex) {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
         }
+        database = new Database(connexion,chemin);
     }
     
     public void deconnecter() {

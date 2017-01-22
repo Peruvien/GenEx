@@ -26,20 +26,20 @@ public class Database {
     private final Connexion connexion;
     private final Map<Integer,Chapitre> chapitresMap;
     private final Map<Integer,Exercice> exercicesMap;
-    private final Map<Integer,TD> tdsMap;
+    private final Map<Integer,Cours> coursMap;
     private final Map<Integer,Examen> examensMap;
     private final Map<Integer,ExercicesDExamen> exercicesDExamenMap;
-    private final Map<Integer,ExercicesDeTD> exercicesDeTDMap;
+    private final Map<Integer,ExercicesDeCours> exercicesDeTDMap;
     
     //CONSTRUCTEUR
     public Database(Connexion connexion, String path) {
         this.connexion = connexion;
         chapitresMap = new TreeMap<Integer,Chapitre>();
         exercicesMap = new TreeMap<Integer,Exercice>();
-        tdsMap = new TreeMap<Integer,TD>();
+        coursMap = new TreeMap<Integer,Cours>();
         examensMap = new TreeMap<Integer,Examen>();
         exercicesDExamenMap = new TreeMap<Integer,ExercicesDExamen>();
-        exercicesDeTDMap = new TreeMap<Integer,ExercicesDeTD>();
+        exercicesDeTDMap = new TreeMap<Integer,ExercicesDeCours>();
         
         connexion.connecter(path);
         try {
@@ -74,7 +74,7 @@ public class Database {
         
         int idExamen;
         Date dateExamen;
-        Time heureExamen, dureeExamen;
+        Time dureeExamen;
         String libelleExamen, fichierExamenPath;
         
         String requete2 = "SELECT * FROM EXAMEN";
@@ -82,7 +82,6 @@ public class Database {
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
             dateExamen = res2.getDate("dateExamen");
-            heureExamen = res2.getTime("heureExamen");
             dureeExamen = res2.getTime("dureeExamen");
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
@@ -99,7 +98,8 @@ public class Database {
         while (res3.next()) {
             idExercice = res3.getInt("idExercice");
             numeroExercice = res3.getInt("numeroExercice");
-            dureeExercice = res3.getTime("dureeExercice");
+            dureeExercice = Time.valueOf(res3.getString("dureeExercice"));
+            //System.out.println(dureeExercice.toLocalTime());
             pointsExercice = res3.getInt("pointsExercice");
             libelleExercice = res3.getString("libelleExercice");
             fichierExercicePath = res3.getString("fichierExercice");
@@ -114,19 +114,19 @@ public class Database {
         int idTD, numeroTD;
         String fichierTDPath;
         
-        String requete4 = "SELECT * FROM TDs";
+        String requete4 = "SELECT * FROM COURS";
         ResultSet res4 = connexion.executerRequete(requete4);
         while (res4.next()) {
-            idTD = res4.getInt("idTD");
-            numeroTD = res4.getInt("numeroTD");
-            fichierTDPath = res4.getString("fichierTD");
+            idTD = res4.getInt("idCours");
+            numeroTD = res4.getInt("numeroCours");
+            fichierTDPath = res4.getString("fichierCours");
             idChapitre = res4.getInt("idChapitre");
             Chapitre chapitreTD = chapitresMap.get(idChapitre);
-            TD td = new TD(idTD,numeroTD,fichierTDPath,chapitreTD);
-            tdsMap.put(idTD, td);
+            Cours td = new Cours(idTD,numeroTD,fichierTDPath,chapitreTD);
+            coursMap.put(idTD, td);
         }
         
-        String requete5 = "SELECT * FROM ExercicesDExamen GROUP BY idExamen";
+        String requete5 = "SELECT * FROM EXERCICEEXAMEN GROUP BY idExamen";
         ResultSet res5 = connexion.executerRequete(requete5);
         while (res5.next()) {
             idExamen = res5.getInt("idExamen");
@@ -142,28 +142,29 @@ public class Database {
             exosDexamen.addExercice(exercice);
         }
         
-        String requete6 = "SELECT * FROM ExercicesDeTD GROUP BY idTD";
+        String requete6 = "SELECT * FROM EXERCICECOURS GROUP BY idCours";
         ResultSet res6 = connexion.executerRequete(requete6);
         while (res6.next()) {
-            idTD = res6.getInt("idTD");
+            idTD = res6.getInt("idCours");
             idExercice = res6.getInt("idExercice");
             Date dateUtilisation = res6.getDate("dateUtilisation");
-            TD td = tdsMap.get(idTD);
+            Cours td = coursMap.get(idTD);
             Exercice exercice = exercicesMap.get(idExercice);
-            ExercicesDeTD exercicesDeTD = exercicesDeTDMap.get(idTD);
+            ExercicesDeCours exercicesDeTD = exercicesDeTDMap.get(idTD);
             if (exercicesDeTD == null) {
-                exercicesDeTD = new ExercicesDeTD(td, dateUtilisation);
+                exercicesDeTD = new ExercicesDeCours(td, dateUtilisation);
                 exercicesDeTDMap.put(idTD, exercicesDeTD);
             }
             exercicesDeTD.addExercice(exercice);
             td.addExercice(exercice);
         }
     }
-
+    
+    
     //MUTATEURS
-
+    
     //Toutes les fonctions ci dessous peuvent renvoyer un entier pour vérifier si l'ajout à bien été fait
-    public void addChapitre(int numero, boolean presentiel, String libelle, Set<Exercice> exercices, Set<TD> tds){
+    public void addChapitre(int numero, boolean presentiel, String libelle, Set<Exercice> exercices, Set<Cours> tds){
         String request = "INSERT INTO CHAPITRE (numeroChapitre, presentielChapitre, libelleChapitre) ( VALUES (";
         request += "'" + numero + "', ";
         if (presentiel)
@@ -177,15 +178,15 @@ public class Database {
         connexion.executerUpdate(request);
     }
 
-//    public void add(TD td){
+//    public void add(Cours td){
 //        String request = "INSERT INTO COURS (numeroCours, FichierCours, idChapitre) ( VALUES (";
 //    }
 //
     //STATIC
     //Fonction a utiliser lors de la création d'une nouvelle Database
     public static void create(Connexion connexion) throws SQLException{
-
-
+        
+        
         String requete2 = "CREATE TABLE EXERCICE (" +
                 "idExercice INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "numeroExercice INTEGER," +
@@ -196,43 +197,37 @@ public class Database {
                 "idChapitre INTEGER," +
                 "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
                 ");";
-
         connexion.executerUpdate(requete2);
-
+        
+        
         String requete1 = "CREATE TABLE CHAPITRE (" +
                 "idChapitre INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "numeroChapitre INTEGER," +
                 "presentielChapitre BOOLEAN," +
                 "libelleChapitre TEXT" +
                 ");";
-
         connexion.executerUpdate(requete1);
-
+        
+        
         String requete7 = "CREATE TABLE EXERCICECHAPITRE (" +
                 "idChapitre INTEGER NOT NULL," +
                 "idExercice INTEGER NOT NULL," +
                 "PRIMARY KEY(idChapitre, idExercice)," +
-                "FOREIGN KEY(idExamen) REFERENCES CHAPITRE(idChapitre)," +
+                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
                 ");";
-
         connexion.executerUpdate(requete7);
-
-
-
-
-
+        
+        
         String requete3 = "CREATE TABLE COURS (" +
                 "idCours INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "numeroCours INTEGER," +
-                "FichierCours TEXT," +
+                "fichierCours TEXT," +
                 "idChapitre INTEGER," +
                 "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
                 ");";
-        
         connexion.executerUpdate(requete3);
         
-
         
         String requete4 = "CREATE TABLE EXERCICECOURS (" +
                 "dateUtilisation DATE," +
@@ -242,21 +237,20 @@ public class Database {
                 "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
                 ");";
-
-
-
         connexion.executerUpdate(requete4);
-        //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type INTEGER
+        
+        
+        //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type BOOLEAN
         String requete5 = "CREATE TABLE EXAMEN (" +
                 "idExamen INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "boolExamen BOOLEAN NOT NULL," +
                 "dateExamen DATE," +
-                "dureeExamen TIME," +
+                "dureeExamen TEXT," +
                 "libelleExamen TEXT," +
                 "fichierExamen TEXT" +
                 ");";
-        
         connexion.executerUpdate(requete5);
+        
         
         String requete6 = "CREATE TABLE EXERCICEEXAMEN (" +
                 "idExamen INTEGER NOT NULL," +
@@ -265,7 +259,6 @@ public class Database {
                 "FOREIGN KEY(idExamen) REFERENCES EXAMEN(idExamen)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
                 ");";
-        
         connexion.executerUpdate(requete6);
         
         //Faire un petit message comme quoi la création de table s'est bien passée :)

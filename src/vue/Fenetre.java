@@ -211,8 +211,8 @@ public class Fenetre extends JFrame implements Observer {
         exosModelList = new DefaultListModel<>();
         exosList = new JList<>(exosModelList);
         exosList.setDropTarget(new DropTarget(exosList,new DropListTarget()));
-        exosList.addListSelectionListener(new InfoListener());
-        
+        //exosList.addListSelectionListener(new InfoListListener());
+        exosList.addMouseListener(new InfoListener());
         bddModelList = new DefaultListModel<>();
         bddList = new JList<>(bddModelList);
     }
@@ -255,7 +255,7 @@ public class Fenetre extends JFrame implements Observer {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
         
-        InfoTreeListener listener = new InfoTreeListener();
+        InfoListener listener = new InfoListener();
         
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
@@ -491,7 +491,6 @@ public class Fenetre extends JFrame implements Observer {
         
     }
     
-    
     class MenuListener implements ActionListener {
         
         @Override
@@ -543,39 +542,32 @@ public class Fenetre extends JFrame implements Observer {
         
     }
     
-    class InfoListener implements ListSelectionListener {
+    class InfoListener extends MouseAdapter {
         
         @Override
-        public void valueChanged(ListSelectionEvent e) {
-            if (e.getValueIsAdjusting()) {
-                List<ExerciceNode> exosSelected = exosList.getSelectedValuesList();
+        public void mouseClicked(MouseEvent e) {
+            if (exosList.equals(e.getComponent())) {
+                List<NodeInformations> exosSelected = exosList.getSelectedValuesList();
                 String infos = "";
-                for (ExerciceNode exo : exosSelected) {
+                for (NodeInformations exo : exosSelected) {
                     infos += exo.getInformations() + "\n";
                 }
                 infosTextPane.setText(infos);
             }
-        }
-        
-    }
-    
-    class InfoTreeListener extends MouseAdapter {
-        
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            TreePath path = null;
-            if (treeChapPresentiels.equals(e.getComponent())) {
-                path = treeChapPresentiels.getSelectionPath();
+            else {
+                TreePath path;
+                if (treeChapPresentiels.equals(e.getComponent())) {
+                    path = treeChapPresentiels.getSelectionPath();
+                }
+                else {
+                    path = treeChapDistants.getSelectionPath();
+                }
+                Object node = path.getLastPathComponent();
+                if (node instanceof NodeInformations) {
+                    String informations = ((NodeInformations)node).getInformations();
+                    infosTextPane.setText(informations);
+                }
             }
-            if (treeChapDistants.equals(e.getComponent())) {
-                path = treeChapDistants.getSelectionPath();
-            }
-            Object node = path.getLastPathComponent();
-            if (node instanceof NodeInformations) {
-                String informations = ((NodeInformations)node).getInformations();
-                infosTextPane.setText(informations);
-            }
-            
         }
     }
 }

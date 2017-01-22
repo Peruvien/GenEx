@@ -21,7 +21,7 @@ public class Chapitre implements Comparable<Chapitre> {
     private boolean presentiel;
     private String libelle;
     private Set<Exercice> exercices;
-    private Set<TD> tds;
+    private Set<Cours> tds;
     
     
     //CONSTRUCTEUR
@@ -84,11 +84,11 @@ public class Chapitre implements Comparable<Chapitre> {
         this.exercices = exercices;
     }
 
-    public void setTds(Set<TD> tds) {
+    public void setTds(Set<Cours> tds) {
         this.tds = tds;
     }
 
-    public void addTd(TD td){
+    public void addTd(Cours td){
         this.tds.add(td);
     }
 

@@ -14,43 +14,43 @@ import java.util.TreeSet;
  * @author Robin
  * @author Vincent
  */
-public class TD implements Comparable<TD> {
+public class Cours implements Comparable<Cours> {
     
     //ATTRIBUTS
-    private final int idTD;
+    private final int idCours;
     private Chapitre chapitre;
-    private final int numeroTD;
-    private final File fichier;
+    private final int numeroCours;
+    private final File fichierCours;
     private final Set<Exercice> exercices;
     
     //CONSTRUCTEUR
-    public TD(int idTD, int numeroTD, String fichierTDPath) {
-        this.idTD = idTD;
-        this.numeroTD = numeroTD;
-        this.fichier = new File(fichierTDPath);
-        exercices = new TreeSet();
+    public Cours(int idCours, int numeroCours, String fichierCoursPath) {
+        this.idCours = idCours;
+        this.numeroCours = numeroCours;
+        this.fichierCours = new File(fichierCoursPath);
+        exercices = new TreeSet<>();
     }
-    public TD(int idTD, int numeroTD, String fichierTDPath, Chapitre chapitreTD) {
-        this(idTD,numeroTD,fichierTDPath);
-        this.chapitre = chapitreTD;
+    public Cours(int idCours, int numeroCours, String fichierCoursPath, Chapitre chapitreCours) {
+        this(idCours,numeroCours,fichierCoursPath);
+        this.chapitre = chapitreCours;
     }
     
     
     //ACCESSEURS
-    public int getIdTD() {
-        return idTD;
+    public int getIDCours() {
+        return idCours;
     }
 
     public Chapitre getChapitre() {
         return chapitre;
     }
 
-    public int getNumeroTD() {
-        return numeroTD;
+    public int getNumeroCours() {
+        return numeroCours;
     }
 
     public File getFichier() {
-        return fichier;
+        return fichierCours;
     }
 
 
@@ -61,10 +61,10 @@ public class TD implements Comparable<TD> {
     
     //COMPARABLE
     @Override
-    public int compareTo(TD o) {
+    public int compareTo(Cours o) {
         int res = chapitre.compareTo(o.chapitre);
         if (res == 0) {
-            res = numeroTD - o.numeroTD;
+            res = numeroCours - o.numeroCours;
         }
         return res;
     }

@@ -34,7 +34,7 @@ public class Examen implements Comparable<Examen> {
         this.duree = duree;
         this.libelle = libelle;
         this.fichier = new File(fichier);
-        this.exercices = new TreeSet();
+        this.exercices = new TreeSet<>();
     }
     
     

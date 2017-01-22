@@ -13,16 +13,16 @@ import java.util.ArrayList;
  * @author Robin
  * @author Vincent
  */
-public class ExercicesDeTD {
+public class ExercicesDeCours {
      
     //ATTRIBUTS
-    private final TD td;
+    private final Cours td;
     private final ArrayList<Exercice> exercices;
     private final Date dateUtilisation;
     
     
     //CONSTRUCTEUR
-    public ExercicesDeTD(TD td, Date dateUtilisation) {
+    public ExercicesDeCours(Cours td, Date dateUtilisation) {
         this.td = td;
         this.dateUtilisation = dateUtilisation;
         exercices = new ArrayList<>();

@@ -83,13 +83,6 @@ public class Connexion {
         
         setStatement();
         
-        if (isSQLite) {
-            try {
-                statement.executeUpdate("PRAGMA synchronous = OFF;");
-            } catch (SQLException ex) {
-                Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
         try {
             statement.setQueryTimeout(30);
         } catch (SQLException ex) {
