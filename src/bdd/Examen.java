@@ -39,7 +39,14 @@ public class Examen implements Comparable<Examen> {
     
     
     //ACCESSEURS
-    
+    @Override
+    public String toString() {
+        String res = "Date : " + date.toString() + "\n";
+        res += "Durée : " + duree.toString() + "\n";
+        res += "Libellé : " + libelle + "\n";
+        res += "Fichier : " + fichier.getAbsolutePath() + "\n";
+        return res;
+    }
     
     //MUTATEURS
     public void addExercice(Exercice exercice) {

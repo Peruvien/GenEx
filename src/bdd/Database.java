@@ -9,8 +9,11 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,7 +85,7 @@ public class Database {
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
             dateExamen = res2.getDate("dateExamen");
-            dureeExamen = res2.getTime("dureeExamen");
+            dureeExamen = Time.valueOf(res2.getString("dureeExamen"));
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
             Examen examen = new Examen(idExamen,dateExamen,dureeExamen,libelleExamen,fichierExamenPath);
@@ -99,6 +102,10 @@ public class Database {
             idExercice = res3.getInt("idExercice");
             numeroExercice = res3.getInt("numeroExercice");
             dureeExercice = Time.valueOf(res3.getString("dureeExercice"));
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dureeExercice);
+            System.out.println(cal.get(Calendar.MINUTE));
+            
             //System.out.println(dureeExercice.toLocalTime());
             pointsExercice = res3.getInt("pointsExercice");
             libelleExercice = res3.getString("libelleExercice");
@@ -190,7 +197,7 @@ public class Database {
         String requete2 = "CREATE TABLE EXERCICE (" +
                 "idExercice INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "numeroExercice INTEGER," +
-                "dureeExercice TIME," +
+                "dureeExercice TEXT," +
                 "pointsExercice INTEGER," +
                 "libelleExercice TEXT," +
                 "fichierExercice TEXT," +

@@ -562,10 +562,12 @@ public class Fenetre extends JFrame implements Observer {
                 else {
                     path = treeChapDistants.getSelectionPath();
                 }
-                Object node = path.getLastPathComponent();
-                if (node instanceof NodeInformations) {
-                    String informations = ((NodeInformations)node).getInformations();
-                    infosTextPane.setText(informations);
+                if (path != null)  {
+                    Object node = path.getLastPathComponent();
+                    if (node instanceof NodeInformations) {
+                        String informations = ((NodeInformations)node).getInformations();
+                        infosTextPane.setText(informations);
+                    }
                 }
             }
         }

@@ -70,7 +70,10 @@ public class Exercice implements Comparable<Exercice> {
         String res = "Présentiel : " + chapitreExercice.isPresentiel() + "\n";
         res += "Numéro de chapitre : " + chapitreExercice.getNumeroChapitre() + "\n";
         res += "Numéro d'exercice : " + numeroExercice + "\n";
+        res += "Temps : " + duree + "\n";
+        res += "Points : " + points + "\n";
         res += "Libellé : " + libelle + "\n";
+        res += "Fichier : " + fichier.getAbsolutePath() + "\n";
         return res;
     }
     
