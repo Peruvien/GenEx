@@ -50,6 +50,8 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -211,8 +213,8 @@ public class Fenetre extends JFrame implements Observer {
         exosModelList = new DefaultListModel<>();
         exosList = new JList<>(exosModelList);
         exosList.setDropTarget(new DropTarget(exosList,new DropListTarget()));
-        //exosList.addListSelectionListener(new InfoListListener());
-        exosList.addMouseListener(new InfoListener());
+        exosList.addListSelectionListener(new InfoListListener());
+        
         bddModelList = new DefaultListModel<>();
         bddList = new JList<>(bddModelList);
     }
@@ -255,17 +257,15 @@ public class Fenetre extends JFrame implements Observer {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
         
-        InfoListener listener = new InfoListener();
-        
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
         treeChapPresentiels.setTransferHandler(new TransferNodeHandler());
-        treeChapPresentiels.addMouseListener(listener);
+        treeChapPresentiels.addTreeSelectionListener(new InfoTreeListener());
         
         treeChapDistants = new JTree(rootDistants);
         treeChapDistants.setDragEnabled(true);
         treeChapDistants.setTransferHandler(new TransferNodeHandler());
-        treeChapDistants.addMouseListener(listener);
+        treeChapDistants.addTreeSelectionListener(new InfoTreeListener());
         
         chapitresPresentiels = new TreeMap<>();
         chapitresDistants = new TreeMap<>();
@@ -542,34 +542,41 @@ public class Fenetre extends JFrame implements Observer {
         
     }
     
-    class InfoListener extends MouseAdapter {
+    class InfoListListener implements ListSelectionListener {
         
         @Override
-        public void mouseClicked(MouseEvent e) {
-            if (exosList.equals(e.getComponent())) {
-                List<NodeInformations> exosSelected = exosList.getSelectedValuesList();
-                String infos = "";
-                for (NodeInformations exo : exosSelected) {
-                    infos += exo.getInformations() + "\n";
-                }
-                infosTextPane.setText(infos);
+        public void valueChanged(ListSelectionEvent e) {
+            List<NodeInformations> exosSelected = exosList.getSelectedValuesList();
+            String infos = "";
+            for (NodeInformations exo : exosSelected) {
+                infos += exo.getInformations() + "\n";
+            }
+            infosTextPane.setText(infos);
+        }
+        
+    }
+    
+    class InfoTreeListener implements TreeSelectionListener {
+        
+        @Override
+        public void valueChanged(TreeSelectionEvent e) {
+            Object src = e.getSource();
+            TreePath path;
+            if (src.equals(treeChapPresentiels)) {
+                path = treeChapPresentiels.getSelectionPath();
             }
             else {
-                TreePath path;
-                if (treeChapPresentiels.equals(e.getComponent())) {
-                    path = treeChapPresentiels.getSelectionPath();
-                }
-                else {
-                    path = treeChapDistants.getSelectionPath();
-                }
-                if (path != null)  {
-                    Object node = path.getLastPathComponent();
-                    if (node instanceof NodeInformations) {
-                        String informations = ((NodeInformations)node).getInformations();
-                        infosTextPane.setText(informations);
-                    }
+                path = treeChapDistants.getSelectionPath();
+            }
+            if (path != null)  {
+                Object node = path.getLastPathComponent();
+                if (node instanceof NodeInformations) {
+                    String informations = ((NodeInformations)node).getInformations();
+                    infosTextPane.setText(informations);
                 }
             }
         }
+        
     }
+    
 }
