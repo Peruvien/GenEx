@@ -9,11 +9,8 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.util.Calendar;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +29,7 @@ public class Database {
     private final Map<Integer,Cours> coursMap;
     private final Map<Integer,Examen> examensMap;
     private final Map<Integer,ExercicesDExamen> exercicesDExamenMap;
-    private final Map<Integer,ExercicesDeCours> exercicesDeTDMap;
+    private final Map<Integer,ExercicesDeCours> exercicesDeCoursMap;
     
     //CONSTRUCTEUR
     public Database(Connexion connexion, String path) {
@@ -42,7 +39,7 @@ public class Database {
         coursMap = new TreeMap<Integer,Cours>();
         examensMap = new TreeMap<Integer,Examen>();
         exercicesDExamenMap = new TreeMap<Integer,ExercicesDExamen>();
-        exercicesDeTDMap = new TreeMap<Integer,ExercicesDeCours>();
+        exercicesDeCoursMap = new TreeMap<Integer,ExercicesDeCours>();
         
         connexion.connecter(path);
         try {
@@ -64,7 +61,7 @@ public class Database {
         String libelleChapitre;
         
         String requete1 = "SELECT * FROM CHAPITRE";
-        ResultSet res1 = this.connexion.executerRequete(requete1);
+        ResultSet res1 = connexion.executerRequete(requete1);
         while (res1.next()) {
             idChapitre = res1.getInt("idChapitre");
             numeroChapitre = res1.getInt("numeroChapitre");
@@ -102,11 +99,6 @@ public class Database {
             idExercice = res3.getInt("idExercice");
             numeroExercice = res3.getInt("numeroExercice");
             dureeExercice = Time.valueOf(res3.getString("dureeExercice"));
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(dureeExercice);
-            System.out.println(cal.get(Calendar.MINUTE));
-            
-            //System.out.println(dureeExercice.toLocalTime());
             pointsExercice = res3.getInt("pointsExercice");
             libelleExercice = res3.getString("libelleExercice");
             fichierExercicePath = res3.getString("fichierExercice");
@@ -118,19 +110,19 @@ public class Database {
             chapitresMap.get(idChapitre).addExercice(exercice);
         }
         
-        int idTD, numeroTD;
-        String fichierTDPath;
+        int icCours, numeroCours;
+        String fichierCoursPath;
         
         String requete4 = "SELECT * FROM COURS";
         ResultSet res4 = connexion.executerRequete(requete4);
         while (res4.next()) {
-            idTD = res4.getInt("idCours");
-            numeroTD = res4.getInt("numeroCours");
-            fichierTDPath = res4.getString("fichierCours");
+            icCours = res4.getInt("idCours");
+            numeroCours = res4.getInt("numeroCours");
+            fichierCoursPath = res4.getString("fichierCours");
             idChapitre = res4.getInt("idChapitre");
-            Chapitre chapitreTD = chapitresMap.get(idChapitre);
-            Cours td = new Cours(idTD,numeroTD,fichierTDPath,chapitreTD);
-            coursMap.put(idTD, td);
+            Chapitre chapitreCours = chapitresMap.get(idChapitre);
+            Cours cours = new Cours(icCours,numeroCours,fichierCoursPath,chapitreCours);
+            coursMap.put(icCours, cours);
         }
         
         String requete5 = "SELECT * FROM EXERCICEEXAMEN GROUP BY idExamen";
@@ -152,18 +144,18 @@ public class Database {
         String requete6 = "SELECT * FROM EXERCICECOURS GROUP BY idCours";
         ResultSet res6 = connexion.executerRequete(requete6);
         while (res6.next()) {
-            idTD = res6.getInt("idCours");
+            icCours = res6.getInt("idCours");
             idExercice = res6.getInt("idExercice");
             Date dateUtilisation = res6.getDate("dateUtilisation");
-            Cours td = coursMap.get(idTD);
+            Cours cours = coursMap.get(icCours);
             Exercice exercice = exercicesMap.get(idExercice);
-            ExercicesDeCours exercicesDeTD = exercicesDeTDMap.get(idTD);
-            if (exercicesDeTD == null) {
-                exercicesDeTD = new ExercicesDeCours(td, dateUtilisation);
-                exercicesDeTDMap.put(idTD, exercicesDeTD);
+            ExercicesDeCours exercicesDeCours = exercicesDeCoursMap.get(icCours);
+            if (exercicesDeCours == null) {
+                exercicesDeCours = new ExercicesDeCours(cours, dateUtilisation);
+                exercicesDeCoursMap.put(icCours, exercicesDeCours);
             }
-            exercicesDeTD.addExercice(exercice);
-            td.addExercice(exercice);
+            exercicesDeCours.addExercice(exercice);
+            cours.addExercice(exercice);
         }
     }
     
@@ -172,6 +164,7 @@ public class Database {
     
     //Toutes les fonctions ci dessous peuvent renvoyer un entier pour vérifier si l'ajout à bien été fait
     public void addChapitre(int numero, boolean presentiel, String libelle, Set<Exercice> exercices, Set<Cours> tds){
+        //String requete = "INSERT INTO CHAPITRE (numeroChapitre, presentielChapitre, libelleChapitre) VALUES (?,?,?)";
         String request = "INSERT INTO CHAPITRE (numeroChapitre, presentielChapitre, libelleChapitre) ( VALUES (";
         request += "'" + numero + "', ";
         if (presentiel)
@@ -181,7 +174,13 @@ public class Database {
         request += ", ";
         request += "'" + libelle + "', ";
         request += ");";
-        //connexion.executerPreparedRequete()
+        /*
+        try {
+            connexion.executerPreparedRequete(requete,"(int)" + numero,"(bool)" + presentiel, libelle);
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        */
         connexion.executerUpdate(request);
     }
 
@@ -273,7 +272,7 @@ public class Database {
         //Je pense que faire une fenetre info pour le dire peut être cool aussi ^^
         //Techniquement, je peux te renvoyer un boolean pour dire si ça été créer ou non
     }
-
-
+    
+    
     
 }
