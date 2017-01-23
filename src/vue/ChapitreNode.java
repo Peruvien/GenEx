@@ -43,7 +43,7 @@ public class ChapitreNode extends DefaultMutableTreeNode implements NodeInformat
     //NODEINFORMATIONS
     @Override
     public String getInformations() {
-        return chapitre.toString();
+        return chapitre.toString() + "\n";
     }
     
 }

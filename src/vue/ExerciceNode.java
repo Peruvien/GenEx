@@ -55,7 +55,7 @@ public class ExerciceNode extends DefaultMutableTreeNode implements NodeInformat
     
     @Override
     public String getInformations() {
-        return exercice.toString();
+        return exercice.toString() + "\n";
     }
     
     @Override

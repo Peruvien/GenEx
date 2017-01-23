@@ -73,7 +73,7 @@ public class Exercice implements Comparable<Exercice> {
         res += "Temps : " + duree + "\n";
         res += "Points : " + points + "\n";
         res += "Libellé : " + libelle + "\n";
-        res += "Fichier : " + fichier.getAbsolutePath() + "\n";
+        res += "Fichier : " + fichier.getAbsolutePath();
         return res;
     }
     

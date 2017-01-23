@@ -561,19 +561,23 @@ public class Fenetre extends JFrame implements Observer {
         @Override
         public void valueChanged(TreeSelectionEvent e) {
             Object src = e.getSource();
-            TreePath path;
+            TreePath[] paths;
             if (src.equals(treeChapPresentiels)) {
-                path = treeChapPresentiels.getSelectionPath();
+                paths = treeChapPresentiels.getSelectionPaths();
             }
             else {
-                path = treeChapDistants.getSelectionPath();
+                paths = treeChapDistants.getSelectionPaths();
             }
-            if (path != null)  {
-                Object node = path.getLastPathComponent();
-                if (node instanceof NodeInformations) {
-                    String informations = ((NodeInformations)node).getInformations();
-                    infosTextPane.setText(informations);
+            if (paths != null)  {
+                String informations = "";
+                for (TreePath path : paths) {
+                    Object node = path.getLastPathComponent();
+                    if (node instanceof NodeInformations) {
+                        informations += ((NodeInformations)node).getInformations() + "\n";
+                    }
                 }
+                infosTextPane.setText(informations);
+                
             }
         }
         
