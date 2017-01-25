@@ -62,8 +62,8 @@ public class FileChooser extends JPanel{
     public String getPath() {
         File file = new File(textField.getText());
         
-        boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile() || fileChooser.getDialogType() == JFileChooser.SAVE_DIALOG);
-        boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory() || fileChooser.getDialogType() == JFileChooser.SAVE_DIALOG);
+        boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile() || typeDialog == JFileChooser.SAVE_DIALOG);
+        boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory() || typeDialog == JFileChooser.SAVE_DIALOG);
         
         if (correctFile || correctDir) {
             setText(file.getAbsolutePath());

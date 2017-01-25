@@ -28,6 +28,7 @@ public class ExerciceNode extends DefaultMutableTreeNode implements NodeInformat
     
     
     //ACCESSEURS
+    /*
     public boolean isPresentiel() {
         return exercice.getChapitre().isPresentiel();
     }
@@ -47,7 +48,7 @@ public class ExerciceNode extends DefaultMutableTreeNode implements NodeInformat
     public String getTitre() {
         return titre;
     }
-    
+    */
     @Override
     public String toString() {
         return titre;

@@ -21,7 +21,7 @@ public class Chapitre implements Comparable<Chapitre> {
     private boolean presentiel;
     private String libelle;
     private Set<Exercice> exercices;
-    private Set<Cours> tds;
+    private Set<Cours> cours;
     
     
     //CONSTRUCTEUR
@@ -32,6 +32,7 @@ public class Chapitre implements Comparable<Chapitre> {
         this.libelle = libelle;
         
         exercices = new TreeSet<>();
+        cours = new TreeSet<>();
     }
     
     
@@ -43,6 +44,11 @@ public class Chapitre implements Comparable<Chapitre> {
     public Set<Exercice> getExercices() {
         return exercices;
     }
+    
+    public Set<Cours> getCours() {
+        return cours;
+    }
+    
     public int getIdChapitre() {
         return idChapitre;
     }
@@ -71,29 +77,29 @@ public class Chapitre implements Comparable<Chapitre> {
     public void setNumeroChapitre(int numeroChapitre) {
         this.numeroChapitre = numeroChapitre;
     }
-
+    
     public void setPresentiel(boolean presentiel) {
         this.presentiel = presentiel;
     }
-
+    
     public void setLibelle(String libelle) {
         this.libelle = libelle;
     }
-
+    
     public void setExercices(Set<Exercice> exercices) {
         this.exercices = exercices;
     }
-
-    public void setTds(Set<Cours> tds) {
-        this.tds = tds;
+    
+    public void setCours(Set<Cours> cours) {
+        this.cours = cours;
     }
-
-    public void addTd(Cours td){
-        this.tds.add(td);
+    
+    public void addCours(Cours td){
+        this.cours.add(td);
     }
-
-    public void resetTd(){
-        this.tds.clear();
+    
+    public void resetCours(){
+        this.cours.clear();
     }
     
     

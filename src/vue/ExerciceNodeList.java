@@ -18,7 +18,7 @@ public class ExerciceNodeList extends ExerciceNode {
     
     //CONSTRUCTEUR
     public ExerciceNodeList(Exercice exercice, String titre) {
-        super(exercice,  titre);
+        super(exercice, titre);
     }
     
     public static ExerciceNodeList getExerciceNodeList(ExerciceNode node) {
@@ -34,6 +34,13 @@ public class ExerciceNodeList extends ExerciceNode {
         return res;
     }
     
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ExerciceNodeList) {
+            return ((ExerciceNodeList)o).exercice.equals(this.exercice);
+        }
+        return false;
+    }
     
     //MUTATEURS
 }

@@ -59,4 +59,9 @@ public class Controleur {
         modele.deconnecter();
     }
     
+    public void rechercherExercice(String tags) {
+        String[] tagsTab = tags.split(",");
+        modele.rechercherExercice(tagsTab);
+    }
+    
 }

@@ -8,7 +8,9 @@ package modele;
 import bdd.Database;
 import bdd.Chapitre;
 import bdd.Connexion;
+import bdd.Cours;
 import bdd.Exercice;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Map;
@@ -62,6 +64,49 @@ public class Modele implements Observable {
         connexion.deconnecter();
     }
     
+    public void rechercherExercice(String ... tags) {
+        String requete = "SELECT * FROM EXERCICE "
+                       + "WHERE tagsExercice LIKE ";
+        for (int i = 0; i < tags.length; i++) {
+            if (i == 0) {
+                requete += "'%" + tags[i] + "%'";
+            }
+            if (i > 0 && i < tags.length) {
+                requete += " OR tagsExercice LIKE '%" + tags[i] + "%'";
+            }
+        }
+        //System.out.println(requete);
+        ResultSet res = connexion.executerRequete(requete);
+        observer.clearRecherche();
+        try {
+            while (res.next()) {
+                int idExercice = res.getInt("idExercice");
+                int numeroExercice = res.getInt("numeroExercice");
+                Time dureeExercice = Time.valueOf(res.getString("dureeExercice"));
+                int pointsExercice = res.getInt("pointsExercice");
+                String libelleExercice = res.getString("libelleExercice");
+                String fichierExercice = res.getString("fichierExercice");
+                String tagsExercice = res.getString("tagsExercice");
+                int idChapitre = res.getInt("idChapitre");
+                /*
+                System.out.println(res.getInt("idExercice"));
+                System.out.println(res.getInt("numeroExercice"));
+                System.out.println(res.getString("dureeExercice"));
+                System.out.println(res.getInt("pointsExercice"));
+                System.out.println(res.getString("libelleExercice"));
+                System.out.println(res.getString("fichierExercice"));
+                System.out.println(res.getString("tagsExercice"));
+                System.out.println(res.getInt("idChapitre"));
+                System.out.println();
+                */
+                Chapitre chapitre = database.getChapitres().get(idChapitre);
+                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,chapitre);
+                observer.addExerciceRecherche(exercice);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     //OBSERVABLE
     @Override
@@ -74,24 +119,31 @@ public class Modele implements Observable {
         Map<Integer,Chapitre> chapitres = database.getChapitres();
         Set<Entry<Integer,Chapitre>> chapitresSet = chapitres.entrySet();
         
-        for (Entry<Integer,Chapitre> chapitre : chapitresSet) {
-            Chapitre chapitreValue = chapitre.getValue();
+        for (Entry<Integer,Chapitre> chapitreEntry : chapitresSet) {
+            Chapitre chapitre = chapitreEntry.getValue();
             /*
             int idChapitre = chapitreValue.getID();
             int numeroChapitre = chapitreValue.getNumero();
             boolean presentiel = chapitreValue.isPresentiel();
             String libelle = chapitreValue.getLibelle();
             */
-            observer.addChapitre(chapitreValue);
+            observer.addChapitre(chapitre);
             
-            Set<Exercice> exercices = chapitreValue.getExercices();
+            Set<Exercice> exercices = chapitre.getExercices();
             for (Exercice exercice : exercices) {
+                /*
                 int idExercice = exercice.getID();
                 int numeroExercice = exercice.getNumero();
                 Time dureeExercice = exercice.getDuree();
                 int pointsExercice = exercice.getPoints();
                 String libelleExercice = exercice.getLibelle();
+                */
                 notifyObserverExercice(exercice);
+            }
+            
+            Set<Cours> cours = chapitre.getCours();
+            for (Cours cour : cours) {
+                notifyObserverCours(cour);
             }
         }
     }
@@ -99,6 +151,10 @@ public class Modele implements Observable {
     @Override
     public void notifyObserverExercice(Exercice exercice) {
         observer.addExercice(exercice);
+    }
+    
+    public void notifyObserverCours(Cours cours) {
+        observer.addCours(cours);
     }
     
 }

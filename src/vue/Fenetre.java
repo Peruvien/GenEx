@@ -6,6 +6,8 @@
 package vue;
 
 import bdd.Chapitre;
+import bdd.Cours;
+import bdd.Examen;
 import bdd.Exercice;
 import controleur.Controleur;
 import java.awt.BorderLayout;
@@ -20,13 +22,13 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -73,13 +75,14 @@ public class Fenetre extends JFrame implements Observer {
     private JPanel dropPanel;
     private JPanel infosExoPanel;
     private JPanel boutonsExoPanel;
+    private RechercheResultatsPanel rechercheResPanel;
     //LISTS
-    private DefaultListModel<String> tdModelList;
-    private JList tdList;
-    private DefaultListModel<String> examModelList;
-    private JList examList;
-    private DefaultListModel<ExerciceNode> exosModelList;
-    private JList exosList;
+    private DefaultListModel<Cours> coursModelList;
+    private JList <Cours>coursList;
+    private DefaultListModel<Examen> examModelList;
+    private JList <Examen>examList;
+    private DefaultListModel<ExerciceNodeList> exosModelList;
+    private JList <ExerciceNodeList>exosList;
     //TEXTPANE
     private JTextPane infosTextPane;
     //TEXTFIELD
@@ -87,7 +90,7 @@ public class Fenetre extends JFrame implements Observer {
     //BUTTONS
     private JButton rechercheButton;
     private JButton rechercheAvanceeButton;
-    private JButton creerTDButton;
+    private JButton creerCoursButton;
     private JButton creerExamButton;
     //TABBEDPANE
     private JTabbedPane ongletsTabbedPane;
@@ -97,10 +100,15 @@ public class Fenetre extends JFrame implements Observer {
     //ARBRES
     private JTree treeChapPresentiels;
     private JTree treeChapDistants;
+    private JTree treeChapCoursPresentiels;
+    private JTree treeChapCoursDistants;
     private DefaultMutableTreeNode rootPresentiels;
     private DefaultMutableTreeNode rootDistants;
+    private DefaultMutableTreeNode rootCoursPresentiels;
     private Map<Integer,ChapitreNode> chapitresPresentiels;
     private Map<Integer,ChapitreNode> chapitresDistants;
+    private Map<Integer,ChapitreNode> chapitresCoursPresentiels;
+    private Map<Integer,ChapitreNode> chapitresCoursDistants;
     private DataFlavor nodeFlavor;
     //PREFS Database
     private DefaultListModel<String> bddModelList;
@@ -163,6 +171,9 @@ public class Fenetre extends JFrame implements Observer {
         
         setVisible(true);
         ouvrirDossierBDD(JOptionPane.YES_NO_OPTION,preferences.getDossierBDD());
+        
+        addExamen(new Examen(1,new Date(1515451),new Time(1000),"Test Examen","fichier.pdf"));
+        
     }
     
     
@@ -198,14 +209,15 @@ public class Fenetre extends JFrame implements Observer {
         infosExoPanel = new JPanel(new BorderLayout());
         recherchePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         boutonsExoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        rechercheResPanel = new RechercheResultatsPanel(new GridLayout(1,2));
         rechercheAvanceePanel = new RechercheAvanceePanel();
     }
     /**
      * Initialise les listes et leurs modèles.
      */
     private void initLists() {
-        tdModelList = new DefaultListModel<>();
-        tdList = new JList<>(tdModelList);
+        coursModelList = new DefaultListModel<>();
+        coursList = new JList<>(coursModelList);
         
         examModelList = new DefaultListModel<>();
         examList = new JList<>(examModelList);
@@ -235,10 +247,12 @@ public class Fenetre extends JFrame implements Observer {
      * Initialise les boutons.
      */
     private void initButtons() {
+        RechercheListener listener = new RechercheListener();
         rechercheButton = new JButton("Rechercher");
+        rechercheButton.addActionListener(listener);
         rechercheAvanceeButton = new JButton("Recherche avancée");
-        rechercheAvanceeButton.addActionListener(new RechercheListener());
-        creerTDButton = new JButton("Créer TD");
+        rechercheAvanceeButton.addActionListener(listener);
+        creerCoursButton = new JButton("Créer Cours");
         creerExamButton = new JButton("Créer Examen");
     }
     /**
@@ -247,7 +261,7 @@ public class Fenetre extends JFrame implements Observer {
     private void initTextFields() {
         infosTextPane = new JTextPane();
         infosTextPane.setText("Informations sur l'exerice ou chapitre");
-        rechercheField = new JTextField("Rechercher...");
+        rechercheField = new JTextField();
         rechercheField.setColumns(15);
     }
     /**
@@ -256,20 +270,26 @@ public class Fenetre extends JFrame implements Observer {
     private void initTrees() {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
+        rootCoursPresentiels = new DefaultMutableTreeNode("Chapitres");
+        
+        InfoTreeListener listener = new InfoTreeListener();
         
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
         treeChapPresentiels.setTransferHandler(new TransferNodeHandler());
-        treeChapPresentiels.addTreeSelectionListener(new InfoTreeListener());
+        treeChapPresentiels.addTreeSelectionListener(listener);
         
         treeChapDistants = new JTree(rootDistants);
         treeChapDistants.setDragEnabled(true);
         treeChapDistants.setTransferHandler(new TransferNodeHandler());
-        treeChapDistants.addTreeSelectionListener(new InfoTreeListener());
+        treeChapDistants.addTreeSelectionListener(listener);
+        
+        treeChapCoursPresentiels = new JTree(rootCoursPresentiels);
+        treeChapCoursPresentiels.addTreeSelectionListener(listener);
         
         chapitresPresentiels = new TreeMap<>();
         chapitresDistants = new TreeMap<>();
-        
+        chapitresCoursPresentiels = new TreeMap<>();
     }
     /**
      * Initialise tous les menus et menuItems.
@@ -312,19 +332,19 @@ public class Fenetre extends JFrame implements Observer {
     private void setComponents() {
         splitPaneCentral.add(ongletsTabbedPane);
         splitPaneCentral.add(infosExoPanel);
-        
         splitPaneCentral.setDividerLocation(400);
         
         ongletsTabbedPane.addTab("Chapitres présentiels", treeChapPresentiels);
         ongletsTabbedPane.addTab("Chapitre distants", treeChapDistants);
-        ongletsTabbedPane.addTab("TDs",tdList);
+        ongletsTabbedPane.addTab("Cours présentiels",treeChapCoursPresentiels);
+        ongletsTabbedPane.addTab("Cours", coursList);
         ongletsTabbedPane.addTab("Examens",examList);
         
         recherchePanel.add(rechercheField);
         recherchePanel.add(rechercheButton);
         recherchePanel.add(rechercheAvanceeButton);
         
-        boutonsExoPanel.add(creerTDButton);
+        boutonsExoPanel.add(creerCoursButton);
         boutonsExoPanel.add(creerExamButton);
         
         dropPanel.add(exosList,BorderLayout.CENTER);
@@ -442,6 +462,12 @@ public class Fenetre extends JFrame implements Observer {
         return res;
     }
     
+    private void addExoNodeList(ExerciceNodeList exercice) {
+        if (!exosModelList.contains(exercice)) {
+            exosModelList.addElement(exercice);
+        }
+    }
+    
     
     //OBSERVER
     @Override
@@ -452,6 +478,8 @@ public class Fenetre extends JFrame implements Observer {
         if (presentiel) {
             chapitresPresentiels.put(idChapitre, chapitreAdd);
             rootPresentiels.add(chapitreAdd);
+            ChapitreNode chapitreAddCours = new ChapitreNode(chapitre, "Chapitre " + chapitre.getNumeroChapitre());
+            rootCoursPresentiels.add(chapitreAddCours);
         }
         else {
             chapitresDistants.put(idChapitre, chapitreAdd);
@@ -473,6 +501,35 @@ public class Fenetre extends JFrame implements Observer {
         }
     }
     
+    @Override
+    public void clearRecherche() {
+        rechercheResPanel.clear();
+    }
+    
+    @Override 
+    public void addExerciceRecherche(Exercice exercice) {
+        ExerciceNodeList exoNodeList = new ExerciceNodeList(exercice,"");
+        rechercheResPanel.addExerciceNode(exoNodeList);
+    }
+    
+    @Override
+    public void addCours(Cours cours) {
+        boolean presentiel = cours.getChapitre().isPresentiel();
+        int idChapitre = cours.getChapitre().getIdChapitre();
+        CoursNode coursAdd = new CoursNode(cours, "Cours " + cours.getNumeroCours());
+        if (presentiel) {
+            chapitresPresentiels.get(idChapitre).add(coursAdd);
+        }
+        else {
+            chapitresDistants.get(idChapitre).add(coursAdd);
+        }
+        
+    }
+
+    @Override
+    public void addExamen(Examen examen) {
+        examModelList.addElement(examen);
+    }
     
     //CLASSES INTERNES
     class DropListTarget extends DropTargetAdapter {
@@ -480,10 +537,8 @@ public class Fenetre extends JFrame implements Observer {
         @Override
         public void drop(DropTargetDropEvent dtde) {
             try {
-                ExerciceNode node = (ExerciceNode)dtde.getTransferable().getTransferData(nodeFlavor);
-                if (!exosModelList.contains(node)) {
-                    exosModelList.addElement(node);
-                }
+                ExerciceNodeList node = (ExerciceNodeList)dtde.getTransferable().getTransferData(nodeFlavor);
+                addExoNodeList(node);
             } catch (UnsupportedFlavorException | IOException ex) {
                 Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -531,13 +586,30 @@ public class Fenetre extends JFrame implements Observer {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
+            clearRecherche();
+            int recherche = 1;
+            if (src.equals(rechercheButton)) {
+                recherche = 0;
+                controleur.rechercherExercice(rechercheField.getText());
+            }
             if (src.equals(rechercheAvanceeButton)) {
                 Object[] options = {"Rechercher","Annuler"};
                 int res = JOptionPane.showOptionDialog(rechercheAvanceePanel,rechercheAvanceePanel,"Recherche avancée",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,null);
                 if (res == JOptionPane.YES_OPTION) {
                     
                 }
+                recherche = res;
             }
+            if (recherche == 0) {
+                String[] options = { "Ajouter la sélection", "Annuler" };
+                int res = JOptionPane.showOptionDialog(null, rechercheResPanel,"Résultat de recherche", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                if (res == JOptionPane.YES_OPTION) {
+                    for (ExerciceNodeList exercice : rechercheResPanel.getSelectedValuesList()) {
+                        addExoNodeList(exercice);
+                    }
+                }
+            }
+            
         }
         
     }
@@ -546,12 +618,14 @@ public class Fenetre extends JFrame implements Observer {
         
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            List<NodeInformations> exosSelected = exosList.getSelectedValuesList();
-            String infos = "";
-            for (NodeInformations exo : exosSelected) {
-                infos += exo.getInformations() + "\n";
+            if (!e.getValueIsAdjusting()) {
+                List<ExerciceNodeList> exosSelected = exosList.getSelectedValuesList();
+                String infos = "";
+                for (NodeInformations exo : exosSelected) {
+                    infos += exo.getInformations() + "\n";
+                }
+                infosTextPane.setText(infos);
             }
-            infosTextPane.setText(infos);
         }
         
     }
@@ -568,7 +642,7 @@ public class Fenetre extends JFrame implements Observer {
             else {
                 paths = treeChapDistants.getSelectionPaths();
             }
-            if (paths != null)  {
+            if (paths != null) {
                 String informations = "";
                 for (TreePath path : paths) {
                     Object node = path.getLastPathComponent();
@@ -577,7 +651,6 @@ public class Fenetre extends JFrame implements Observer {
                     }
                 }
                 infosTextPane.setText(informations);
-                
             }
         }
         

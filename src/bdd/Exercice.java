@@ -83,6 +83,14 @@ public class Exercice implements Comparable<Exercice> {
     
     //COMPARABLE
     @Override
+    public boolean equals(Object o) {
+        if (o instanceof Exercice) {
+            return ((Exercice)o).compareTo(this) == 0;
+        }
+        return false;
+    }
+    
+    @Override
     public int compareTo(Exercice o) {
         return idExercice - o.idExercice;
     }

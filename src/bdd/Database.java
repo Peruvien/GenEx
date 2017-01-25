@@ -123,6 +123,7 @@ public class Database {
             Chapitre chapitreCours = chapitresMap.get(idChapitre);
             Cours cours = new Cours(icCours,numeroCours,fichierCoursPath,chapitreCours);
             coursMap.put(icCours, cours);
+            chapitresMap.get(idChapitre).addCours(cours);
         }
         
         String requete5 = "SELECT * FROM EXERCICEEXAMEN GROUP BY idExamen";

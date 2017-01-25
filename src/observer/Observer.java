@@ -6,6 +6,8 @@
 package observer;
 
 import bdd.Chapitre;
+import bdd.Cours;
+import bdd.Examen;
 import bdd.Exercice;
 
 /**
@@ -16,5 +18,9 @@ public interface Observer {
     
     public void addChapitre(Chapitre exercice);
     public void addExercice(Exercice exercice);
+    public void clearRecherche();
+    public void addExerciceRecherche(Exercice exercice);
+    public void addCours(Cours cours);
+    public void addExamen(Examen examen);
     
 }

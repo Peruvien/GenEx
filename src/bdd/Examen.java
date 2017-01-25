@@ -41,10 +41,7 @@ public class Examen implements Comparable<Examen> {
     //ACCESSEURS
     @Override
     public String toString() {
-        String res = "Date : " + date.toString() + "\n";
-        res += "Durée : " + duree.toString() + "\n";
-        res += "Libellé : " + libelle + "\n";
-        res += "Fichier : " + fichier.getAbsolutePath() + "\n";
+        String res = "Examen n°" + idExamen;
         return res;
     }
     

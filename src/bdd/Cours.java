@@ -20,7 +20,8 @@ public class Cours implements Comparable<Cours> {
     private final int idCours;
     private Chapitre chapitre;
     private final int numeroCours;
-    private final File fichierCours;
+    private String libelle;
+    private File fichierCours;
     private final Set<Exercice> exercices;
     
     //CONSTRUCTEUR
@@ -52,8 +53,17 @@ public class Cours implements Comparable<Cours> {
     public File getFichier() {
         return fichierCours;
     }
-
-
+    
+    @Override
+    public String toString() {
+         String res = "Présentiel : " + chapitre.isPresentiel() + "\n";
+        res += "Numéro de chapitre : " + chapitre.getNumeroChapitre() + "\n";
+        res += "Numéro de cours : " + numeroCours + "\n";
+        res += "Fichier : " + fichierCours.getAbsolutePath();
+        return res;
+    }
+    
+    
     //MUTATEURS
     public void addExercice(Exercice exercice) {
         exercices.add(exercice);
