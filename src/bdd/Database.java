@@ -73,6 +73,7 @@ public class Database {
         
         
         int idExamen;
+        boolean isExamen;
         Date dateExamen;
         Time dureeExamen;
         String libelleExamen, fichierExamenPath;
@@ -81,11 +82,12 @@ public class Database {
         ResultSet res2 = connexion.executerRequete(requete2);
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
+            isExamen = res2.getBoolean("boolExamen");
             dateExamen = res2.getDate("dateExamen");
             dureeExamen = Time.valueOf(res2.getString("dureeExamen"));
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
-            Examen examen = new Examen(idExamen,dateExamen,dureeExamen,libelleExamen,fichierExamenPath);
+            Examen examen = new Examen(idExamen,isExamen,dateExamen,dureeExamen,libelleExamen,fichierExamenPath);
             examensMap.put(idExamen, examen);
         }
         

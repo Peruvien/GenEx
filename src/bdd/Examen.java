@@ -20,6 +20,7 @@ public class Examen implements Comparable<Examen> {
     
     //ATTRIBUTS
     private final int idExamen;
+    private boolean isExamen;
     private final Date date;
     private final Time duree;
     private final String libelle;
@@ -28,8 +29,9 @@ public class Examen implements Comparable<Examen> {
     
     
     //CONSTRUCTEUR
-    public Examen(int idExamen, Date date, Time duree, String libelle, String fichier) {
+    public Examen(int idExamen, boolean isExamen, Date date, Time duree, String libelle, String fichier) {
         this.idExamen = idExamen;
+        this.isExamen = isExamen;
         this.date = date;
         this.duree = duree;
         this.libelle = libelle;

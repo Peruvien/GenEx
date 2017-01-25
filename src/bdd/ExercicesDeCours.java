@@ -16,14 +16,14 @@ import java.util.ArrayList;
 public class ExercicesDeCours {
      
     //ATTRIBUTS
-    private final Cours td;
+    private final Cours cours;
     private final ArrayList<Exercice> exercices;
     private final Date dateUtilisation;
     
     
     //CONSTRUCTEUR
-    public ExercicesDeCours(Cours td, Date dateUtilisation) {
-        this.td = td;
+    public ExercicesDeCours(Cours cours, Date dateUtilisation) {
+        this.cours = cours;
         this.dateUtilisation = dateUtilisation;
         exercices = new ArrayList<>();
     }
