@@ -172,7 +172,7 @@ public class Fenetre extends JFrame implements Observer {
         setVisible(true);
         ouvrirDossierBDD(JOptionPane.YES_NO_OPTION,preferences.getDossierBDD());
         
-        addExamen(new Examen(1,new Date(1515451),new Time(1000),"Test Examen","fichier.pdf"));
+        addExamen(new Examen(1,true,new Date(1515451),new Time(1000),"Test Examen","fichier.pdf"));
         
     }
     
