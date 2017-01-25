@@ -46,6 +46,7 @@ public class RechercheResultatsPanel extends JPanel {
     }
     private void initTextPane() {
         infosTextPane = new JTextPane();
+        infosTextPane.setEditable(false);
     }
     
     private void setComponents() {

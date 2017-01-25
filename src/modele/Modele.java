@@ -10,6 +10,7 @@ import bdd.Chapitre;
 import bdd.Connexion;
 import bdd.Cours;
 import bdd.Exercice;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -106,6 +107,59 @@ public class Modele implements Observable {
         } catch (SQLException ex) {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void rechercherExercice(Date dateDebut, Date dateFin, String ... tags) {
+        String requete = "SELECT * FROM EXERCICE INNER JOIN EXERCICECOURS ON EXERCICE.idExercice = EXERCICECOURS.idExercice "
+                       + "WHERE tagsExercice LIKE ";
+        for (int i = 0; i < tags.length; i++) {
+            if (i == 0) {
+                requete += "'%" + tags[i] + "%'";
+            }
+            if (i > 0 && i < tags.length) {
+                requete += " OR tagsExercice LIKE '%" + tags[i] + "%'";
+            }
+        }
+        System.out.println(requete);
+        
+        if (dateDebut != null) {
+            requete += " AND dateUtilisation > " + dateDebut.toString();
+        }
+        if (dateFin != null) {
+            requete += " AND dateUtilisation < " + dateFin.toString();
+        }
+        
+        ResultSet res = connexion.executerRequete(requete);
+        observer.clearRecherche();
+        try {
+            while (res.next()) {
+                int idExercice = res.getInt("idExercice");
+                int numeroExercice = res.getInt("numeroExercice");
+                Time dureeExercice = Time.valueOf(res.getString("dureeExercice"));
+                int pointsExercice = res.getInt("pointsExercice");
+                String libelleExercice = res.getString("libelleExercice");
+                String fichierExercice = res.getString("fichierExercice");
+                String tagsExercice = res.getString("tagsExercice");
+                int idChapitre = res.getInt("idChapitre");
+                /*
+                System.out.println(res.getInt("idExercice"));
+                System.out.println(res.getInt("numeroExercice"));
+                System.out.println(res.getString("dureeExercice"));
+                System.out.println(res.getInt("pointsExercice"));
+                System.out.println(res.getString("libelleExercice"));
+                System.out.println(res.getString("fichierExercice"));
+                System.out.println(res.getString("tagsExercice"));
+                System.out.println(res.getInt("idChapitre"));
+                System.out.println();
+                */
+                Chapitre chapitre = database.getChapitres().get(idChapitre);
+                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,chapitre);
+                observer.addExerciceRecherche(exercice);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
     //OBSERVABLE

@@ -164,7 +164,7 @@ public class Fenetre extends JFrame implements Observer {
         setComponents();
         setMenus();
         
-        setLayout(new GridLayout(1,1));
+        setLayout(new BorderLayout());
         
         setJMenuBar(menuBar);
         add(splitPaneCentral);
@@ -172,7 +172,7 @@ public class Fenetre extends JFrame implements Observer {
         setVisible(true);
         ouvrirDossierBDD(JOptionPane.YES_NO_OPTION,preferences.getDossierBDD());
         
-        addExamen(new Examen(1,true,new Date(1515451),new Time(1000),"Test Examen","fichier.pdf"));
+        addExamen(new Examen(1,true,new Date(175975),new Time(1000),"Test Examen","fichier.pdf"));
         
     }
     
@@ -462,6 +462,10 @@ public class Fenetre extends JFrame implements Observer {
         return res;
     }
     
+    /**
+     * Ajoute un ExerciceNodeList à exosModelList s'il est pas présent.
+     * @param exercice l'ExerciceNodeList à ajouter
+     */
     private void addExoNodeList(ExerciceNodeList exercice) {
         if (!exosModelList.contains(exercice)) {
             exosModelList.addElement(exercice);
@@ -589,14 +593,30 @@ public class Fenetre extends JFrame implements Observer {
             clearRecherche();
             int recherche = 1;
             if (src.equals(rechercheButton)) {
-                recherche = 0;
-                controleur.rechercherExercice(rechercheField.getText());
+                if (!rechercheField.getText().isEmpty()) {
+                    recherche = 0;
+                    controleur.rechercherExercice(rechercheField.getText());
+                }
             }
             if (src.equals(rechercheAvanceeButton)) {
                 Object[] options = {"Rechercher","Annuler"};
                 int res = JOptionPane.showOptionDialog(rechercheAvanceePanel,rechercheAvanceePanel,"Recherche avancée",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,null);
                 if (res == JOptionPane.YES_OPTION) {
-                    
+                    String text = rechercheAvanceePanel.getText();
+                    System.out.println(text);
+                    java.util.Date dateUtilDebut = rechercheAvanceePanel.getDateDebut();
+                    Date dateDebut = null;
+                    if (dateUtilDebut != null ) {
+                        dateDebut = new Date(dateUtilDebut.getTime());
+                        System.out.println(dateDebut.toString());
+                    }
+                    java.util.Date dateUtilFin = rechercheAvanceePanel.getDateFin();
+                    Date dateFin = null;
+                    if (dateUtilFin != null ) {
+                        dateFin = new Date(dateUtilFin.getTime());
+                        System.out.println(dateFin.toString());
+                    }
+                    controleur.rechercherExercice(text, dateUtilDebut, dateUtilFin);
                 }
                 recherche = res;
             }

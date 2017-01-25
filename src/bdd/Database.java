@@ -149,7 +149,7 @@ public class Database {
         while (res6.next()) {
             icCours = res6.getInt("idCours");
             idExercice = res6.getInt("idExercice");
-            Date dateUtilisation = res6.getDate("dateUtilisation");
+            Date dateUtilisation = Date.valueOf(res6.getString("dateUtilisation"));
             Cours cours = coursMap.get(icCours);
             Exercice exercice = exercicesMap.get(idExercice);
             ExercicesDeCours exercicesDeCours = exercicesDeCoursMap.get(icCours);

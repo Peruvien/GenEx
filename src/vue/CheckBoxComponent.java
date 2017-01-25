@@ -32,6 +32,7 @@ public class CheckBoxComponent extends JPanel{
         add(this.component,BorderLayout.CENTER);
     }
     
+    
     //ACCESSEURS
     public boolean isSelected() {
         return checkBox.isSelected();
@@ -40,6 +41,7 @@ public class CheckBoxComponent extends JPanel{
     public Component getComponent() {
         return component;
     }
+    
     
     //MUTATEURS
     public void setSelected(boolean b) {

@@ -5,6 +5,7 @@
  */
 package controleur;
 
+import java.util.Date;
 import modele.Modele;
 
 /**
@@ -62,6 +63,13 @@ public class Controleur {
     public void rechercherExercice(String tags) {
         String[] tagsTab = tags.split(",");
         modele.rechercherExercice(tagsTab);
+    }
+    
+    public void rechercherExercice(String tags, Date dateDebut, Date dateFin) {
+        String[] tagsTab = tags.split(",");
+        java.sql.Date dateDebutSQL = dateDebut != null ? new java.sql.Date(dateDebut.getTime()) : null;
+        java.sql.Date dateFinSQL = dateFin != null ? new java.sql.Date(dateFin.getTime()) : null;
+        modele.rechercherExercice(dateDebutSQL, dateFinSQL, tagsTab);
     }
     
 }
