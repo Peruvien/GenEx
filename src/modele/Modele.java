@@ -120,15 +120,14 @@ public class Modele implements Observable {
                 requete += " OR tagsExercice LIKE '%" + tags[i] + "%'";
             }
         }
-        System.out.println(requete);
-        
         if (dateDebut != null) {
-            requete += " AND dateUtilisation > " + dateDebut.toString();
+            requete += " AND dateUtilisation > '" + dateDebut.toString() + "'";
         }
         if (dateFin != null) {
-            requete += " AND dateUtilisation < " + dateFin.toString();
+            requete += " AND dateUtilisation < '" + dateFin.toString() + "'";
         }
         
+        System.out.println(requete);
         ResultSet res = connexion.executerRequete(requete);
         observer.clearRecherche();
         try {
@@ -141,7 +140,7 @@ public class Modele implements Observable {
                 String fichierExercice = res.getString("fichierExercice");
                 String tagsExercice = res.getString("tagsExercice");
                 int idChapitre = res.getInt("idChapitre");
-                /*
+                
                 System.out.println(res.getInt("idExercice"));
                 System.out.println(res.getInt("numeroExercice"));
                 System.out.println(res.getString("dureeExercice"));
@@ -150,8 +149,9 @@ public class Modele implements Observable {
                 System.out.println(res.getString("fichierExercice"));
                 System.out.println(res.getString("tagsExercice"));
                 System.out.println(res.getInt("idChapitre"));
+                System.out.println(res.getString("dateUtilisation"));
                 System.out.println();
-                */
+                
                 Chapitre chapitre = database.getChapitres().get(idChapitre);
                 Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
