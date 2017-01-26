@@ -201,10 +201,16 @@ public class Database {
     //STATIC
     //Fonction a utiliser lors de la création d'une nouvelle Database
     public static void create(Connexion connexion) throws SQLException{
-        
+        String requete1 = "CREATE TABLE CHAPITRE (" +
+                "idChapitre INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "numeroChapitre INTEGER," +
+                "presentielChapitre BOOLEAN," +
+                "libelleChapitre TEXT" +
+                ");";
+        connexion.executerUpdate(requete1);
         
         String requete2 = "CREATE TABLE EXERCICE (" +
-                "idExercice INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "idExercice INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "numeroExercice INTEGER," +
                 "dureeExercice TEXT," +
                 "pointsExercice INTEGER," +
@@ -216,67 +222,58 @@ public class Database {
         connexion.executerUpdate(requete2);
         
         
-        String requete1 = "CREATE TABLE CHAPITRE (" +
-                "idChapitre INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "numeroChapitre INTEGER," +
-                "presentielChapitre BOOLEAN," +
-                "libelleChapitre TEXT" +
-                ");";
-        connexion.executerUpdate(requete1);
-        
-        
-        String requete7 = "CREATE TABLE EXERCICECHAPITRE (" +
+        String requete3 = "CREATE TABLE EXERCICECHAPITRE (" +
                 "idChapitre INTEGER NOT NULL," +
                 "idExercice INTEGER NOT NULL," +
                 "PRIMARY KEY(idChapitre, idExercice)," +
                 "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
                 ");";
-        connexion.executerUpdate(requete7);
+        connexion.executerUpdate(requete3);
         
         
-        String requete3 = "CREATE TABLE COURS (" +
-                "idCours INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+        String requete4 = "CREATE TABLE COURS (" +
+                "idCours INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "numeroCours INTEGER," +
-                "libelleCours TEXT" +
+                "libelleCours TEXT," +
                 "fichierCours TEXT," +
                 "idChapitre INTEGER," +
                 "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
                 ");";
-        connexion.executerUpdate(requete3);
+        connexion.executerUpdate(requete4);
         
         
-        String requete4 = "CREATE TABLE EXERCICECOURS (" +
-                "dateUtilisation DATE," +
+        String requete5 = "CREATE TABLE EXERCICECOURS (" +
+                "dateUtilisation TEXT," +
                 "idCours INTEGER NOT NULL," +
                 "idExercice INTEGER NOT NULL," +
                 "PRIMARY KEY(idCours, idExercice)," +
                 "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
                 ");";
-        connexion.executerUpdate(requete4);
+        connexion.executerUpdate(requete5);
         
         
         //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type BOOLEAN
-        String requete5 = "CREATE TABLE EXAMEN (" +
-                "idExamen INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+        String requete6 = "CREATE TABLE EXAMEN (" +
+                "idExamen INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "boolExamen BOOLEAN NOT NULL," +
                 "dateExamen DATE," +
                 "dureeExamen TEXT," +
                 "libelleExamen TEXT," +
                 "fichierExamen TEXT" +
                 ");";
-        connexion.executerUpdate(requete5);
+        connexion.executerUpdate(requete6);
         
         
-        String requete6 = "CREATE TABLE EXERCICEEXAMEN (" +
+        String requete7 = "CREATE TABLE EXERCICEEXAMEN (" +
                 "idExamen INTEGER NOT NULL," +
                 "idExercice INTEGER NOT NULL," +
                 "PRIMARY KEY(idExamen, idExercice)," +
                 "FOREIGN KEY(idExamen) REFERENCES EXAMEN(idExamen)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
                 ");";
-        connexion.executerUpdate(requete6);
+        connexion.executerUpdate(requete7);
         
         //Faire un petit message comme quoi la création de table s'est bien passée :)
         System.out.println("La table a bien été créée !");
