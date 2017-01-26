@@ -34,12 +34,12 @@ public class Database {
     //CONSTRUCTEUR
     public Database(Connexion connexion, String path) {
         this.connexion = connexion;
-        chapitresMap = new TreeMap<Integer,Chapitre>();
-        exercicesMap = new TreeMap<Integer,Exercice>();
-        coursMap = new TreeMap<Integer,Cours>();
-        examensMap = new TreeMap<Integer,Examen>();
-        exercicesDExamenMap = new TreeMap<Integer,ExercicesDExamen>();
-        exercicesDeCoursMap = new TreeMap<Integer,ExercicesDeCours>();
+        chapitresMap = new TreeMap<>();
+        exercicesMap = new TreeMap<>();
+        coursMap = new TreeMap<>();
+        examensMap = new TreeMap<>();
+        exercicesDExamenMap = new TreeMap<>();
+        exercicesDeCoursMap = new TreeMap<>();
         
         connexion.connecter(path);
         try {
@@ -53,6 +53,10 @@ public class Database {
     //ACCESSEURS
     public Map<Integer,Chapitre> getChapitres() {
         return chapitresMap;
+    }
+    
+    public Map<Integer,Examen> getExamens() {
+        return examensMap;
     }
     
     private void getDatabase() throws SQLException {
@@ -83,7 +87,9 @@ public class Database {
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
             isExamen = res2.getBoolean("boolExamen");
-            dateExamen = res2.getDate("dateExamen");
+            //dateExamen = res2.getDate("dateExamen");
+            System.out.println(res2.getString("dateExamen"));
+            dateExamen = Date.valueOf(res2.getString("dateExamen"));
             dureeExamen = Time.valueOf(res2.getString("dureeExamen"));
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
@@ -113,17 +119,18 @@ public class Database {
         }
         
         int icCours, numeroCours;
-        String fichierCoursPath;
+        String libelleCours, fichierCoursPath;
         
         String requete4 = "SELECT * FROM COURS";
         ResultSet res4 = connexion.executerRequete(requete4);
         while (res4.next()) {
             icCours = res4.getInt("idCours");
             numeroCours = res4.getInt("numeroCours");
+            libelleCours = res4.getString("libelleCours");
             fichierCoursPath = res4.getString("fichierCours");
             idChapitre = res4.getInt("idChapitre");
             Chapitre chapitreCours = chapitresMap.get(idChapitre);
-            Cours cours = new Cours(icCours,numeroCours,fichierCoursPath,chapitreCours);
+            Cours cours = new Cours(icCours,numeroCours,libelleCours,fichierCoursPath,chapitreCours);
             coursMap.put(icCours, cours);
             chapitresMap.get(idChapitre).addCours(cours);
         }
@@ -231,6 +238,7 @@ public class Database {
         String requete3 = "CREATE TABLE COURS (" +
                 "idCours INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "numeroCours INTEGER," +
+                "libelleCours TEXT" +
                 "fichierCours TEXT," +
                 "idChapitre INTEGER," +
                 "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +

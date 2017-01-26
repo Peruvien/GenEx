@@ -20,7 +20,7 @@ public class Examen implements Comparable<Examen> {
     
     //ATTRIBUTS
     private final int idExamen;
-    private boolean isExamen;
+    private final boolean isExamen;
     private final Date date;
     private final Time duree;
     private final String libelle;
@@ -43,9 +43,19 @@ public class Examen implements Comparable<Examen> {
     //ACCESSEURS
     @Override
     public String toString() {
-        String res = "Examen n°" + idExamen;
+        String res = "Examen n°" + idExamen + "\n";
+        res += "Est un examen : " + isExamen + "\n";
+        res += "Date : " + date.toLocalDate().toString() + "\n";
+        res += "Durée : " + duree.toLocalTime().toString() + "\n";
+        res += "Libellé : " + libelle + "\n";
+        res += "Fichier : " + fichier.getAbsolutePath() + "\n";
         return res;
     }
+    
+    public int getID() {
+        return idExamen;
+    }
+    
     
     //MUTATEURS
     public void addExercice(Exercice exercice) {

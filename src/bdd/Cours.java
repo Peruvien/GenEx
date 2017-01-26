@@ -20,19 +20,21 @@ public class Cours implements Comparable<Cours> {
     private final int idCours;
     private Chapitre chapitre;
     private final int numeroCours;
-    private String libelle;
+    private String libelleCours;
     private File fichierCours;
     private final Set<Exercice> exercices;
     
+    
     //CONSTRUCTEUR
-    public Cours(int idCours, int numeroCours, String fichierCoursPath) {
+    public Cours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath) {
         this.idCours = idCours;
         this.numeroCours = numeroCours;
+        this.libelleCours = libelleCours;
         this.fichierCours = new File(fichierCoursPath);
         exercices = new TreeSet<>();
     }
-    public Cours(int idCours, int numeroCours, String fichierCoursPath, Chapitre chapitreCours) {
-        this(idCours,numeroCours,fichierCoursPath);
+    public Cours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitreCours) {
+        this(idCours, numeroCours, libelleCours, fichierCoursPath);
         this.chapitre = chapitreCours;
     }
     
@@ -59,6 +61,7 @@ public class Cours implements Comparable<Cours> {
          String res = "Présentiel : " + chapitre.isPresentiel() + "\n";
         res += "Numéro de chapitre : " + chapitre.getNumeroChapitre() + "\n";
         res += "Numéro de cours : " + numeroCours + "\n";
+        res += "Libellé : " + libelleCours + "\n";
         res += "Fichier : " + fichierCours.getAbsolutePath();
         return res;
     }
