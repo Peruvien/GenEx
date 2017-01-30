@@ -201,10 +201,10 @@ public class Database {
     public static void create(Connexion connexion) throws SQLException{
         String requete1 = "CREATE TABLE CHAPITRE (" +
                 "idChapitre INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "numeroChapitre INTEGER," +
-                "presentielChapitre BOOLEAN," +
+                "numeroChapitre INTEGER NOT NULL," +
+                "presentielChapitre BOOLEAN NOT NULL," +
                 "libelleChapitre TEXT," +
-                "CONSTRAINT uniqueChapitre UNIQUE (presentielChapitre, numeroChapitre)" +
+                "CONSTRAINT uniqueChapitre UNIQUE (presentielChapitre, numeroChapitre)," +
                 ");";
         connexion.executerUpdate(requete1);
         
