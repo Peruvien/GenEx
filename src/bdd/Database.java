@@ -87,8 +87,6 @@ public class Database {
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
             isExamen = res2.getBoolean("boolExamen");
-            //dateExamen = res2.getDate("dateExamen");
-            System.out.println(res2.getString("dateExamen"));
             dateExamen = Date.valueOf(res2.getString("dateExamen"));
             dureeExamen = Time.valueOf(res2.getString("dureeExamen"));
             libelleExamen = res2.getString("libelleExamen");
@@ -205,7 +203,8 @@ public class Database {
                 "idChapitre INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "numeroChapitre INTEGER," +
                 "presentielChapitre BOOLEAN," +
-                "libelleChapitre TEXT" +
+                "libelleChapitre TEXT," +
+                "CONSTRAINT uniqueChapitre UNIQUE (presentielChapitre, numeroChapitre)" +
                 ");";
         connexion.executerUpdate(requete1);
         
