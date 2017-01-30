@@ -5,11 +5,23 @@
  */
 package vue;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author robin
  */
-public interface NodeInformations {
+public class ExercicePanels {
     
-    public String getInformations();
+    //ATTRIBUTS
+    
+    
+    //CONSTRUCTEUR
+    
+    
+    //ACCESSEURS
+    
+    
+    //MUTATEURS
+    
 }

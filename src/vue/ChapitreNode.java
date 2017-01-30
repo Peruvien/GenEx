@@ -13,34 +13,34 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author Robin
  * @author Vincent
  */
-public class ChapitreNode extends DefaultMutableTreeNode implements NodeInformations {
+public class ChapitreNode extends DefaultMutableTreeNode implements Informations {
     
     //ATTRIBUTS
     private final Chapitre chapitre;
-    private final String titre;
+    
     
     //CONSTRUCTEUR
-    public ChapitreNode(Chapitre chapitre, String titre) {
-        super(titre);
+    public ChapitreNode(Chapitre chapitre) {
+        super(chapitre);
         this.chapitre = chapitre;
-        this.titre = titre;
     }
     
+    
     //ACCESSEURS
-    public String getTitre() {
-        return titre;
+    public Chapitre getChapitre() {
+        return chapitre;
     }
     
     @Override
     public String toString() {
-        return titre;
+        return "Chapitre n°" + chapitre.getNumeroChapitre();
     }
     
     
     //MUTATEURS
     
     
-    //NODEINFORMATIONS
+    //INFORMATIONS
     @Override
     public String getInformations() {
         return chapitre.toString() + "\n";

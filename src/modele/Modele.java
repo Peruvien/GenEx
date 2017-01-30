@@ -9,6 +9,7 @@ import bdd.Database;
 import bdd.Chapitre;
 import bdd.Connexion;
 import bdd.Cours;
+import bdd.Examen;
 import bdd.Exercice;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -43,22 +44,28 @@ public class Modele implements Observable {
     
     //ACCESSEURS
     public void actualiserAffichage() {
-        notifyObserverChapitres();
+        if (observer != null ){
+            notifyObserverChapitres();
+            notifyObserverExamens();
+        }
     }
+    
     
     //MUTATEURS
     public void ouvrirBDD(String chemin) {
         database = new Database(connexion,chemin);
     }
     
-    public void creerBDD(String chemin) {
+    public boolean creerBDD(String chemin) {
         connexion.connecter(chemin);
         try {
             Database.create(connexion);
         } catch (SQLException ex) {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         database = new Database(connexion,chemin);
+        return true;
     }
     
     public void deconnecter() {
@@ -89,17 +96,6 @@ public class Modele implements Observable {
                 String fichierExercice = res.getString("fichierExercice");
                 String tagsExercice = res.getString("tagsExercice");
                 int idChapitre = res.getInt("idChapitre");
-                /*
-                System.out.println(res.getInt("idExercice"));
-                System.out.println(res.getInt("numeroExercice"));
-                System.out.println(res.getString("dureeExercice"));
-                System.out.println(res.getInt("pointsExercice"));
-                System.out.println(res.getString("libelleExercice"));
-                System.out.println(res.getString("fichierExercice"));
-                System.out.println(res.getString("tagsExercice"));
-                System.out.println(res.getInt("idChapitre"));
-                System.out.println();
-                */
                 Chapitre chapitre = database.getChapitres().get(idChapitre);
                 Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
@@ -140,18 +136,6 @@ public class Modele implements Observable {
                 String fichierExercice = res.getString("fichierExercice");
                 String tagsExercice = res.getString("tagsExercice");
                 int idChapitre = res.getInt("idChapitre");
-                
-                System.out.println(res.getInt("idExercice"));
-                System.out.println(res.getInt("numeroExercice"));
-                System.out.println(res.getString("dureeExercice"));
-                System.out.println(res.getInt("pointsExercice"));
-                System.out.println(res.getString("libelleExercice"));
-                System.out.println(res.getString("fichierExercice"));
-                System.out.println(res.getString("tagsExercice"));
-                System.out.println(res.getInt("idChapitre"));
-                System.out.println(res.getString("dateUtilisation"));
-                System.out.println();
-                
                 Chapitre chapitre = database.getChapitres().get(idChapitre);
                 Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
@@ -161,6 +145,7 @@ public class Modele implements Observable {
         }
         
     }
+    
     
     //OBSERVABLE
     @Override
@@ -175,30 +160,18 @@ public class Modele implements Observable {
         
         for (Entry<Integer,Chapitre> chapitreEntry : chapitresSet) {
             Chapitre chapitre = chapitreEntry.getValue();
-            /*
-            int idChapitre = chapitreValue.getID();
-            int numeroChapitre = chapitreValue.getNumero();
-            boolean presentiel = chapitreValue.isPresentiel();
-            String libelle = chapitreValue.getLibelle();
-            */
             observer.addChapitre(chapitre);
-            
-            Set<Exercice> exercices = chapitre.getExercices();
-            for (Exercice exercice : exercices) {
-                /*
-                int idExercice = exercice.getID();
-                int numeroExercice = exercice.getNumero();
-                Time dureeExercice = exercice.getDuree();
-                int pointsExercice = exercice.getPoints();
-                String libelleExercice = exercice.getLibelle();
-                */
-                notifyObserverExercice(exercice);
-            }
             
             Set<Cours> cours = chapitre.getCours();
             for (Cours cour : cours) {
                 notifyObserverCours(cour);
             }
+            
+            Set<Exercice> exercices = chapitre.getExercices();
+            for (Exercice exercice : exercices) {
+                notifyObserverExercice(exercice);
+            }
+            
         }
     }
     
@@ -209,6 +182,16 @@ public class Modele implements Observable {
     
     public void notifyObserverCours(Cours cours) {
         observer.addCours(cours);
+    }
+    
+    public void notifyObserverExamens() {
+        Map<Integer,Examen> examensMap = database.getExamens();
+        Set<Entry<Integer,Examen>> examensSet = examensMap.entrySet();
+        
+        for (Entry<Integer,Examen> examenEntry : examensSet) {
+            Examen examen = examenEntry.getValue();
+            observer.addExamen(examen);
+        }
     }
     
 }

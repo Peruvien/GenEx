@@ -73,6 +73,7 @@ public class PreferencesDialog extends JDialog {
     }
     private void initFileChooser() {
         fileBDD = new FileChooser("Dossier des bases de données","",JFileChooser.DIRECTORIES_ONLY,JFileChooser.OPEN_DIALOG);
+        fileBDD.setText(preferences.getDossierBDD());
     }
     private void initButtons() {
         BoutonsListener boutonListener = new BoutonsListener();

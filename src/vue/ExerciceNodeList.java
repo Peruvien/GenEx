@@ -17,18 +17,18 @@ public class ExerciceNodeList extends ExerciceNode {
     //ATTRIBUTS
     
     //CONSTRUCTEUR
-    public ExerciceNodeList(Exercice exercice, String titre) {
-        super(exercice, titre);
+    public ExerciceNodeList(Exercice exercice) {
+        super(exercice);
     }
     
     public static ExerciceNodeList getExerciceNodeList(ExerciceNode node) {
-        return new ExerciceNodeList(node.exercice, node.titre);
+        return new ExerciceNodeList(node.exercice);
     }
     
     //ACCESSEURS
     @Override
     public String toString() {
-        String res = "Chapitre " + exercice.getChapitre().getNumeroChapitre();
+        String res = "Chapitre n°" + exercice.getChapitre().getNumeroChapitre();
         res += exercice.getChapitre().isPresentiel() ? " présentiel " : " distant ";
         res += " Exercice n°" + exercice.getNumero();
         return res;

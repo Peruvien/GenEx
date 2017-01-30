@@ -24,7 +24,6 @@ public class TransferableNode implements Transferable {
     public static DataFlavor nodeFlavor;
     private ExerciceNodeList node;
     
-    
     //CONSTRUCTEURS
     public TransferableNode(ExerciceNode node) {
         super();
@@ -37,8 +36,8 @@ public class TransferableNode implements Transferable {
         }
     }
     
-    public TransferableNode(Exercice exercice, String titre) {
-        this(new ExerciceNodeList(exercice, titre));
+    public TransferableNode(Exercice exercice) {
+        this(new ExerciceNodeList(exercice));
     }
     
     

@@ -26,38 +26,47 @@ public class Controleur {
     
     
     //ACCESSEURS
-    
-    
-    //MUTATEURS
-    public void creerBDD(String chemin) {
-        String lowerCase = chemin.toLowerCase();
-        if (lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
-         || lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
-         || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db2")
-         || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
-         || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
-         || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
-         || lowerCase.endsWith(".sl3")) {
-            modele.creerBDD(chemin);
-        }
+    private boolean isSQLite(String lowerCase) {
+        return (lowerCase.endsWith(".sdb") || lowerCase.endsWith(".sqlite")
+             || lowerCase.endsWith(".db2") || lowerCase.endsWith(".s2db")
+             || lowerCase.endsWith(".sqlite2") || lowerCase.endsWith(".sl2")
+             || lowerCase.endsWith(".db3") || lowerCase.endsWith(".s3db")
+             || lowerCase.endsWith(".sqlite3") || lowerCase.endsWith(".sl3"));
     }
     
     
+    //MUTATEURS
+    public void actualiserAffichage() {
+        modele.actualiserAffichage();
+    }
+    
+    public boolean  creerBDD(String chemin) {
+        String lowerCase = chemin.toLowerCase();
+        boolean isSQLite = isSQLite(lowerCase);
+        boolean created = false;
+        if (isSQLite) {
+            created = modele.creerBDD(chemin);
+        }
+        return created;
+    }
+    
     public void ouvrirBDD(String chemin) {
         String lowerCase = chemin.toLowerCase();
-        if (lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
-         || lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
-         || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db2")
-         || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
-         || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
-         || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
-         || lowerCase.endsWith(".sl3") || lowerCase.endsWith(".kexi")) {
+        if (isSQLite(lowerCase)) {
             modele.ouvrirBDD(chemin);
         }
     }
     
-    public void deconnecter() {
-        modele.deconnecter();
+    public void ajouterChapitre(boolean presentiel, int numero, String libelle) {
+        
+    }
+    
+    public void modifierChapitre(boolean presentiel, int numero, String libelle) {
+        
+    }
+    
+    public void supprimerChapitre(boolean presentiel, int numero) {
+        
     }
     
     public void rechercherExercice(String tags) {
@@ -70,6 +79,10 @@ public class Controleur {
         java.sql.Date dateDebutSQL = dateDebut != null ? new java.sql.Date(dateDebut.getTime()) : null;
         java.sql.Date dateFinSQL = dateFin != null ? new java.sql.Date(dateFin.getTime()) : null;
         modele.rechercherExercice(dateDebutSQL, dateFinSQL, tagsTab);
+    }
+    
+    public void deconnecter() {
+        modele.deconnecter();
     }
     
 }

@@ -12,22 +12,27 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author robin
  */
-public class CoursNode extends DefaultMutableTreeNode implements NodeInformations {
+public class CoursNode extends DefaultMutableTreeNode implements Informations {
     
     //ATTRIBUTS
     private final Cours cours;
-    private final String titre;
     
     //CONSTRUCTEUR
     public CoursNode(Cours cours, String titre) {
-        super(titre);
+        super(cours);
         this.cours = cours;
-        this.titre = titre;
     }
     
     
     //ACCESSEURS
+    public Cours getCours() {
+        return cours;
+    }
     
+    @Override
+    public String toString() {
+        return "Cours n°" + cours.getNumeroCours();
+    }
     
     //MUTATEURS
     

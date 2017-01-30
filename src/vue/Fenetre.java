@@ -11,9 +11,12 @@ import bdd.Examen;
 import bdd.Exercice;
 import controleur.Controleur;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
@@ -22,13 +25,16 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,6 +42,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -44,6 +52,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -76,13 +87,12 @@ public class Fenetre extends JFrame implements Observer {
     private JPanel infosExoPanel;
     private JPanel boutonsExoPanel;
     private RechercheResultatsPanel rechercheResPanel;
+    private ChapitrePanels chapitrePanels;
     //LISTS
-    private DefaultListModel<Cours> coursModelList;
-    private JList <Cours>coursList;
-    private DefaultListModel<Examen> examModelList;
-    private JList <Examen>examList;
+    private DefaultListModel<ExamenList> examModelList;
+    private JList<ExamenList> examList;
     private DefaultListModel<ExerciceNodeList> exosModelList;
-    private JList <ExerciceNodeList>exosList;
+    private JList<ExerciceNodeList> exosList;
     //TEXTPANE
     private JTextPane infosTextPane;
     //TEXTFIELD
@@ -100,15 +110,10 @@ public class Fenetre extends JFrame implements Observer {
     //ARBRES
     private JTree treeChapPresentiels;
     private JTree treeChapDistants;
-    private JTree treeChapCoursPresentiels;
-    private JTree treeChapCoursDistants;
     private DefaultMutableTreeNode rootPresentiels;
     private DefaultMutableTreeNode rootDistants;
-    private DefaultMutableTreeNode rootCoursPresentiels;
-    private Map<Integer,ChapitreNode> chapitresPresentiels;
-    private Map<Integer,ChapitreNode> chapitresDistants;
-    private Map<Integer,ChapitreNode> chapitresCoursPresentiels;
-    private Map<Integer,ChapitreNode> chapitresCoursDistants;
+    private Map<Integer, ChapitreNode> chapitresPresentiels;
+    private Map<Integer, ChapitreNode> chapitresDistants;
     private DataFlavor nodeFlavor;
     //PREFS Database
     private DefaultListModel<String> bddModelList;
@@ -122,12 +127,20 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem ouvrirBDD;
     private JMenuItem ouvrirDossier;
     private JMenuItem ajouterChapitre;
+    private JMenuItem modifierChapitre;
     private JMenuItem supprimerChapitre;
     private JMenuItem ajouterExercice;
+    private JMenuItem modifierExercice;
     private JMenuItem supprimerExercice;
     private JMenuItem quitter;
     private JMenu outils;
     private JMenuItem prefsMenuItem;
+    
+    //POPUP MENU
+    private JPopupMenu popupMenu;
+    private JMenuItem ajouterChapitrePopup;
+    private JMenuItem modifierChapitrePopup;
+    private JMenuItem supprimerChapitrePopup;
     
     //CLASSES PERSOS
     private final Controleur controleur;
@@ -144,9 +157,9 @@ public class Fenetre extends JFrame implements Observer {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
         }
-        setSize(new Dimension(950,600));
+        setSize(new Dimension(950, 600));
         setLocationRelativeTo(null);
-        
+
         WindowListener exitListener = new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -154,26 +167,23 @@ public class Fenetre extends JFrame implements Observer {
                 System.exit(0);
             }
         };
-        
+
         addWindowListener(exitListener);
-        
+
         this.controleur = controleur;
         this.preferences = preferences;
-        
+
         initAll();
         setComponents();
         setMenus();
-        
+
         setLayout(new BorderLayout());
-        
+
         setJMenuBar(menuBar);
         add(splitPaneCentral);
-        
+
         setVisible(true);
-        ouvrirDossierBDD(JOptionPane.YES_NO_OPTION,preferences.getDossierBDD());
-        
-        addExamen(new Examen(1,true,new Date(175975),new Time(1000),"Test Examen","fichier.pdf"));
-        
+        ouvrirDossierBDD(JOptionPane.YES_NO_OPTION, preferences.getDossierBDD());
     }
     
     
@@ -195,12 +205,14 @@ public class Fenetre extends JFrame implements Observer {
         initTrees();
         initMenus();
     }
+    
     /**
      * Initialise le dialogue des préférences.
      */
     private void initPreferences() {
         preferencesDialog = new PreferencesDialog(this, "Préferences", true, this.controleur, this.preferences);
     }
+    
     /**
      * Initialise les panels.
      */
@@ -209,27 +221,30 @@ public class Fenetre extends JFrame implements Observer {
         infosExoPanel = new JPanel(new BorderLayout());
         recherchePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         boutonsExoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        rechercheResPanel = new RechercheResultatsPanel(new GridLayout(1,2));
+        rechercheResPanel = new RechercheResultatsPanel(new GridLayout(1, 2));
         rechercheAvanceePanel = new RechercheAvanceePanel();
+        chapitrePanels = new ChapitrePanels();
     }
+    
     /**
      * Initialise les listes et leurs modèles.
      */
     private void initLists() {
-        coursModelList = new DefaultListModel<>();
-        coursList = new JList<>(coursModelList);
-        
+        InfoListListener listener = new InfoListListener();
+
         examModelList = new DefaultListModel<>();
         examList = new JList<>(examModelList);
-        
+        examList.addListSelectionListener(listener);
+
         exosModelList = new DefaultListModel<>();
         exosList = new JList<>(exosModelList);
-        exosList.setDropTarget(new DropTarget(exosList,new DropListTarget()));
-        exosList.addListSelectionListener(new InfoListListener());
-        
+        exosList.setDropTarget(new DropTarget(exosList, new DropListTarget()));
+        exosList.addListSelectionListener(listener);
+
         bddModelList = new DefaultListModel<>();
         bddList = new JList<>(bddModelList);
     }
+    
     /**
      * Initialise les splitPanes.
      */
@@ -237,12 +252,14 @@ public class Fenetre extends JFrame implements Observer {
         splitPaneCentral = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPaneDroit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     }
+    
     /**
      * Initialise le tabbedPane.
      */
     private void initTabbedPane() {
         ongletsTabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     }
+    
     /**
      * Initialise les boutons.
      */
@@ -255,6 +272,7 @@ public class Fenetre extends JFrame implements Observer {
         creerCoursButton = new JButton("Créer Cours");
         creerExamButton = new JButton("Créer Examen");
     }
+    
     /**
      * Initialise les textPanes et textFields;
      */
@@ -264,99 +282,119 @@ public class Fenetre extends JFrame implements Observer {
         rechercheField = new JTextField();
         rechercheField.setColumns(15);
     }
+    
     /**
      * Initialise les arbres.
      */
     private void initTrees() {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
-        rootCoursPresentiels = new DefaultMutableTreeNode("Chapitres");
-        
+
         InfoTreeListener listener = new InfoTreeListener();
-        
+
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
         treeChapPresentiels.setTransferHandler(new TransferNodeHandler());
         treeChapPresentiels.addTreeSelectionListener(listener);
-        
+
         treeChapDistants = new JTree(rootDistants);
         treeChapDistants.setDragEnabled(true);
         treeChapDistants.setTransferHandler(new TransferNodeHandler());
         treeChapDistants.addTreeSelectionListener(listener);
-        
-        treeChapCoursPresentiels = new JTree(rootCoursPresentiels);
-        treeChapCoursPresentiels.addTreeSelectionListener(listener);
-        
+
         chapitresPresentiels = new TreeMap<>();
         chapitresDistants = new TreeMap<>();
-        chapitresCoursPresentiels = new TreeMap<>();
     }
+    
     /**
      * Initialise tous les menus et menuItems.
      */
     private void initMenus() {
+        //MENU
         MenuListener menuListener = new MenuListener();
-        
+
         menuBar = new JMenuBar();
         fichier = new JMenu("Fichier");
-        
+
         nouveau = new JMenuItem("Nouveau");
-        nouveau.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_MASK));
+        nouveau.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK));
         nouveau.addActionListener(menuListener);
-        
+
         ouvrirBDD = new JMenuItem("Ouvrir");
-        ouvrirBDD.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_MASK));
+        ouvrirBDD.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
         ouvrirBDD.addActionListener(menuListener);
-        
+
         ouvrirDossier = new JMenuItem("Ouvrir dossier");
         ouvrirDossier.addActionListener(menuListener);
-        
+
         ajouterChapitre = new JMenuItem("Ajouter chapitre");
         ajouterChapitre.addActionListener(menuListener);
-        
+
+        modifierChapitre = new JMenuItem("Modifier chapitre");
+        modifierChapitre.addActionListener(menuListener);
+
+        supprimerChapitre = new JMenuItem("Supprimer chapitre");
+        supprimerChapitre.addActionListener(menuListener);
+
         ajouterExercice = new JMenuItem("Ajouter exercice");
         ajouterExercice.addActionListener(menuListener);
-        
+
+        modifierExercice = new JMenuItem("Modifier exercice");
+        modifierExercice.addActionListener(menuListener);
+
+        supprimerExercice = new JMenuItem("Supprimer exercice");
+        modifierExercice.addActionListener(menuListener);
+
         quitter = new JMenuItem("Quitter");
-        quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,KeyEvent.CTRL_MASK));
+        quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
         quitter.addActionListener(menuListener);
-        
+
         outils = new JMenu("Outils");
         prefsMenuItem = new JMenuItem("Préférences");
-        prefsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_MASK));
+        prefsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK));
         prefsMenuItem.addActionListener(menuListener);
+
+        //POPUP MENU
+        popupMenu = new JPopupMenu();
+        ajouterChapitrePopup = new JMenuItem("Ajouter chapitre");
+        ajouterChapitrePopup.addActionListener(menuListener);
+        modifierChapitrePopup = new JMenuItem("Modifier chapitre");
+        modifierChapitrePopup.addActionListener(menuListener);
+        supprimerChapitrePopup = new JMenuItem("Supprimer chapitre");
+        supprimerChapitrePopup.addActionListener(menuListener);
     }
+    
     /**
-     * Met les composants les uns dans les autres pour mettre en place l'interface.
+     * Met les composants les uns dans les autres pour mettre en place
+     * l'interface.
      */
     private void setComponents() {
         splitPaneCentral.add(ongletsTabbedPane);
         splitPaneCentral.add(infosExoPanel);
         splitPaneCentral.setDividerLocation(400);
-        
+
         ongletsTabbedPane.addTab("Chapitres présentiels", treeChapPresentiels);
         ongletsTabbedPane.addTab("Chapitre distants", treeChapDistants);
-        ongletsTabbedPane.addTab("Cours présentiels",treeChapCoursPresentiels);
-        ongletsTabbedPane.addTab("Cours", coursList);
-        ongletsTabbedPane.addTab("Examens",examList);
-        
+        ongletsTabbedPane.addTab("Examens", examList);
+
         recherchePanel.add(rechercheField);
         recherchePanel.add(rechercheButton);
         recherchePanel.add(rechercheAvanceeButton);
-        
+
         boutonsExoPanel.add(creerCoursButton);
         boutonsExoPanel.add(creerExamButton);
-        
-        dropPanel.add(exosList,BorderLayout.CENTER);
-        dropPanel.add(boutonsExoPanel,BorderLayout.SOUTH);
-        
+
+        dropPanel.add(exosList, BorderLayout.CENTER);
+        dropPanel.add(boutonsExoPanel, BorderLayout.SOUTH);
+
         splitPaneDroit.add(dropPanel);
         splitPaneDroit.add(infosTextPane);
         splitPaneDroit.setDividerLocation(250);
-        
-        infosExoPanel.add(recherchePanel,BorderLayout.NORTH);
-        infosExoPanel.add(splitPaneDroit,BorderLayout.CENTER);
+
+        infosExoPanel.add(recherchePanel, BorderLayout.NORTH);
+        infosExoPanel.add(splitPaneDroit, BorderLayout.CENTER);
     }
+    
     /**
      * Met les menuItems dans les menus correspondants.
      */
@@ -364,14 +402,30 @@ public class Fenetre extends JFrame implements Observer {
         fichier.add(nouveau);
         fichier.add(ouvrirBDD);
         fichier.add(ouvrirDossier);
+        fichier.add(new JSeparator());
         fichier.add(ajouterChapitre);
+        fichier.add(modifierChapitre);
+        fichier.add(supprimerChapitre);
+        fichier.add(new JSeparator());
         fichier.add(ajouterExercice);
+        fichier.add(modifierExercice);
+        fichier.add(supprimerExercice);
+        fichier.add(new JSeparator());
         fichier.add(quitter);
-        
+
         outils.add(prefsMenuItem);
-        
+
         menuBar.add(fichier);
         menuBar.add(outils);
+
+        popupMenu.add(ajouterChapitrePopup);
+        popupMenu.add(modifierChapitrePopup);
+        popupMenu.add(supprimerChapitrePopup);
+
+        PopupMenuListener popupListener = new PopupMenuListener();
+
+        treeChapPresentiels.addMouseListener(popupListener);
+        treeChapDistants.addMouseListener(popupListener);
     }
     
     /**
@@ -385,13 +439,11 @@ public class Fenetre extends JFrame implements Observer {
             @Override
             public boolean accept(File dir, String name) {
                 String lowerCase = name.toLowerCase();
-                return lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
-                    || lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
-                    || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db2")
-                    || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
-                    || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
-                    || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
-                    || lowerCase.endsWith(".sl3");
+                return lowerCase.endsWith(".sdb") || lowerCase.endsWith(".sqlite")
+                    || lowerCase.endsWith(".db2") || lowerCase.endsWith(".s2db")
+                    || lowerCase.endsWith(".sqlite2") || lowerCase.endsWith(".sl2")
+                    || lowerCase.endsWith(".db3") || lowerCase.endsWith(".s3db")
+                    || lowerCase.endsWith(".sqlite3") || lowerCase.endsWith(".sl3");
             }
         };
         File[] filesBDD = fileBDD.listFiles(fileFilter);
@@ -408,14 +460,13 @@ public class Fenetre extends JFrame implements Observer {
      */
     private void ouvrirDossierBDD(int optionType, String chemin) {
         int res;
-        int res2 = JOptionPane.CANCEL_OPTION;
+        boolean res2 = false;
         Object[] options;
         if (optionType == JOptionPane.YES_NO_OPTION) {
             options = new Object[2];
             options[0] = "Ouvrir";
             options[1] = "Créer";
-        }
-        else {
+        } else {
             options = new Object[3];
             options[0] = "Ouvrir";
             options[1] = "Créer";
@@ -430,36 +481,38 @@ public class Fenetre extends JFrame implements Observer {
             if (res == JOptionPane.NO_OPTION) {
                 res2 = this.creerBDD(chemin);
             }
-        } while ((res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) && (res2 == JOptionPane.NO_OPTION || res2 == JOptionPane.CANCEL_OPTION || res2 == JOptionPane.CLOSED_OPTION));
+        } while ((res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) && !res2);
+        
+        controleur.actualiserAffichage();
     }
     
     /**
-     * Ouvre un dialogue pour demander à l'utilisateur le chemin pour créer une nouvelle base de données. Si le fichier existe : demande confirmation d'écrasement.
-     * @return Un entier qui représente l'option choisie, peut être JOptionPane.OK_OPTION, JOptionPane.CANCEL_OPTION, JOptionPane.NO_OPTION ou JOptionPane.CLOSED_OPTION
+     * Ouvre un dialogue pour demander à l'utilisateur le chemin pour créer une nouvelle base de données.
+     * Si le fichier existe : demande confirmation d'écrasement.
+     *
+     * @return Un entier qui représente l'option choisie, peut être
+     * JOptionPane.OK_OPTION, JOptionPane.CANCEL_OPTION, JOptionPane.NO_OPTION
+     * ou JOptionPane.CLOSED_OPTION
      */
-    private int creerBDD(String chemin) {
-        FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3");
-        FileChooser fileBDD = new FileChooser("Base de données",chemin,JFileChooser.FILES_ONLY,JFileChooser.SAVE_DIALOG);
+    private boolean creerBDD(String chemin) {
+        FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Base de données (.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)", "sdb", "sqlite", "db2", "s2db", "sqlite2", "sl2", "db3", "s3db", "sqlite3", "sl3");
+        FileChooser fileBDD = new FileChooser("Base de données", chemin, JFileChooser.FILES_ONLY, JFileChooser.SAVE_DIALOG);
         fileBDD.setFilter(fileFilter);
-        
-        int res = JOptionPane.showConfirmDialog(this,fileBDD,"Créer la base de données",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+        boolean created = false;
+        int res = JOptionPane.showConfirmDialog(this, fileBDD, "Créer la base de données", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (res == JOptionPane.OK_OPTION) {
             File file = new File(fileBDD.getPath());
             if (file.exists()) {
                 int res2 = JOptionPane.showConfirmDialog(this, "Voulez-vous écraser le fichier ?", "Fichier déjà existant", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (res2 == JOptionPane.YES_OPTION) {
                     file.delete();
-                    controleur.creerBDD(fileBDD.getPath());
+                    created = controleur.creerBDD(fileBDD.getPath());
                 }
-                else {
-                    return res2;
-                }
-            }
-            else {
-                controleur.creerBDD(fileBDD.getPath());
+            } else {
+                created = controleur.creerBDD(fileBDD.getPath());
             }
         }
-        return res;
+        return created;
     }
     
     /**
@@ -473,34 +526,153 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     
+    //METHODES GRAPHIQUES
+    private void ajouterChapitre(Object src) {
+        JPanel presentielPanel = chapitrePanels.getPresentielPanel();
+        chapitrePanels.setNumeroSpinner();
+        JPanel numeroPanel = chapitrePanels.getNumeroPanel();
+        JPanel libellePanel = chapitrePanels.getLibellePanel();
+        JPanel inputs = new JPanel(new GridLayout(3, 0));
+        inputs.add(presentielPanel);
+        inputs.add(numeroPanel);
+        inputs.add(libellePanel);
+        String[] options = {"Ajouter", "Annuler"};
+        
+        JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
+        JSpinner numeroSpinner = chapitrePanels.getNumeroSpinner();
+        JTextField libelleField = chapitrePanels.getLibelleField();
+        if (src.equals(ajouterChapitrePopup)) {
+             Component comp = ongletsTabbedPane.getSelectedComponent();
+            if (comp.equals(treeChapPresentiels)) {
+                presentielCheckBox.setSelected(false);
+                presentielCheckBox.doClick(1);
+            }
+            else {
+                presentielCheckBox.setSelected(true);
+                presentielCheckBox.doClick(1);
+            }
+        }
+        libelleField.setText("");
+        int res = JOptionPane.showOptionDialog(null, inputs, "Ajouter chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        if (res == JOptionPane.YES_OPTION) {
+            controleur.ajouterChapitre(presentielCheckBox.isSelected(), (int)numeroSpinner.getValue(), libelleField.getText());
+        }
+    }
+    
+    private void modifierChapitre(Object src) {
+        JPanel presentielPanel = chapitrePanels.getPresentielPanel();
+        chapitrePanels.setNumeroBox();
+        JPanel numeroPanel = chapitrePanels.getNumeroPanel();
+        JPanel libellePanel = chapitrePanels.getLibellePanel();
+        JPanel inputs = new JPanel(new GridLayout(3, 0));
+        inputs.add(presentielPanel);
+        inputs.add(numeroPanel);
+        inputs.add(libellePanel);
+        String[] options = {"Modifier", "Annuler"};
+        
+        JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
+        JComboBox numeroBox = chapitrePanels.getNumeroBox();
+        JTextField libelleField = chapitrePanels.getLibelleField();
+        if (numeroBox.getItemCount() > 0) {
+            if (src.equals(modifierChapitrePopup)) {
+                Component comp = ongletsTabbedPane.getSelectedComponent();
+                TreePath path;
+                if (comp.equals(treeChapPresentiels)) {
+                    presentielCheckBox.setSelected(false);
+                    presentielCheckBox.doClick(1);
+                    path = treeChapPresentiels.getSelectionPath();
+                }
+                else {
+                    presentielCheckBox.setSelected(true);
+                    presentielCheckBox.doClick(1);
+                    path = treeChapDistants.getSelectionPath();
+                }
+                if (path != null && path.getPathCount() > 1) {
+                    numeroBox.setSelectedItem(((ChapitreNode)path.getPathComponent(1)).getChapitre().getNumeroChapitre());
+                }
+                else {
+                    numeroBox.setSelectedIndex(0);
+                }
+            }
+            int res = JOptionPane.showOptionDialog(null, inputs, "Modifier chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if (res == JOptionPane.YES_OPTION) {
+                controleur.modifierChapitre(presentielCheckBox.isSelected(), (int) numeroBox.getSelectedItem(), libelleField.getText());
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Il n'y a pas de chapitre à modifier");
+        }
+    }
+    
+    private void supprimerChapitre(Object src) {
+        JPanel presentielPanel = chapitrePanels.getPresentielPanel();
+        chapitrePanels.setNumeroBox();
+        JPanel numeroPanel = chapitrePanels.getNumeroPanel();
+        JPanel inputs = new JPanel(new GridLayout(2, 0));
+        inputs.add(presentielPanel);
+        inputs.add(numeroPanel);
+        String[] options = {"Supprimer", "Annuler"};
+        JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
+        JComboBox numeroBox = chapitrePanels.getNumeroBox();
+        if (numeroBox.getItemCount() > 0) {
+            if (src.equals(supprimerChapitrePopup)) {
+                Component comp = ongletsTabbedPane.getSelectedComponent();
+                TreePath path;
+                if (comp.equals(treeChapPresentiels)) {
+                    presentielCheckBox.setSelected(false);
+                    presentielCheckBox.doClick(1);
+                    path = treeChapPresentiels.getSelectionPath();
+                }
+                else {
+                    presentielCheckBox.setSelected(true);
+                    presentielCheckBox.doClick(1);
+                    path = treeChapDistants.getSelectionPath();
+                }
+                if (path != null && path.getPathCount() > 1) {
+                    numeroBox.setSelectedItem(((ChapitreNode)path.getPathComponent(1)).getChapitre().getNumeroChapitre());
+                }
+                else {
+                    numeroBox.setSelectedIndex(0);
+                }
+            }
+            int res = JOptionPane.showOptionDialog(null, inputs, "Modifier chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if (res == JOptionPane.YES_OPTION) {
+                int res2 = JOptionPane.showConfirmDialog(null, "Êtes-vous sûr ?", "Demande de confirmation", JOptionPane.YES_NO_OPTION);
+                if (res2 == JOptionPane.YES_OPTION) {
+                    controleur.supprimerChapitre(presentielCheckBox.isSelected(), (int)numeroBox.getSelectedItem());
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Il n'y a pas de chapitre à supprimer");
+        }
+    }
+    
+    
     //OBSERVER
     @Override
     public void addChapitre(Chapitre chapitre) {
-        ChapitreNode chapitreAdd = new ChapitreNode(chapitre, "Chapitre " + chapitre.getNumeroChapitre());
+        ChapitreNode chapitreAdd = new ChapitreNode(chapitre);
         boolean presentiel = chapitre.isPresentiel();
         int idChapitre = chapitre.getIdChapitre();
         if (presentiel) {
             chapitresPresentiels.put(idChapitre, chapitreAdd);
             rootPresentiels.add(chapitreAdd);
-            ChapitreNode chapitreAddCours = new ChapitreNode(chapitre, "Chapitre " + chapitre.getNumeroChapitre());
-            rootCoursPresentiels.add(chapitreAddCours);
-        }
-        else {
+            chapitrePanels.addItemPresentiel(chapitre.getNumeroChapitre(), chapitre.getLibelle());
+        } else {
             chapitresDistants.put(idChapitre, chapitreAdd);
             rootDistants.add(chapitreAdd);
+            chapitrePanels.addItemDistant(chapitre.getNumeroChapitre(), chapitre.getLibelle());
         }
         this.repaint();
     }
     
     @Override
     public void addExercice(Exercice exercice) {
-        ExerciceNode exerciceAdd = new ExerciceNode(exercice, "Exercice " + exercice.getNumero());
+        ExerciceNode exerciceAdd = new ExerciceNode(exercice);
         boolean presentiel = exercice.getChapitre().isPresentiel();
         int idChapitre = exercice.getChapitre().getIdChapitre();
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(exerciceAdd);
-        }
-        else {
+        } else {
             chapitresDistants.get(idChapitre).add(exerciceAdd);
         }
     }
@@ -510,9 +682,9 @@ public class Fenetre extends JFrame implements Observer {
         rechercheResPanel.clear();
     }
     
-    @Override 
+    @Override
     public void addExerciceRecherche(Exercice exercice) {
-        ExerciceNodeList exoNodeList = new ExerciceNodeList(exercice,"");
+        ExerciceNodeList exoNodeList = new ExerciceNodeList(exercice);
         rechercheResPanel.addExerciceNode(exoNodeList);
     }
     
@@ -523,17 +695,17 @@ public class Fenetre extends JFrame implements Observer {
         CoursNode coursAdd = new CoursNode(cours, "Cours " + cours.getNumeroCours());
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(coursAdd);
-        }
-        else {
+        } else {
             chapitresDistants.get(idChapitre).add(coursAdd);
         }
         
     }
-
+    
     @Override
     public void addExamen(Examen examen) {
-        examModelList.addElement(examen);
+        examModelList.addElement(new ExamenList(examen));
     }
+    
     
     //CLASSES INTERNES
     class DropListTarget extends DropTargetAdapter {
@@ -541,7 +713,7 @@ public class Fenetre extends JFrame implements Observer {
         @Override
         public void drop(DropTargetDropEvent dtde) {
             try {
-                ExerciceNodeList node = (ExerciceNodeList)dtde.getTransferable().getTransferData(nodeFlavor);
+                ExerciceNodeList node = (ExerciceNodeList) dtde.getTransferable().getTransferData(nodeFlavor);
                 addExoNodeList(node);
             } catch (UnsupportedFlavorException | IOException ex) {
                 Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
@@ -559,20 +731,32 @@ public class Fenetre extends JFrame implements Observer {
                 creerBDD(preferences.getDossierBDD());
             }
             if (src.equals(ouvrirBDD)) {
-                ouvrirDossierBDD(JOptionPane.YES_NO_CANCEL_OPTION,preferences.getDossierBDD());
+                ouvrirDossierBDD(JOptionPane.YES_NO_CANCEL_OPTION, preferences.getDossierBDD());
             }
             if (src.equals(ouvrirDossier)) {
-                FileChooser fileDossier = new FileChooser("Ouvrir dosiser",preferences.getDossierBDD(),JFileChooser.DIRECTORIES_ONLY,JFileChooser.OPEN_DIALOG);
+                FileChooser fileDossier = new FileChooser("Ouvrir dosiser", preferences.getDossierBDD(), JFileChooser.DIRECTORIES_ONLY, JFileChooser.OPEN_DIALOG);
                 int res = JOptionPane.showConfirmDialog(null, fileDossier, "Ouvrir dossier de base de données", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (res == JOptionPane.OK_OPTION) {
-                    ouvrirDossierBDD(JOptionPane.YES_NO_CANCEL_OPTION,fileDossier.getPath());
+                    ouvrirDossierBDD(JOptionPane.YES_NO_CANCEL_OPTION, fileDossier.getPath());
                 }
             }
-            if (src.equals(ajouterChapitre)) {
-                
+            if (src.equals(ajouterChapitre) || src.equals(ajouterChapitrePopup)) {
+                ajouterChapitre(src);
+            }
+            if (src.equals(modifierChapitre) || src.equals(modifierChapitrePopup)) {
+                modifierChapitre(src);
+            }
+            if (src.equals(supprimerChapitre) || src.equals(supprimerChapitrePopup)) {
+                supprimerChapitre(src);
             }
             if (src.equals(ajouterExercice)) {
-                
+
+            }
+            if (src.equals(modifierChapitre)) {
+
+            }
+            if (src.equals(supprimerExercice)) {
+
             }
             if (src.equals(prefsMenuItem)) {
                 preferencesDialog.showDialog();
@@ -599,30 +783,19 @@ public class Fenetre extends JFrame implements Observer {
                 }
             }
             if (src.equals(rechercheAvanceeButton)) {
-                Object[] options = {"Rechercher","Annuler"};
-                int res = JOptionPane.showOptionDialog(rechercheAvanceePanel,rechercheAvanceePanel,"Recherche avancée",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,null);
+                Object[] options = {"Rechercher", "Annuler"};
+                int res = JOptionPane.showOptionDialog(rechercheAvanceePanel, rechercheAvanceePanel, "Recherche avancée", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
                 if (res == JOptionPane.YES_OPTION) {
                     String text = rechercheAvanceePanel.getText();
-                    System.out.println(text);
-                    java.util.Date dateUtilDebut = rechercheAvanceePanel.getDateDebut();
-                    Date dateDebut = null;
-                    if (dateUtilDebut != null ) {
-                        dateDebut = new Date(dateUtilDebut.getTime());
-                        System.out.println(dateDebut.toString());
-                    }
-                    java.util.Date dateUtilFin = rechercheAvanceePanel.getDateFin();
-                    Date dateFin = null;
-                    if (dateUtilFin != null ) {
-                        dateFin = new Date(dateUtilFin.getTime());
-                        System.out.println(dateFin.toString());
-                    }
+                    Date dateUtilDebut = rechercheAvanceePanel.getDateDebut();
+                    Date dateUtilFin = rechercheAvanceePanel.getDateFin();
                     controleur.rechercherExercice(text, dateUtilDebut, dateUtilFin);
                 }
                 recherche = res;
             }
             if (recherche == 0) {
-                String[] options = { "Ajouter la sélection", "Annuler" };
-                int res = JOptionPane.showOptionDialog(null, rechercheResPanel,"Résultat de recherche", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                String[] options = {"Ajouter la sélection", "Annuler"};
+                int res = JOptionPane.showOptionDialog(null, rechercheResPanel, "Résultat de recherche", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
                 if (res == JOptionPane.YES_OPTION) {
                     for (ExerciceNodeList exercice : rechercheResPanel.getSelectedValuesList()) {
                         addExoNodeList(exercice);
@@ -638,10 +811,19 @@ public class Fenetre extends JFrame implements Observer {
         
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting()) {
+            Object src = e.getSource();
+            if (src.equals(exosList) && !e.getValueIsAdjusting()) {
                 List<ExerciceNodeList> exosSelected = exosList.getSelectedValuesList();
                 String infos = "";
-                for (NodeInformations exo : exosSelected) {
+                for (Informations exo : exosSelected) {
+                    infos += exo.getInformations() + "\n";
+                }
+                infosTextPane.setText(infos);
+            }
+            if (src.equals(examList)) {
+                List<ExamenList> exosSelected = examList.getSelectedValuesList();
+                String infos = "";
+                for (Informations exo : exosSelected) {
                     infos += exo.getInformations() + "\n";
                 }
                 infosTextPane.setText(infos);
@@ -649,7 +831,7 @@ public class Fenetre extends JFrame implements Observer {
         }
         
     }
-    
+
     class InfoTreeListener implements TreeSelectionListener {
         
         @Override
@@ -658,19 +840,29 @@ public class Fenetre extends JFrame implements Observer {
             TreePath[] paths;
             if (src.equals(treeChapPresentiels)) {
                 paths = treeChapPresentiels.getSelectionPaths();
-            }
-            else {
+            } else {
                 paths = treeChapDistants.getSelectionPaths();
             }
             if (paths != null) {
                 String informations = "";
                 for (TreePath path : paths) {
                     Object node = path.getLastPathComponent();
-                    if (node instanceof NodeInformations) {
-                        informations += ((NodeInformations)node).getInformations() + "\n";
+                    if (node instanceof Informations) {
+                        informations += ((Informations) node).getInformations() + "\n";
                     }
                 }
                 infosTextPane.setText(informations);
+            }
+        }
+        
+    }
+    
+    class PopupMenuListener extends MouseAdapter {
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                popupMenu.show(e.getComponent(), e.getX(), e.getY());
             }
         }
         

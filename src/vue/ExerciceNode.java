@@ -13,50 +13,23 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author Robin
  * @author Vincent
  */
-public class ExerciceNode extends DefaultMutableTreeNode implements NodeInformations {
+public class ExerciceNode extends DefaultMutableTreeNode implements Informations {
     
     //ATTRIBUTS
     protected Exercice exercice;
-    protected final String titre;
+    
     
     //CONSTRUCTEUR
-    public ExerciceNode(Exercice exercice, String titre) {
-        super(titre,false);
+    public ExerciceNode(Exercice exercice) {
+        super(exercice,false);
         this.exercice =  exercice;
-        this.titre = titre;
     }
     
     
     //ACCESSEURS
-    /*
-    public boolean isPresentiel() {
-        return exercice.getChapitre().isPresentiel();
-    }
-
-    public int getId() {
-        return exercice.getID();
-    }
-
-    public int getNbChapitre() {
-        return exercice.getChapitre().getNumeroChapitre();
-    }
-
-    public int getNumero() {
-        return exercice.getNumero();
-    }
-
-    public String getTitre() {
-        return titre;
-    }
-    */
     @Override
     public String toString() {
-        return titre;
-    }
-    
-    @Override
-    public String getInformations() {
-        return exercice.toString() + "\n";
+        return "Exercice n°" + exercice.getNumero();
     }
     
     @Override
@@ -68,6 +41,14 @@ public class ExerciceNode extends DefaultMutableTreeNode implements NodeInformat
         return false;
     }
     
+    
     //MUTATEURS
+    
+    
+    //INFORMATIONS
+    @Override
+    public String getInformations() {
+        return exercice.toString() + "\n";
+    }
     
 }
