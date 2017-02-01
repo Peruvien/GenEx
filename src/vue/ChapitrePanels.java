@@ -15,22 +15,26 @@ import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
  * @author robin
  */
-public class ChapitrePanels {
+public class ChapitrePanels extends JComponent {
     
     //ATTRIBUTS
     private JPanel presentielPanel;
     private JPanel numeroPanel;
     private JPanel libellePanel;
+    
     private JCheckBox presentielCheckBox;
     private SpinnerNumberModel numeroModelSpinner;
     private JSpinner numeroSpinner;
@@ -96,6 +100,7 @@ public class ChapitrePanels {
         libellePanel = new JPanel(new BorderLayout());
         libellePanel.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),"Libellé"));
     }
+    
     private void initSets() {
         presentiels = new TreeSet();
         distants = new TreeSet();
@@ -155,6 +160,10 @@ public class ChapitrePanels {
             libelleField.setText(libelle);
         }
         libelles.put(new Pair(Boolean.TRUE,numero), libelle);
+        ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+        for (ChangeListener listener : listeners) {
+            listener.stateChanged(new ChangeEvent(numeroBox));
+        }
     }
     
     public void addItemDistant(int numero, String libelle) {
@@ -164,13 +173,25 @@ public class ChapitrePanels {
             libelleField.setText(libelle);
         }
         libelles.put(new Pair(Boolean.FALSE,numero), libelle);
+        ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+        for (ChangeListener listener : listeners) {
+            listener.stateChanged(new ChangeEvent(numeroBox));
+        }
     }
     
+    public void addChangeListener(ChangeListener l) {
+        listenerList.add(ChangeListener.class, l);
+    }
+    
+    
+    //CLASSES INTERNES
     class CheckBoxListener implements ActionListener {
         
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
+            ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+            
             if (src.equals(presentielCheckBox)) {
                 if (presentielCheckBox.isSelected()) {
                     setItemsPresentiels();
@@ -178,6 +199,9 @@ public class ChapitrePanels {
                 else {
                     setItemsDistants();
                 }
+            }
+            for (ChangeListener listener : listeners) {
+                listener.stateChanged(new ChangeEvent(src));
             }
         }
         
@@ -188,6 +212,8 @@ public class ChapitrePanels {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
+            ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+            
             if (src.equals(numeroBox)) {
                 boolean presentiel = presentielCheckBox.isSelected();
                 if (numeroBox.getItemCount() != 0) {
@@ -196,7 +222,9 @@ public class ChapitrePanels {
                     String libelle = libelles.get(pair);
                     libelleField.setText(libelle);
                 }
-                
+            }
+            for (ChangeListener listener : listeners) {
+                listener.stateChanged(new ChangeEvent(src));
             }
         }
         

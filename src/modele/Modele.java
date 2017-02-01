@@ -97,7 +97,7 @@ public class Modele implements Observable {
                 String tagsExercice = res.getString("tagsExercice");
                 int idChapitre = res.getInt("idChapitre");
                 Chapitre chapitre = database.getChapitres().get(idChapitre);
-                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,chapitre);
+                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
             }
         } catch (SQLException ex) {
@@ -137,7 +137,7 @@ public class Modele implements Observable {
                 String tagsExercice = res.getString("tagsExercice");
                 int idChapitre = res.getInt("idChapitre");
                 Chapitre chapitre = database.getChapitres().get(idChapitre);
-                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,chapitre);
+                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
             }
         } catch (SQLException ex) {

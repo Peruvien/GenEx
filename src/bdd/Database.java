@@ -97,7 +97,7 @@ public class Database {
         
         int idExercice, numeroExercice, pointsExercice;
         Time dureeExercice;
-        String libelleExercice, fichierExercicePath;
+        String libelleExercice, fichierExercicePath, tagsExercice;
         
         String requete3 = "SELECT * FROM EXERCICE";
         ResultSet res3 = connexion.executerRequete(requete3);
@@ -108,10 +108,11 @@ public class Database {
             pointsExercice = res3.getInt("pointsExercice");
             libelleExercice = res3.getString("libelleExercice");
             fichierExercicePath = res3.getString("fichierExercice");
+            tagsExercice = res3.getString("tagsExercice");
             idChapitre = res3.getInt("idChapitre");
             Chapitre chapitreExercice = chapitresMap.get(idChapitre);
             Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,
-                    fichierExercicePath,chapitreExercice);
+                    fichierExercicePath,tagsExercice,chapitreExercice);
             exercicesMap.put(idExercice, exercice);
             chapitresMap.get(idChapitre).addExercice(exercice);
         }
