@@ -80,10 +80,10 @@ public class Modele implements Observable {
                 requete += "'%" + tags[i] + "%'";
             }
             if (i > 0 && i < tags.length) {
-                requete += " OR tagsExercice LIKE '%" + tags[i] + "%'";
+                requete += " AND tagsExercice LIKE '%" + tags[i] + "%'";
             }
         }
-        //System.out.println(requete);
+        
         ResultSet res = connexion.executerRequete(requete);
         observer.clearRecherche();
         try {

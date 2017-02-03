@@ -38,7 +38,7 @@ public class ChapitrePanels extends JComponent {
     private JCheckBox presentielCheckBox;
     private SpinnerNumberModel numeroModelSpinner;
     private JSpinner numeroSpinner;
-    private JComboBox numeroBox;
+    private JComboBox<Integer> numeroBox;
     private JTextField libelleField;
     
     private Set<Integer> presentiels;
@@ -102,11 +102,11 @@ public class ChapitrePanels extends JComponent {
     }
     
     private void initSets() {
-        presentiels = new TreeSet();
-        distants = new TreeSet();
+        presentiels = new TreeSet<>();
+        distants = new TreeSet<>();
     }
     private void initMap() {
-        libelles = new TreeMap();
+        libelles = new TreeMap<>();
     }
     private void initCheckBox() {
         presentielCheckBox = new JCheckBox("présentiel");
@@ -117,7 +117,7 @@ public class ChapitrePanels extends JComponent {
         numeroSpinner = new JSpinner(numeroModelSpinner);
     }
     private void initComboBox() {
-        numeroBox = new JComboBox();
+        numeroBox = new JComboBox<>();
         numeroBox.addActionListener(new ComboBoxListener());
     }
     private void initField() {

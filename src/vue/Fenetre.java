@@ -52,6 +52,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
@@ -133,6 +134,9 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem ajouterExercice;
     private JMenuItem modifierExercice;
     private JMenuItem supprimerExercice;
+    private JMenuItem ajouterExamen;
+    private JMenuItem modifierExamen;
+    private JMenuItem supprimerExamen;
     private JMenuItem quitter;
     private JMenu outils;
     private JMenuItem prefsMenuItem;
@@ -209,14 +213,12 @@ public class Fenetre extends JFrame implements Observer {
         initTrees();
         initMenus();
     }
-    
     /**
      * Initialise le dialogue des préférences.
      */
     private void initPreferences() {
         preferencesDialog = new PreferencesDialog(this, "Préferences", true, this.controleur, this.preferences);
     }
-    
     /**
      * Initialise les panels.
      */
@@ -230,7 +232,6 @@ public class Fenetre extends JFrame implements Observer {
         chapitrePanels = new ChapitrePanels();
         exercicePanels = new ExercicePanels(chapitrePanels);
     }
-    
     /**
      * Initialise les listes et leurs modèles.
      */
@@ -249,22 +250,22 @@ public class Fenetre extends JFrame implements Observer {
         bddModelList = new DefaultListModel<>();
         bddList = new JList<>(bddModelList);
     }
-    
     /**
      * Initialise les splitPanes.
      */
     private void initSplitPane() {
         splitPaneCentral = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPaneCentral.setContinuousLayout(true);
         splitPaneDroit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPaneDroit.setContinuousLayout(true);
+        splitPaneDroit.setOneTouchExpandable(true);
     }
-    
     /**
      * Initialise le tabbedPane.
      */
     private void initTabbedPane() {
         ongletsTabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
     }
-    
     /**
      * Initialise les boutons.
      */
@@ -277,17 +278,16 @@ public class Fenetre extends JFrame implements Observer {
         creerCoursButton = new JButton("Créer Cours");
         creerExamButton = new JButton("Créer Examen");
     }
-    
     /**
      * Initialise les textPanes et textFields;
      */
     private void initTextFields() {
         infosTextPane = new JTextPane();
+        infosTextPane.setEditable(false);
         infosTextPane.setText("Informations sur l'exerice ou chapitre");
         rechercheField = new JTextField();
         rechercheField.setColumns(15);
     }
-    
     /**
      * Initialise les arbres.
      */
@@ -310,7 +310,6 @@ public class Fenetre extends JFrame implements Observer {
         chapitresPresentiels = new TreeMap<>();
         chapitresDistants = new TreeMap<>();
     }
-    
     /**
      * Initialise tous les menus et menuItems.
      */
@@ -350,6 +349,15 @@ public class Fenetre extends JFrame implements Observer {
         supprimerExercice = new JMenuItem("Supprimer exercice");
         supprimerExercice.addActionListener(menuListener);
         
+        ajouterExamen = new JMenuItem("Ajouter examen");
+        ajouterExamen.addActionListener(menuListener);
+        
+        modifierExamen = new JMenuItem("Modifier examen");
+        modifierExamen.addActionListener(menuListener);
+        
+        supprimerExamen = new JMenuItem("Supprimer examen");
+        supprimerExamen.addActionListener(menuListener);
+        
         quitter = new JMenuItem("Quitter");
         quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
         quitter.addActionListener(menuListener);
@@ -388,30 +396,29 @@ public class Fenetre extends JFrame implements Observer {
     private void setComponents() {
         splitPaneCentral.add(ongletsTabbedPane);
         splitPaneCentral.add(infosExoPanel);
-        splitPaneCentral.setDividerLocation(400);
-
+        splitPaneCentral.setDividerLocation(410);
+        
         ongletsTabbedPane.addTab("Chapitres présentiels", treeChapPresentiels);
         ongletsTabbedPane.addTab("Chapitre distants", treeChapDistants);
         ongletsTabbedPane.addTab("Examens", examList);
-
+        
         recherchePanel.add(rechercheField);
         recherchePanel.add(rechercheButton);
         recherchePanel.add(rechercheAvanceeButton);
-
+        
         boutonsExoPanel.add(creerCoursButton);
         boutonsExoPanel.add(creerExamButton);
-
+        
         dropPanel.add(exosList, BorderLayout.CENTER);
         dropPanel.add(boutonsExoPanel, BorderLayout.SOUTH);
-
+        
         splitPaneDroit.add(dropPanel);
-        splitPaneDroit.add(infosTextPane);
+        splitPaneDroit.add(new JScrollPane(infosTextPane));
         splitPaneDroit.setDividerLocation(250);
-
+        
         infosExoPanel.add(recherchePanel, BorderLayout.NORTH);
         infosExoPanel.add(splitPaneDroit, BorderLayout.CENTER);
     }
-    
     /**
      * Met les menuItems dans les menus correspondants.
      */
@@ -429,18 +436,21 @@ public class Fenetre extends JFrame implements Observer {
         fichier.add(supprimerExercice);
         fichier.add(new JSeparator());
         fichier.add(quitter);
-
+        
         outils.add(prefsMenuItem);
-
+        
         menuBar.add(fichier);
         menuBar.add(outils);
-
+        
         popupMenu.add(ajouterChapitrePopup);
         popupMenu.add(modifierChapitrePopup);
         popupMenu.add(supprimerChapitrePopup);
-
+        popupMenu.add(new JSeparator());
+        popupMenu.add(ajouterExercicePopup);
+        popupMenu.add(modifierExercicePopup);
+        popupMenu.add(supprimerExercicePopup);
+        
         PopupMenuListener popupListener = new PopupMenuListener();
-
         treeChapPresentiels.addMouseListener(popupListener);
         treeChapDistants.addMouseListener(popupListener);
     }
@@ -533,7 +543,7 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     /**
-     * Ajoute un ExerciceNodeList à exosModelList s'il est pas présent.
+     * Ajoute un ExerciceNodeList à exosModelList s'il n'est pas présent.
      * @param exercice l'ExerciceNodeList à ajouter
      */
     private void addExoNodeList(ExerciceNodeList exercice) {
@@ -544,6 +554,54 @@ public class Fenetre extends JFrame implements Observer {
     
     
     //METHODES GRAPHIQUES
+    private boolean setSelectedPresentiel(JCheckBox presentielCheckBox) {
+        boolean res;
+        Component comp = ongletsTabbedPane.getSelectedComponent();
+        if (comp.equals(treeChapPresentiels)) {
+            presentielCheckBox.setSelected(false);
+            presentielCheckBox.doClick(0);
+            res = true;
+        }
+        else {
+            presentielCheckBox.setSelected(true);
+            presentielCheckBox.doClick(0);
+            res = false;
+        }
+        return res;
+    }
+    
+    private TreePath getSelectedPath() {
+        TreePath res;
+        Component comp = ongletsTabbedPane.getSelectedComponent();
+        if (comp.equals(treeChapPresentiels)) {
+            res = treeChapPresentiels.getSelectionPath();
+        }
+        else {
+            res = treeChapDistants.getSelectionPath();
+        }
+        return res;
+    }
+    
+    private void setSelectedChapitrePath(JComboBox numeroBox) {
+        TreePath path = getSelectedPath();
+        if (path != null && path.getPathCount() > 1 && numeroBox.getItemCount() > 0) {
+            numeroBox.setSelectedItem(((ChapitreNode)path.getPathComponent(1)).getChapitre().getNumeroChapitre());
+        }
+        else {
+            numeroBox.setSelectedIndex(0);
+        }
+    }
+    
+    private void setSelectedExercicePath(JComboBox numeroChapitreBox, JComboBox numeroBox) {
+        setSelectedChapitrePath(numeroChapitreBox);
+        TreePath path = getSelectedPath();
+        Object lastPathComponent = path.getLastPathComponent();
+        if (lastPathComponent instanceof ExerciceNode) {
+            ExerciceNode exerciceNode = (ExerciceNode)lastPathComponent;
+            numeroBox.setSelectedItem(exerciceNode.getExercice().getNumero());
+        }
+    }
+    
     private void ajouterChapitre(Object src) {
         JPanel presentielPanel = chapitrePanels.getPresentielPanel();
         chapitrePanels.setNumeroSpinner();
@@ -560,15 +618,7 @@ public class Fenetre extends JFrame implements Observer {
         
         String[] options = {"Ajouter", "Annuler"};
         if (src.equals(ajouterChapitrePopup)) {
-             Component comp = ongletsTabbedPane.getSelectedComponent();
-            if (comp.equals(treeChapPresentiels)) {
-                presentielCheckBox.setSelected(false);
-                presentielCheckBox.doClick(1);
-            }
-            else {
-                presentielCheckBox.setSelected(true);
-                presentielCheckBox.doClick(1);
-            }
+            setSelectedPresentiel(presentielCheckBox);
         }
         libelleField.setText("");
         int res = JOptionPane.showOptionDialog(this, inputs, "Ajouter chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -594,24 +644,8 @@ public class Fenetre extends JFrame implements Observer {
         String[] options = {"Modifier", "Annuler"};
         if (numeroBox.getItemCount() > 0) {
             if (src.equals(modifierChapitrePopup)) {
-                Component comp = ongletsTabbedPane.getSelectedComponent();
-                TreePath path;
-                if (comp.equals(treeChapPresentiels)) {
-                    presentielCheckBox.setSelected(false);
-                    presentielCheckBox.doClick(1);
-                    path = treeChapPresentiels.getSelectionPath();
-                }
-                else {
-                    presentielCheckBox.setSelected(true);
-                    presentielCheckBox.doClick(1);
-                    path = treeChapDistants.getSelectionPath();
-                }
-                if (path != null && path.getPathCount() > 1) {
-                    numeroBox.setSelectedItem(((ChapitreNode)path.getPathComponent(1)).getChapitre().getNumeroChapitre());
-                }
-                else {
-                    numeroBox.setSelectedIndex(0);
-                }
+                setSelectedPresentiel(presentielCheckBox);
+                setSelectedChapitrePath(numeroBox);
             }
             int res = JOptionPane.showOptionDialog(this, inputs, "Modifier chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (res == JOptionPane.YES_OPTION) {
@@ -636,34 +670,18 @@ public class Fenetre extends JFrame implements Observer {
         String[] options = {"Supprimer", "Annuler"};
         if (numeroBox.getItemCount() > 0) {
             if (src.equals(supprimerChapitrePopup)) {
-                Component comp = ongletsTabbedPane.getSelectedComponent();
-                TreePath path;
-                if (comp.equals(treeChapPresentiels)) {
-                    presentielCheckBox.setSelected(false);
-                    presentielCheckBox.doClick(1);
-                    path = treeChapPresentiels.getSelectionPath();
-                }
-                else {
-                    presentielCheckBox.setSelected(true);
-                    presentielCheckBox.doClick(1);
-                    path = treeChapDistants.getSelectionPath();
-                }
-                if (path != null && path.getPathCount() > 1) {
-                    numeroBox.setSelectedItem(((ChapitreNode)path.getPathComponent(1)).getChapitre().getNumeroChapitre());
-                }
-                else {
-                    numeroBox.setSelectedIndex(0);
-                }
+                setSelectedPresentiel(presentielCheckBox);
+                setSelectedChapitrePath(numeroBox);
             }
             int res = JOptionPane.showOptionDialog(this, inputs, "Modifier chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (res == JOptionPane.YES_OPTION) {
-                int res2 = JOptionPane.showConfirmDialog(null, "Êtes-vous sûr ?", "Demande de confirmation", JOptionPane.YES_NO_OPTION);
+                int res2 = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr ?", "Demande de confirmation", JOptionPane.YES_NO_OPTION);
                 if (res2 == JOptionPane.YES_OPTION) {
                     controleur.supprimerChapitre(presentielCheckBox.isSelected(), (int)numeroBox.getSelectedItem());
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Il n'y a pas de chapitre à supprimer");
+            JOptionPane.showMessageDialog(this, "Il n'y a pas de chapitre à supprimer");
         }
     }
     
@@ -697,6 +715,13 @@ public class Fenetre extends JFrame implements Observer {
         FileChooser fichierChooser = exercicePanels.getFichierChooser();
         JTextField tagsField = exercicePanels.getTagsField();
         
+        exercicePanels.setAjout(true);
+        if (src.equals(ajouterExercicePopup)) {
+            setSelectedPresentiel(presentielCheckBox);
+            setSelectedChapitrePath(numeroChapitreBox);
+        }
+        
+        exercicePanels.clearFields();
         String[] options = { "Ajouter", "Annuler" };
         
         int res = JOptionPane.showOptionDialog(this, inputs,"Ajouter exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
@@ -727,16 +752,29 @@ public class Fenetre extends JFrame implements Observer {
         
         JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
         JComboBox numeroChapitreBox = chapitrePanels.getNumeroBox();
-        JSpinner numeroSpinner = exercicePanels.getNumeroSpinner();
+        JComboBox numeroBox = exercicePanels.getNumeroBox();
         JTimeChooser dureeChoser = exercicePanels.getDureeChooser();
         JSpinner pointsSpin = exercicePanels.getPointsSpinner();
         JTextField libelleField = exercicePanels.getLibelleField();
         FileChooser fichierChooser = exercicePanels.getFichierChooser();
         JTextField tagsField = exercicePanels.getTagsField();
         
+        exercicePanels.setAjout(false);
+        exercicePanels.setFields();
+        if (src.equals(modifierExercicePopup)) {
+            setSelectedPresentiel(presentielCheckBox);
+            setSelectedChapitrePath(numeroChapitreBox);
+            TreePath path = getSelectedPath();
+            Object lastPathComponent = path.getLastPathComponent();
+            if (lastPathComponent instanceof ExerciceNode) {
+                ExerciceNode exerciceNode = (ExerciceNode)lastPathComponent;
+                numeroBox.setSelectedItem(exerciceNode.getExercice().getNumero());
+            }
+        }
+        
         String[] options = { "Modifier", "Annuler" };
         
-        int res = JOptionPane.showOptionDialog(null, inputs,"Modifier exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
+        int res = JOptionPane.showOptionDialog(this, inputs,"Modifier exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
         if (res == JOptionPane.YES_OPTION) {
             
         }
@@ -756,9 +794,21 @@ public class Fenetre extends JFrame implements Observer {
         JComboBox numeroChapitreBox = chapitrePanels.getNumeroBox();
         JComboBox numeroBox = exercicePanels.getNumeroBox();
         
-        exercicePan.add(numeroPan);
         inputs.add(chapitrePan,BorderLayout.CENTER);
-        inputs.add(exercicePan,BorderLayout.SOUTH);
+        inputs.add(numeroPan,BorderLayout.SOUTH);
+        
+        exercicePanels.setAjout(false);
+        exercicePanels.setFields();
+        if (src.equals(supprimerExercicePopup)) {
+            setSelectedPresentiel(presentielCheckBox);
+            setSelectedChapitrePath(numeroChapitreBox);
+            TreePath path = getSelectedPath();
+            Object lastPathComponent = path.getLastPathComponent();
+            if (lastPathComponent instanceof ExerciceNode) {
+                ExerciceNode exerciceNode = (ExerciceNode)lastPathComponent;
+                numeroBox.setSelectedItem(exerciceNode.getExercice().getNumero());
+            }
+        }
         
         String[] options = { "Supprimer", "Annuler" };
         

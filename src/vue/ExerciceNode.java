@@ -27,6 +27,10 @@ public class ExerciceNode extends DefaultMutableTreeNode implements Informations
     
     
     //ACCESSEURS
+    public Exercice getExercice() {
+        return exercice;
+    }
+    
     @Override
     public String toString() {
         return "Exercice n°" + exercice.getNumero();

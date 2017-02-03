@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Time;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -47,13 +48,15 @@ public class ExercicePanels {
     
     private SpinnerNumberModel numeroModelSpinner;
     private JSpinner numeroSpinner;
-    private JComboBox numeroBox;
+    private JComboBox<Integer> numeroBox;
     private JTimeChooser dureeChooser;
     private SpinnerNumberModel pointsModelSpinner;
     private JSpinner pointsSpinner;
     private JTextField libelleField;
     private FileChooser fichierChooser;
     private JTextField tagsField;
+    
+    private boolean ajout;
     
     private Map<Pair,Set<Exercice>> exercices;
     
@@ -64,6 +67,7 @@ public class ExercicePanels {
         this.chapitrePanels.addChangeListener(new ChapitreListener());
         initAll();
         setComponents();
+        ajout = true;
     }
     
     
@@ -169,7 +173,7 @@ public class ExercicePanels {
         exercices = new TreeMap<>();
     }
     private void initComboBox() {
-        numeroBox = new JComboBox();
+        numeroBox = new JComboBox<>();
         numeroBox.addActionListener(new ExerciceBoxListener());
     }
     private void initTimeChooser() {
@@ -211,10 +215,31 @@ public class ExercicePanels {
     public void addExercice(Pair chapitre, Exercice exercice) {
         Set<Exercice> exos = exercices.get(chapitre);
         if (exos == null) {
-            exos = new TreeSet();
+            exos = new TreeSet<>();
             exercices.put(chapitre, exos);
         }
         exos.add(exercice);
+    }
+    
+    public void clearFields() {
+        if (numeroBox.getItemCount() > 0) {
+            numeroBox.setSelectedIndex(0);
+        }
+        dureeChooser.setTime(new Time(10));
+        pointsSpinner.setValue(0);
+        libelleField.setText("");
+        tagsField.setText("");
+    }
+    
+    public void setAjout(boolean ajout) {
+        this.ajout = ajout;
+    }
+    
+    public void setFields() {
+        chapitrePanels.getNumeroBox().setSelectedIndex(0);
+        if (numeroBox.getItemCount() > 0) {
+            numeroBox.setSelectedIndex(0);
+        }
     }
     
     private void setFields(Exercice exercice) {
@@ -241,26 +266,29 @@ public class ExercicePanels {
         
         @Override
         public void stateChanged(ChangeEvent e) {
-            boolean presentiel = chapitrePanels.getPresentielCheckBox().isSelected();
-            Object numeroChapitreObj = chapitrePanels.getNumeroBox().getSelectedItem();
-            if (numeroChapitreObj != null) {
-                int numeroChapitre = (int)numeroChapitreObj;
-                Set<Exercice> chapitre = exercices.get(new Pair(presentiel,numeroChapitre));
-                if (chapitre != null) {
-                    numeroBox.removeAllItems();
-                    for (Exercice exo : chapitre) {
-                        numeroBox.addItem(exo.getNumero());
+            if (!ajout) {
+                boolean presentiel = chapitrePanels.getPresentielCheckBox().isSelected();
+                Object numeroChapitreObj = chapitrePanels.getNumeroBox().getSelectedItem();
+                if (numeroChapitreObj != null) {
+                    int numeroChapitre = (int)numeroChapitreObj;
+                    Set<Exercice> chapitre = exercices.get(new Pair(presentiel,numeroChapitre));
+                    if (chapitre != null) {
+                        numeroBox.removeAllItems();
+                        for (Exercice exo : chapitre) {
+                            numeroBox.addItem(exo.getNumero());
+                        }
+                        numeroBox.setSelectedIndex(0);
                     }
-                    numeroBox.setSelectedIndex(0);
+                    else {
+                        numeroBox.removeAllItems();
+                        clearFields();
+                    }
                 }
                 else {
                     numeroBox.removeAllItems();
+                    clearFields();
                 }
             }
-            else {
-                numeroBox.removeAllItems();
-            }
-            
         }
         
     }
@@ -269,16 +297,18 @@ public class ExercicePanels {
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object src = e.getSource();
-            if (src.equals(numeroBox)) {
-                Object exerciceObj = numeroBox.getSelectedItem();
-                if (exerciceObj != null) {
-                    int numeroExercice = (int)exerciceObj;
-                    Pair chapitrePair = getPairChapitre();
-                    Set<Exercice> chapitre = exercices.get(chapitrePair);
-                    for (Exercice exercice : chapitre) {
-                        if (exercice.getNumero() == numeroExercice) {
-                            setFields(exercice);
+            if (!ajout) {
+                Object src = e.getSource();
+                if (src.equals(numeroBox)) {
+                    Object exerciceObj = numeroBox.getSelectedItem();
+                    if (exerciceObj != null) {
+                        int numeroExercice = (int)exerciceObj;
+                        Pair chapitrePair = getPairChapitre();
+                        Set<Exercice> chapitre = exercices.get(chapitrePair);
+                        for (Exercice exercice : chapitre) {
+                            if (exercice.getNumero() == numeroExercice) {
+                                setFields(exercice);
+                            }
                         }
                     }
                 }
