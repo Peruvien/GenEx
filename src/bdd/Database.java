@@ -111,10 +111,10 @@ public class Database {
             tagsExercice = res3.getString("tagsExercice");
             idChapitre = res3.getInt("idChapitre");
             Chapitre chapitreExercice = chapitresMap.get(idChapitre);
-            //Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,
-            //        fichierExercicePath,tagsExercice,chapitreExercice);
-            //exercicesMap.put(idExercice, exercice);
-            //chapitresMap.get(idChapitre).addExercice(exercice);
+            Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,
+                    fichierExercicePath,tagsExercice,chapitreExercice);
+            exercicesMap.put(idExercice, exercice);
+            chapitresMap.get(idChapitre).addExercice(exercice);
         }
         
         int icCours, numeroCours;
