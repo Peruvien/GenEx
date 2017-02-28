@@ -25,8 +25,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -82,6 +80,8 @@ public class Fenetre extends JFrame implements Observer {
     
     //ATTRIBUTS
     //INTERFACE PRINCIPALE
+    //JFRAME
+    private LecteurPDFrame lecteurFrame;
     //PANELS
     private JPanel recherchePanel;
     private JPanel dropPanel;
@@ -141,14 +141,17 @@ public class Fenetre extends JFrame implements Observer {
     private JMenu outils;
     private JMenuItem prefsMenuItem;
     
-    //POPUP MENU
-    private JPopupMenu popupMenu;
+    //POPUP MENU ARBRES
+    private JPopupMenu popupMenuTree;
     private JMenuItem ajouterChapitrePopup;
     private JMenuItem modifierChapitrePopup;
     private JMenuItem supprimerChapitrePopup;
     private JMenuItem ajouterExercicePopup;
     private JMenuItem modifierExercicePopup;
     private JMenuItem supprimerExercicePopup;
+    //POPUP MENU EXAMENS
+    private JPopupMenu popupMenuExamens;
+    private JMenuItem afficherExamen;
     
     //CLASSES PERSOS
     private final Controleur controleur;
@@ -180,7 +183,8 @@ public class Fenetre extends JFrame implements Observer {
 
         this.controleur = controleur;
         this.preferences = preferences;
-
+        this.lecteurFrame = new LecteurPDFrame();
+        
         initAll();
         setComponents();
         setMenus();
@@ -246,7 +250,8 @@ public class Fenetre extends JFrame implements Observer {
         exosList = new JList<>(exosModelList);
         exosList.setDropTarget(new DropTarget(exosList, new DropListTarget()));
         exosList.addListSelectionListener(listener);
-
+        
+        
         bddModelList = new DefaultListModel<>();
         bddList = new JList<>(bddModelList);
     }
@@ -294,19 +299,19 @@ public class Fenetre extends JFrame implements Observer {
     private void initTrees() {
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
-
+        
         InfoTreeListener listener = new InfoTreeListener();
-
+        
         treeChapPresentiels = new JTree(rootPresentiels);
         treeChapPresentiels.setDragEnabled(true);
         treeChapPresentiels.setTransferHandler(new TransferNodeHandler());
         treeChapPresentiels.addTreeSelectionListener(listener);
-
+        
         treeChapDistants = new JTree(rootDistants);
         treeChapDistants.setDragEnabled(true);
         treeChapDistants.setTransferHandler(new TransferNodeHandler());
         treeChapDistants.addTreeSelectionListener(listener);
-
+        
         chapitresPresentiels = new TreeMap<>();
         chapitresDistants = new TreeMap<>();
     }
@@ -314,9 +319,11 @@ public class Fenetre extends JFrame implements Observer {
      * Initialise tous les menus et menuItems.
      */
     private void initMenus() {
-        //MENU
+        //LISTENERS
         MenuListener menuListener = new MenuListener();
-
+        AfficherListener afficherListener = new AfficherListener();
+        
+        //MENU
         menuBar = new JMenuBar();
         fichier = new JMenu("Fichier");
 
@@ -367,8 +374,8 @@ public class Fenetre extends JFrame implements Observer {
         prefsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK));
         prefsMenuItem.addActionListener(menuListener);
 
-        //POPUP MENU
-        popupMenu = new JPopupMenu();
+        //POPUP MENU ARBRES
+        popupMenuTree = new JPopupMenu();
         
         ajouterChapitrePopup = new JMenuItem("Ajouter chapitre");
         ajouterChapitrePopup.addActionListener(menuListener);
@@ -387,6 +394,11 @@ public class Fenetre extends JFrame implements Observer {
         
         supprimerExercicePopup = new JMenuItem("Supprimer exercice");
         supprimerExercicePopup.addActionListener(menuListener);
+        //POPUP MENU EXAMENS
+        popupMenuExamens = new JPopupMenu();
+        
+        afficherExamen = new JMenuItem("Afficher");
+        afficherExamen.addActionListener(afficherListener);
     }
     
     /**
@@ -442,17 +454,21 @@ public class Fenetre extends JFrame implements Observer {
         menuBar.add(fichier);
         menuBar.add(outils);
         
-        popupMenu.add(ajouterChapitrePopup);
-        popupMenu.add(modifierChapitrePopup);
-        popupMenu.add(supprimerChapitrePopup);
-        popupMenu.add(new JSeparator());
-        popupMenu.add(ajouterExercicePopup);
-        popupMenu.add(modifierExercicePopup);
-        popupMenu.add(supprimerExercicePopup);
+        popupMenuTree.add(ajouterChapitrePopup);
+        popupMenuTree.add(modifierChapitrePopup);
+        popupMenuTree.add(supprimerChapitrePopup);
+        popupMenuTree.add(new JSeparator());
+        popupMenuTree.add(ajouterExercicePopup);
+        popupMenuTree.add(modifierExercicePopup);
+        popupMenuTree.add(supprimerExercicePopup);
         
-        PopupMenuListener popupListener = new PopupMenuListener();
-        treeChapPresentiels.addMouseListener(popupListener);
-        treeChapDistants.addMouseListener(popupListener);
+        popupMenuExamens.add(afficherExamen);
+        
+        treeChapPresentiels.setComponentPopupMenu(popupMenuTree);
+        treeChapDistants.setComponentPopupMenu(popupMenuTree);
+        
+        examList.setComponentPopupMenu(popupMenuExamens);
+        
     }
     
     /**
@@ -1029,15 +1045,13 @@ public class Fenetre extends JFrame implements Observer {
         
     }
     
-    class PopupMenuListener extends MouseAdapter {
+    class AfficherListener implements ActionListener {
         
         @Override
-        public void mouseReleased(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON3) {
-                popupMenu.show(e.getComponent(), e.getX(), e.getY());
-            }
+        public void actionPerformed(ActionEvent e) {
+            lecteurFrame.openFichier(examList.getSelectedValue().getFichier());
+            lecteurFrame.setVisible(true);
         }
         
     }
-    
 }

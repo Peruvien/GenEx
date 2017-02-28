@@ -39,4 +39,8 @@ public class ExamenList implements Informations {
         return examen.toString();
     }
     
+    public String getFichier() {
+        return examen.getFichier();
+    }
+    
 }
