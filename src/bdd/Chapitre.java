@@ -111,14 +111,6 @@ public class Chapitre implements Comparable<Chapitre> {
         }
         return false;
     }
-
-//    @Override
-//    public int hashCode() {
-//        int hash = 3;
-//        hash = 53 * hash + this.idChapitre;
-//        return hash;
-//    }
-    
     
     @Override
     public int compareTo(Chapitre o) {

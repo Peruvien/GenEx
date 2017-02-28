@@ -52,8 +52,8 @@ public class Cours implements Comparable<Cours> {
         return numeroCours;
     }
 
-    public File getFichier() {
-        return fichierCours;
+    public String getFichier() {
+        return fichierCours.getAbsolutePath();
     }
     
     @Override

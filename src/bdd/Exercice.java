@@ -71,6 +71,10 @@ public class Exercice implements Comparable<Exercice> {
         return tags;
     }
     
+    public String getFichier() {
+        return fichier.getAbsolutePath();
+    }
+    
     @Override
     public String toString() {
         String res = "";

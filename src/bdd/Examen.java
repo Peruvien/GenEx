@@ -56,6 +56,9 @@ public class Examen implements Comparable<Examen> {
         return idExamen;
     }
     
+    public String getFichier() {
+        return fichier.getAbsolutePath();
+    }
     
     //MUTATEURS
     public void addExercice(Exercice exercice) {
