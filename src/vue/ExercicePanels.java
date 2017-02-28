@@ -236,7 +236,9 @@ public class ExercicePanels {
     }
     
     public void setFields() {
-        chapitrePanels.getNumeroBox().setSelectedIndex(0);
+        if (chapitrePanels.getNumeroBox().getItemCount() > 0) {
+            chapitrePanels.getNumeroBox().setSelectedIndex(0);
+        }
         if (numeroBox.getItemCount() > 0) {
             numeroBox.setSelectedIndex(0);
         }
