@@ -18,9 +18,9 @@ public class Exercice implements Comparable<Exercice> {
     //ATTRIBUTS
     private Chapitre chapitreExercice;
     private final int idExercice;
-    private final int numeroExercice;
+    private int numeroExercice;
     private final Time duree;
-    private final int points;
+    private int points;
     private final String libelle;
     private final File fichier;
     private String tags;
@@ -73,7 +73,8 @@ public class Exercice implements Comparable<Exercice> {
     
     @Override
     public String toString() {
-        String res = "Présentiel : " + chapitreExercice.isPresentiel() + "\n";
+        String res = "";
+        res += "Présentiel : " + chapitreExercice.isPresentiel() + "\n";
         res += "Numéro de chapitre : " + chapitreExercice.getNumeroChapitre() + "\n";
         res += "Numéro d'exercice : " + numeroExercice + "\n";
         res += "Temps : " + duree + "\n";
@@ -85,7 +86,10 @@ public class Exercice implements Comparable<Exercice> {
     
     
     //MUTATEURS
-    
+    //TODO Faire en arraylist pour ajouter ou supprimer des tags
+    public void setTags(String tags){
+        this.tags = tags;
+    }
     
     //COMPARABLE
     @Override

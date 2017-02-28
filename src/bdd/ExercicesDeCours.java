@@ -29,8 +29,12 @@ public class ExercicesDeCours {
     }
     
     //ACCESSEURS
-    
-    
+
+
+    public Date getDateUtilisation() {
+        return dateUtilisation;
+    }
+
     //MUTATEURS
     public void addExercice(Exercice exercice) {
         exercices.add(exercice);

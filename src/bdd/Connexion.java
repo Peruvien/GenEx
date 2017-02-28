@@ -35,7 +35,7 @@ public class Connexion {
     private void setDatabase(String db) {
         database = db;
     }
-    
+
     private void setConnection(String driver) {
         try {
             Class.forName(driver);
@@ -44,6 +44,7 @@ public class Connexion {
         }
         try {
             connexion = DriverManager.getConnection(database);
+            Sql.setConnexion(connexion);
         } catch (SQLException ex) {
             Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -154,5 +155,7 @@ public class Connexion {
             }
         }
     }
-    
+
+
+
 }

@@ -111,10 +111,10 @@ public class Database {
             tagsExercice = res3.getString("tagsExercice");
             idChapitre = res3.getInt("idChapitre");
             Chapitre chapitreExercice = chapitresMap.get(idChapitre);
-            Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,
-                    fichierExercicePath,tagsExercice,chapitreExercice);
-            exercicesMap.put(idExercice, exercice);
-            chapitresMap.get(idChapitre).addExercice(exercice);
+            //Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,
+            //        fichierExercicePath,tagsExercice,chapitreExercice);
+            //exercicesMap.put(idExercice, exercice);
+            //chapitresMap.get(idChapitre).addExercice(exercice);
         }
         
         int icCours, numeroCours;
@@ -205,7 +205,7 @@ public class Database {
                 "numeroChapitre INTEGER NOT NULL," +
                 "presentielChapitre BOOLEAN NOT NULL," +
                 "libelleChapitre TEXT," +
-                "CONSTRAINT uniqueChapitre UNIQUE (presentielChapitre, numeroChapitre)," +
+                "CONSTRAINT uniqueChapitre UNIQUE (presentielChapitre, numeroChapitre)" +
                 ");";
         connexion.executerUpdate(requete1);
         
@@ -216,8 +216,9 @@ public class Database {
                 "pointsExercice INTEGER," +
                 "libelleExercice TEXT," +
                 "fichierExercice TEXT," +
-                "idChapitre INTEGER," +
-                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
+                "tagsExercice TEXT," +
+                "idChapitre INTEGER" +
+                //"FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
                 ");";
         connexion.executerUpdate(requete2);
         
