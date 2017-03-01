@@ -32,7 +32,7 @@ public class Database {
     private final Map<Integer,ExercicesDeCours> exercicesDeCoursMap;
     
     //CONSTRUCTEUR
-    public Database(Connexion connexion, String path) {
+    private Database(Connexion connexion, String path) {
         this.connexion = connexion;
         chapitresMap = new TreeMap<>();
         exercicesMap = new TreeMap<>();
@@ -48,7 +48,34 @@ public class Database {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    private Database() {
+        this.connexion = null;
+        this.chapitresMap = null;
+        this.exercicesMap = null;
+        this.coursMap = null;
+        this.examensMap = null;
+        this.exercicesDExamenMap = null;
+        this.exercicesDeCoursMap = null;
+    }
+
+    private static Database INSTANCE = null;
+
+    public static void resetINSTANCE(){
+        INSTANCE = null;
+    }
+
+    public static Database getINSTANCE(){
+        return INSTANCE;
+    }
+
+    public static void setINSTANCE(Connexion c, String p){
+        if (INSTANCE != null){
+            System.err.println("You can't set a Database already setted, try reseting it first !");
+        }else{
+            INSTANCE = new Database(c, p);
+        }
+    }
     
     //ACCESSEURS
     public Map<Integer,Chapitre> getChapitres() {
@@ -191,6 +218,12 @@ public class Database {
         }
         */
         connexion.executerUpdate(request);
+    }
+
+    public void addExercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice,
+                            String libelleExercice, String fichierExercicePath, String tags){
+        this.exercicesMap.put(idExercice, new Exercice(idExercice, numeroExercice, dureeExercice, pointsExercice,
+                libelleExercice, fichierExercicePath, tags));
     }
 
 //    public void add(Cours td){

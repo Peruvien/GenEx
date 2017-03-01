@@ -53,7 +53,11 @@ public class Modele implements Observable {
     
     //MUTATEURS
     public void ouvrirBDD(String chemin) {
-        database = new Database(connexion,chemin);
+        //database = new Database(connexion,chemin);
+        if(Database.getINSTANCE() == null)
+            Database.resetINSTANCE();
+        Database.setINSTANCE(connexion, chemin);
+        database = Database.getINSTANCE();
     }
     
     public boolean creerBDD(String chemin) {
@@ -64,7 +68,12 @@ public class Modele implements Observable {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-        database = new Database(connexion,chemin);
+        if(Database.getINSTANCE() == null)
+            Database.resetINSTANCE();
+        Database.setINSTANCE(connexion, chemin);
+        database = Database.getINSTANCE();
+        //database = new Database(connexion,chemin);
+
         return true;
     }
     

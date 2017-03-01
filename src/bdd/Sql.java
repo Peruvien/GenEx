@@ -1,5 +1,6 @@
 package bdd;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -30,6 +31,8 @@ public abstract class Sql{
         }
         int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
         System.out.println(id);
+        Database.getINSTANCE().addExercice(id, numeroExercice, dureeExercice, pointsExercice, libelleExercice,
+                fichierExercicePath, tags);
 
         //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
     return true;
