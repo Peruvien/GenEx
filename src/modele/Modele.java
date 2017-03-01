@@ -54,7 +54,7 @@ public class Modele implements Observable {
     //MUTATEURS
     public void ouvrirBDD(String chemin) {
         //database = new Database(connexion,chemin);
-        if(Database.getINSTANCE() == null)
+        if(Database.getINSTANCE() != null)
             Database.resetINSTANCE();
         Database.setINSTANCE(connexion, chemin);
         database = Database.getINSTANCE();
@@ -68,7 +68,7 @@ public class Modele implements Observable {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-        if(Database.getINSTANCE() == null)
+        if(Database.getINSTANCE() != null)
             Database.resetINSTANCE();
         Database.setINSTANCE(connexion, chemin);
         database = Database.getINSTANCE();
