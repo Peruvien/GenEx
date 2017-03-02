@@ -853,10 +853,10 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addExercice(int idChapitre, Exercice exercice) {
+    public void addExercice(Exercice exercice) {
         ExerciceNode exerciceAdd = new ExerciceNode(exercice);
         boolean presentiel = exercice.getChapitre().isPresentiel();
-        
+        int idChapitre = exercice.getChapitre().getIdChapitre();
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(exerciceAdd);
         } else {
@@ -866,9 +866,20 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addCours(int idChapitre, Cours cours) {
+    public void clearRecherche() {
+        rechercheResPanel.clear();
+    }
+    
+    @Override
+    public void addExerciceRecherche(Exercice exercice) {
+        ExerciceNodeList exoNodeList = new ExerciceNodeList(exercice);
+        rechercheResPanel.addExerciceNode(exoNodeList);
+    }
+    
+    @Override
+    public void addCours(Cours cours) {
         boolean presentiel = cours.getChapitre().isPresentiel();
-        
+        int idChapitre = cours.getChapitre().getIdChapitre();
         CoursNode coursAdd = new CoursNode(cours, "Cours " + cours.getNumeroCours());
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(coursAdd);
@@ -881,17 +892,6 @@ public class Fenetre extends JFrame implements Observer {
     @Override
     public void addExamen(Examen examen) {
         examModelList.addElement(new ExamenList(examen));
-    }
-    
-    @Override
-    public void clearRecherche() {
-        rechercheResPanel.clear();
-    }
-    
-    @Override
-    public void addExerciceRecherche(Exercice exercice) {
-        ExerciceNodeList exoNodeList = new ExerciceNodeList(exercice);
-        rechercheResPanel.addExerciceNode(exoNodeList);
     }
     
     

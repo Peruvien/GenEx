@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="pdf4j-icepdf-viewerapp-asl-6.1.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/pdf4j-icepdf-viewerapp-asl-6.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
