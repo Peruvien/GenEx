@@ -29,7 +29,20 @@ public class Connexion {
     
     
     //ACCESSSEURS
+    public static boolean isAccess(String path) {
+        String lowerCase = path.toLowerCase();
+        return lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb");
+    }
     
+    public static boolean isSQLite(String path) {
+        String lowerCase = path.toLowerCase();
+        return lowerCase.endsWith(".db") || lowerCase.endsWith(".sdb")
+            || lowerCase.endsWith(".sqlite") || lowerCase.endsWith(".db3")
+            || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
+            || lowerCase.endsWith(".sl3") || lowerCase.endsWith(".db2")
+            || lowerCase.endsWith(".s2db") || lowerCase.endsWith(".sqlite2")
+            || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".kexi");
+    }
     
     //MUTATEURS
     private void setDatabase(String db) {

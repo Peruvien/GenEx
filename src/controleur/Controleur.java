@@ -5,6 +5,7 @@
  */
 package controleur;
 
+import bdd.Connexion;
 import java.util.Date;
 import modele.Modele;
 
@@ -26,13 +27,6 @@ public class Controleur {
     
     
     //ACCESSEURS
-    private boolean isSQLite(String lowerCase) {
-        return (lowerCase.endsWith(".sdb") || lowerCase.endsWith(".sqlite")
-             || lowerCase.endsWith(".db2") || lowerCase.endsWith(".s2db")
-             || lowerCase.endsWith(".sqlite2") || lowerCase.endsWith(".sl2")
-             || lowerCase.endsWith(".db3") || lowerCase.endsWith(".s3db")
-             || lowerCase.endsWith(".sqlite3") || lowerCase.endsWith(".sl3"));
-    }
     
     
     //MUTATEURS
@@ -41,18 +35,15 @@ public class Controleur {
     }
     
     public boolean  creerBDD(String chemin) {
-        String lowerCase = chemin.toLowerCase();
-        boolean isSQLite = isSQLite(lowerCase);
         boolean created = false;
-        if (isSQLite) {
+        if (Connexion.isSQLite(chemin)) {
             created = modele.creerBDD(chemin);
         }
         return created;
     }
     
     public void ouvrirBDD(String chemin) {
-        String lowerCase = chemin.toLowerCase();
-        if (isSQLite(lowerCase)) {
+        if (Connexion.isSQLite(chemin)) {
             modele.ouvrirBDD(chemin);
         }
     }
