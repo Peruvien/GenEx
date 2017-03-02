@@ -199,25 +199,8 @@ public class Database {
     //MUTATEURS
     
     //Toutes les fonctions ci dessous peuvent renvoyer un entier pour vérifier si l'ajout à bien été fait
-    public void addChapitre(int numero, boolean presentiel, String libelle, Set<Exercice> exercices, Set<Cours> tds){
-        //String requete = "INSERT INTO CHAPITRE (numeroChapitre, presentielChapitre, libelleChapitre) VALUES (?,?,?)";
-        String request = "INSERT INTO CHAPITRE (numeroChapitre, presentielChapitre, libelleChapitre) ( VALUES (";
-        request += "'" + numero + "', ";
-        if (presentiel)
-            request += "1";
-        else
-            request += "0";
-        request += ", ";
-        request += "'" + libelle + "', ";
-        request += ");";
-        /*
-        try {
-            connexion.executerPreparedRequete(requete,"(int)" + numero,"(bool)" + presentiel, libelle);
-        } catch (SQLException ex) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        */
-        connexion.executerUpdate(request);
+    public void addChapitre(int idChapitre, int numeroChapitre, boolean presentiel, String libelle){
+        this.chapitresMap.put(idChapitre, new Chapitre(idChapitre, numeroChapitre, presentiel, libelle));
     }
 
     public void addExercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice,
@@ -226,10 +209,15 @@ public class Database {
                 libelleExercice, fichierExercicePath, tags));
     }
 
-//    public void add(Cours td){
-//        String request = "INSERT INTO COURS (numeroCours, FichierCours, idChapitre) ( VALUES (";
-//    }
-//
+    public void addExamen(int idExamen, boolean isExamen, Date date, Time duree, String libelle, String fichier){
+       this.examensMap.put(idExamen, new Examen(idExamen, isExamen, date, duree, libelle, fichier));
+    }
+
+    public void addCours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
+        //this.chapitresMap.put(chapitre.getIdChapitre(), new Cours(idCours, numeroCours, libelleCours, fichierCoursPath));
+        this.chapitresMap.get(chapitre).addCours(new Cours(idCours, numeroCours, libelleCours, fichierCoursPath));
+    }
+
     //STATIC
     //Fonction a utiliser lors de la création d'une nouvelle Database
     public static void create(Connexion connexion) throws SQLException{

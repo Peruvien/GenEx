@@ -1,10 +1,7 @@
 package bdd;
 
 import javax.xml.crypto.Data;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Time;
+import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,15 +43,76 @@ public abstract class Sql{
     }
 
     public static boolean addChapitre(int numeroChapitre, boolean presentiel, String libelle){
-        return true;
+        try {
+            String insertExercice = "INSERT INTO CHAPITRE"
+                    + "(numeroChapitre, presentielChapitre, libelleChapitre) VALUES"
+                    + "(?,?,?)";
+            PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
+            preparedStatement.setInt(1, numeroChapitre);
+            preparedStatement.setBoolean(2, presentiel);
+            preparedStatement.setString(3, libelle);
+            if (preparedStatement.executeUpdate() == 0){
+                return false;
+            }
+            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            System.out.println(id);
+            Database.getINSTANCE().addChapitre(id, numeroChapitre, presentiel, libelle);
+
+            //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
-    public static boolean addExamen(){
-        return true;
+    public static boolean addExamen(boolean isExamen, Date date, Time duree, String libelle, String fichier){
+        try {
+            String insertExercice = "INSERT INTO EXAMEN"
+                    + "(boolExamen, dateExamen, dureeExamen, libelleExamen, fichierExamen) VALUES"
+                    + "(?,?,?)";
+            PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
+            preparedStatement.setBoolean(1, isExamen);
+            preparedStatement.setDate(2, date);
+            preparedStatement.setString(3, duree.toString());
+            preparedStatement.setString(4, libelle);
+            preparedStatement.setString(5, fichier);
+            if (preparedStatement.executeUpdate() == 0){
+                return false;
+            }
+            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            System.out.println(id);
+            Database.getINSTANCE().addExamen(id, isExamen, date, duree, libelle, fichier);
+
+            //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
-    public static boolean addCours(Cours cours){
-        return true;
-    }
+    public static boolean addCours(int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
+        try {
+            String insertExercice = "INSERT INTO COURS"
+                    + "(numeroCours, libelleCours, fichiercours, fichierExamen, idChapitre) VALUES"
+                    + "(?,?,?)";
+            PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
+            preparedStatement.setInt(1, numeroCours);
+            preparedStatement.setString(2, libelleCours);
+            preparedStatement.setString(3, fichierCoursPath);
+            if (preparedStatement.executeUpdate() == 0){
+                return false;
+            }
+            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            System.out.println(id);
+            Database.getINSTANCE().addCours(id, numeroCours, libelleCours, fichierCoursPath, chapitre);
+
+            //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;    }
 
 }
