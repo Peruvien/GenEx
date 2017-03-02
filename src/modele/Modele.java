@@ -170,27 +170,29 @@ public class Modele implements Observable {
         for (Entry<Integer,Chapitre> chapitreEntry : chapitresSet) {
             Chapitre chapitre = chapitreEntry.getValue();
             observer.addChapitre(chapitre);
+            int idChapitre = chapitre.getIdChapitre();
             
             Set<Cours> cours = chapitre.getCours();
             for (Cours cour : cours) {
-                notifyObserverCours(cour);
+                notifyObserverCours(idChapitre, cour);
             }
             
             Set<Exercice> exercices = chapitre.getExercices();
             for (Exercice exercice : exercices) {
-                notifyObserverExercice(exercice);
+                notifyObserverExercice(idChapitre, exercice);
             }
             
         }
     }
     
     @Override
-    public void notifyObserverExercice(Exercice exercice) {
-        observer.addExercice(exercice);
+    public void notifyObserverExercice(int idChapitre, Exercice exercice) {
+        observer.addExercice(idChapitre, exercice);
     }
     
-    public void notifyObserverCours(Cours cours) {
-        observer.addCours(cours);
+    @Override
+    public void notifyObserverCours(int idChapitre, Cours cours) {
+        observer.addCours(idChapitre, cours);
     }
     
     public void notifyObserverExamens() {
