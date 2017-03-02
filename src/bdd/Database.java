@@ -86,7 +86,8 @@ public class Database {
     public Map<Integer,Examen> getExamens() {
         return examensMap;
     }
-    
+
+    //TODO Refaire les selects pour virer les classes ExercicesDe...
     private void getDatabase() throws SQLException {
         int idChapitre, numeroChapitre;
         boolean presentiel;
