@@ -1,6 +1,5 @@
 package bdd;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -13,11 +12,11 @@ import java.util.logging.Logger;
  */
 public abstract class Sql{
     private static Connection dbConnexion;
-
+    
     protected static void setConnexion(Connection c){
         dbConnexion = c;
     }
-
+    
     public static boolean addExercice(int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags) {
         try {
             String insertExercice = "INSERT INTO EXERCICE"
@@ -44,17 +43,17 @@ public abstract class Sql{
         }
         return false;
     }
-
+    
     public static boolean addChapitre(int numeroChapitre, boolean presentiel, String libelle){
         return true;
     }
-
+    
     public static boolean addExamen(){
         return true;
     }
-
+    
     public static boolean addCours(Cours cours){
         return true;
     }
-
+    
 }
