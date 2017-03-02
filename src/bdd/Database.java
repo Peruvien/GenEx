@@ -5,6 +5,7 @@
  */
 package bdd;
 
+import javax.xml.crypto.Data;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -216,6 +217,22 @@ public class Database {
     public void addCours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
         //this.chapitresMap.put(chapitre.getIdChapitre(), new Cours(idCours, numeroCours, libelleCours, fichierCoursPath));
         this.chapitresMap.get(chapitre).addCours(new Cours(idCours, numeroCours, libelleCours, fichierCoursPath));
+    }
+
+    public void linkExeToCours(Exercice exercice, Cours cours){
+        Database.getINSTANCE().coursMap.get(cours).addExercice(exercice);
+    }
+
+    public void linkExeToChapitre(Exercice exercice, Chapitre chapitre){
+        Database.getINSTANCE().chapitresMap.get(chapitre).addExercice(exercice);
+    }
+
+    public void linkExeToExamen(Exercice exercice, Examen examen){
+        Database.getINSTANCE().examensMap.get(examen).addExercice(exercice);
+    }
+
+    public void linkCoursToChapitre(Cours cours, Chapitre chapitre){
+        Database.getINSTANCE().chapitresMap.get(chapitre).addCours(cours);
     }
 
     //STATIC
