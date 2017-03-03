@@ -63,7 +63,11 @@ public class Cours implements Comparable<Cours> {
     public int getModeCours() {
         return modeCours;
     }
-
+    
+    public Set<Exercice> getExercices() {
+        return exercices;
+    }
+    
     @Override
     public String toString() {
          String res = "Présentiel : " + chapitre.isPresentiel() + "\n";
