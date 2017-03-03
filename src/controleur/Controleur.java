@@ -5,7 +5,7 @@
  */
 package controleur;
 
-import bdd.Connexion;
+import modele.Connexion;
 import java.util.Date;
 import modele.Modele;
 

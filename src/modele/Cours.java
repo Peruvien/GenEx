@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bdd;
+package modele;
 
 import java.io.File;
 import java.util.Set;
@@ -19,6 +19,10 @@ public class Cours implements Comparable<Cours> {
     //ATTRIBUTS
     private final int idCours;
     private Chapitre chapitre;
+    //0 for both
+    //1 for presentiel
+    //2 for distance
+    private int modeCours;
     private final int numeroCours;
     private String libelleCours;
     private File fichierCours;
@@ -55,7 +59,11 @@ public class Cours implements Comparable<Cours> {
     public String getFichier() {
         return fichierCours.getAbsolutePath();
     }
-    
+
+    public int getModeCours() {
+        return modeCours;
+    }
+
     @Override
     public String toString() {
          String res = "Présentiel : " + chapitre.isPresentiel() + "\n";

@@ -5,8 +5,7 @@
  */
 package observer;
 
-import bdd.Exercice;
-import java.sql.Time;
+import modele.Exercice;
 
 /**
  *

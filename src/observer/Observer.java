@@ -5,10 +5,10 @@
  */
 package observer;
 
-import bdd.Chapitre;
-import bdd.Cours;
-import bdd.Examen;
-import bdd.Exercice;
+import modele.Chapitre;
+import modele.Cours;
+import modele.Examen;
+import modele.Exercice;
 
 /**
  *

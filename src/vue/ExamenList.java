@@ -5,7 +5,7 @@
  */
 package vue;
 
-import bdd.Examen;
+import modele.Examen;
 
 /**
  *

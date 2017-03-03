@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bdd;
+package modele;
 
 import java.io.File;
 import java.sql.Time;
@@ -16,7 +16,7 @@ import java.sql.Time;
 public class Exercice implements Comparable<Exercice> {
     
     //ATTRIBUTS
-    private Chapitre chapitreExercice;
+    private Cours coursExercice;
     private final int idExercice;
     private int numeroExercice;
     private final Time duree;
@@ -27,7 +27,7 @@ public class Exercice implements Comparable<Exercice> {
     
     
     //CONSTRUCTEUR
-    public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags) {
+    private Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags) {
         this.idExercice = idExercice;
         this.numeroExercice = numeroExercice;
         this.duree = dureeExercice;
@@ -36,15 +36,15 @@ public class Exercice implements Comparable<Exercice> {
         this.fichier = new File(fichierExercicePath);
         this.tags = tags;
     }
-    public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags, Chapitre chapitreExercice) {
+    public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags, Cours coursExercice) {
         this(idExercice, numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
-        this.chapitreExercice = chapitreExercice;
+        this.coursExercice = coursExercice;
     }
     
     
     //ACCESSEURS
-    public Chapitre getChapitre() {
-        return chapitreExercice;
+    public Cours getCoursExercice() {
+        return coursExercice;
     }
     
     public int getID() {
@@ -78,8 +78,14 @@ public class Exercice implements Comparable<Exercice> {
     @Override
     public String toString() {
         String res = "";
-        res += "Présentiel : " + chapitreExercice.isPresentiel() + "\n";
-        res += "Numéro de chapitre : " + chapitreExercice.getNumeroChapitre() + "\n";
+        //TODO Gerer les 3 cas
+        res += "Présentiel : ";
+                if (coursExercice.getModeCours() < 2){
+                    res += "oui" + "\n";
+                }else{
+                    res += "non" + "\n";
+                }
+        res += "Numéro de cours : " + coursExercice.getNumeroCours() + "\n";
         res += "Numéro d'exercice : " + numeroExercice + "\n";
         res += "Temps : " + duree + "\n";
         res += "Points : " + points + "\n";

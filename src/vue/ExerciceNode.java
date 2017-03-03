@@ -5,7 +5,7 @@
  */
 package vue;
 
-import bdd.Exercice;
+import modele.Exercice;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bdd;
+package modele;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -18,17 +18,20 @@ public class Chapitre implements Comparable<Chapitre> {
     //ATTRIBUTS
     private final int idChapitre;
     private int numeroChapitre;
-    private boolean presentiel;
+    //0 for both
+    //1 for presentiel
+    //2 for distance
+    private int modeChapitre;
     private String libelle;
     private Set<Exercice> exercices;
     private Set<Cours> cours;
     
     
     //CONSTRUCTEUR
-    public Chapitre(int idChapitre, int numeroChapitre, boolean presentiel, String libelle) {
+    public Chapitre(int idChapitre, int numeroChapitre, int modeChapitre, String libelle) {
         this.idChapitre = idChapitre;
         this.numeroChapitre = numeroChapitre;
-        this.presentiel = presentiel;
+        this.modeChapitre = modeChapitre;
         this.libelle = libelle;
         
         exercices = new TreeSet<>();
@@ -37,8 +40,8 @@ public class Chapitre implements Comparable<Chapitre> {
     
     
     //ACCESSEURS
-    public boolean isPresentiel() {
-        return presentiel;
+    public int isPresentiel() {
+        return modeChapitre;
     }
     
     public Set<Exercice> getExercices() {
@@ -63,8 +66,22 @@ public class Chapitre implements Comparable<Chapitre> {
     
     @Override
     public String toString() {
-        String res = "Présentiel : " + presentiel + "\n";
-        res += "Numéro de chapitre : " + numeroChapitre + "\n";
+        String res = "Présentiel : ";
+        switch (modeChapitre){
+            case 0:
+                res += "presentiel et distance ";
+                break;
+            case 1:
+                res += "presentiel ";
+                break;
+            case 2:
+                res += "distance ";
+                break;
+            default:
+                res += "erreur ";
+                break;
+        }
+        res += "\nNuméro de chapitre : " + numeroChapitre + "\n";
         res += "Libellé : " + libelle;
         return res;
     }
@@ -78,8 +95,8 @@ public class Chapitre implements Comparable<Chapitre> {
         this.numeroChapitre = numeroChapitre;
     }
     
-    public void setPresentiel(boolean presentiel) {
-        this.presentiel = presentiel;
+    public void setPresentiel(int modeChapitre) {
+        this.modeChapitre = modeChapitre;
     }
     
     public void setLibelle(String libelle) {
@@ -115,5 +132,9 @@ public class Chapitre implements Comparable<Chapitre> {
     @Override
     public int compareTo(Chapitre o) {
         return idChapitre - o.idChapitre;
+    }
+
+    public int getModeChapitre() {
+        return modeChapitre;
     }
 }

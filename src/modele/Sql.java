@@ -1,4 +1,4 @@
-package bdd;
+package modele;
 
 import java.sql.*;
 import java.util.logging.Level;
@@ -14,7 +14,7 @@ public abstract class Sql{
         dbConnexion = c;
     }
 
-    public static boolean addExercice(int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags) {
+    public static boolean addExercice(int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags, Cours cours) {
         try {
             String insertExercice = "INSERT INTO EXERCICE"
                     + "(numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercice) VALUES"
@@ -31,7 +31,7 @@ public abstract class Sql{
             int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
             System.out.println(id);
             Database.getINSTANCE().addExercice(id, numeroExercice, dureeExercice, pointsExercice, libelleExercice,
-                    fichierExercicePath, tags);
+                    fichierExercicePath, tags, cours);
             
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
             return true;
@@ -41,21 +41,21 @@ public abstract class Sql{
         return false;
     }
 
-    public static boolean addChapitre(int numeroChapitre, boolean presentiel, String libelle){
+    public static boolean addChapitre(int numeroChapitre, int modeChapitre, String libelle){
         try {
             String insertExercice = "INSERT INTO CHAPITRE"
                     + "(numeroChapitre, presentielChapitre, libelleChapitre) VALUES"
                     + "(?,?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
             preparedStatement.setInt(1, numeroChapitre);
-            preparedStatement.setBoolean(2, presentiel);
+            preparedStatement.setInt(2, modeChapitre);
             preparedStatement.setString(3, libelle);
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
             int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
             System.out.println(id);
-            Database.getINSTANCE().addChapitre(id, numeroChapitre, presentiel, libelle);
+            Database.getINSTANCE().addChapitre(id, numeroChapitre, modeChapitre, libelle);
 
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
             return true;
@@ -112,6 +112,7 @@ public abstract class Sql{
         } catch (SQLException ex) {
             Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;    }
+        return false;
+    }
 
 }

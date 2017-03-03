@@ -5,12 +5,6 @@
  */
 package modele;
 
-import bdd.Database;
-import bdd.Chapitre;
-import bdd.Connexion;
-import bdd.Cours;
-import bdd.Examen;
-import bdd.Exercice;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -104,9 +98,11 @@ public class Modele implements Observable {
                 String libelleExercice = res.getString("libelleExercice");
                 String fichierExercice = res.getString("fichierExercice");
                 String tagsExercice = res.getString("tagsExercice");
-                int idChapitre = res.getInt("idChapitre");
-                Chapitre chapitre = database.getChapitres().get(idChapitre);
-                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,chapitre);
+                //int idChapitre = res.getInt("idChapitre");
+                int idCours = res.getInt("idCours");
+                //Chapitre chapitre = database.getChapitres().get(idChapitre);
+                Cours cours = database.getCoursMap().get(idCours);
+                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,cours);
                 observer.addExerciceRecherche(exercice);
             }
         } catch (SQLException ex) {
@@ -144,9 +140,9 @@ public class Modele implements Observable {
                 String libelleExercice = res.getString("libelleExercice");
                 String fichierExercice = res.getString("fichierExercice");
                 String tagsExercice = res.getString("tagsExercice");
-                int idChapitre = res.getInt("idChapitre");
-                Chapitre chapitre = database.getChapitres().get(idChapitre);
-                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,chapitre);
+                int idCours = res.getInt("idCours");
+                Cours cours = database.getCoursMap().get(idCours);
+                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,cours);
                 observer.addExerciceRecherche(exercice);
             }
         } catch (SQLException ex) {
