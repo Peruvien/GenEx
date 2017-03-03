@@ -15,6 +15,6 @@ public interface Observable {
     
     public void setObserver(Observer obs);
     public void notifyObserverChapitres();
-    public void notifyObserverExercice(Exercice exercice);
+    public void notifyObserverExercice(boolean presentiel, int idChapitre, Exercice exercice);
     
 }

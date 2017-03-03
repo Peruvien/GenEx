@@ -67,6 +67,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import lu.tudor.santec.jtimechooser.JTimeChooser;
+import modele.Connexion;
 import observer.Observer;
 import preferences.Preferences;
 import preferences.PreferencesDialog;
@@ -552,7 +553,12 @@ public class Fenetre extends JFrame implements Observer {
                     created = controleur.creerBDD(fileBDD.getPath());
                 }
             } else {
-                created = controleur.creerBDD(fileBDD.getPath());
+                if (!Connexion.isSQLite(fileBDD.getPath())) {
+                    created = controleur.creerBDD(fileBDD.getPath() + ".sqlite3");
+                }
+                else {
+                    created = controleur.creerBDD(fileBDD.getPath());
+                }
             }
         }
         return created;
@@ -839,7 +845,7 @@ public class Fenetre extends JFrame implements Observer {
     public void addChapitre(Chapitre chapitre) {
         ChapitreNode chapitreAdd = new ChapitreNode(chapitre);
         //TODO GERER LES 3 CAS POSSIBLES
-        boolean presentiel = chapitre.getModeChapitre()<2 ? true : false;
+        boolean presentiel = chapitre.getModeChapitre() < 2 ? true : false;
         int idChapitre = chapitre.getIdChapitre();
         if (presentiel) {
             chapitresPresentiels.put(idChapitre, chapitreAdd);
@@ -854,14 +860,14 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addExercice(Exercice exercice) {
+    public void addExercice(boolean presentiel, int idChapitre, Exercice exercice) {
         ExerciceNode exerciceAdd = new ExerciceNode(exercice);
         //TODO Regarder si ce changement est interessant, gerer les 3 cas
-        boolean presentiel = (exercice.getChapitreExercice().getModeChapitre() < 2);
+        //boolean presentiel = (exercice.getChapitreExercice().getModeChapitre() < 2);
         //TODO Remplacer idChapitre par idCours
         //TODO EN FAIT NON
         //int idCours = exercice.getCoursExercice().getIDCours();
-        int idChapitre = exercice.getChapitreExercice().getIdChapitre();
+        //int idChapitre = exercice.getChapitreExercice().getIdChapitre();
         if (presentiel) {
             //chapitresPresentiels.get(idCours).add(exerciceAdd);
             chapitresPresentiels.get(idChapitre).add(exerciceAdd);
@@ -872,17 +878,6 @@ public class Fenetre extends JFrame implements Observer {
         //TODO Remplacer getChapitre par getCoursExercice()
         exercicePanels.addExercice(new Pair(presentiel, idChapitre), exercice);
         //exercicePanels.addExercice(new Pair(exercice.getChapitre().isPresentiel(),exercice.getChapitre().getNumeroChapitre()), exercice);
-    }
-    
-    @Override
-    public void clearRecherche() {
-        rechercheResPanel.clear();
-    }
-    
-    @Override
-    public void addExerciceRecherche(Exercice exercice) {
-        ExerciceNodeList exoNodeList = new ExerciceNodeList(exercice);
-        rechercheResPanel.addExerciceNode(exoNodeList);
     }
     
     @Override
@@ -902,6 +897,28 @@ public class Fenetre extends JFrame implements Observer {
     @Override
     public void addExamen(Examen examen) {
         examModelList.addElement(new ExamenList(examen));
+    }
+    
+    @Override
+    public void addExerciceOfCours(boolean presentiel, int idChapitre, Cours cours, Exercice exercice) {
+        ExerciceNode exerciceNode = new ExerciceNode(exercice);
+        if (presentiel) {
+            chapitresPresentiels.get(idChapitre).getLastLeaf().add(exerciceNode);
+        }
+        else {
+            chapitresDistants.get(idChapitre).getLastLeaf().add(exerciceNode);
+        }
+    }
+    
+    @Override
+    public void clearRecherche() {
+        rechercheResPanel.clear();
+    }
+    
+    @Override
+    public void addExerciceRecherche(Exercice exercice) {
+        ExerciceNodeList exoNodeList = new ExerciceNodeList(exercice);
+        rechercheResPanel.addExerciceNode(exoNodeList);
     }
     
     

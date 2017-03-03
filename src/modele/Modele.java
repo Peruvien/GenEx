@@ -168,23 +168,29 @@ public class Modele implements Observable {
         for (Entry<Integer,Chapitre> chapitreEntry : chapitresSet) {
             Chapitre chapitre = chapitreEntry.getValue();
             observer.addChapitre(chapitre);
+            boolean presentiel = (chapitre.getModeChapitre() < 2);
+            int idChapitre = chapitre.getIdChapitre();
             
             Set<Cours> cours = chapitre.getCours();
             for (Cours cour : cours) {
                 notifyObserverCours(cour);
+                Set<Exercice> exercicesCours = cour.getExercices();
+                for (Exercice exerciceCours : exercicesCours) {
+                    observer.addExerciceOfCours(presentiel, idChapitre, cour, exerciceCours);
+                }
             }
             
             Set<Exercice> exercices = chapitre.getExercices();
             for (Exercice exercice : exercices) {
-                notifyObserverExercice(exercice);
+                notifyObserverExercice(presentiel, idChapitre, exercice);
             }
             
         }
     }
     
     @Override
-    public void notifyObserverExercice(Exercice exercice) {
-        observer.addExercice(exercice);
+    public void notifyObserverExercice(boolean presentiel, int idChapitre, Exercice exercice) {
+        observer.addExercice(presentiel, idChapitre, exercice);
     }
     
     public void notifyObserverCours(Cours cours) {

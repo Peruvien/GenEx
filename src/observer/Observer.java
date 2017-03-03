@@ -17,10 +17,11 @@ import modele.Exercice;
 public interface Observer {
     
     public void addChapitre(Chapitre exercice);
-    public void addExercice(Exercice exercice);
-    public void clearRecherche();
-    public void addExerciceRecherche(Exercice exercice);
     public void addCours(Cours cours);
     public void addExamen(Examen examen);
+    public void addExercice(boolean presentiel, int idChapitre, Exercice exercice);
+    public void addExerciceOfCours(boolean presentiel, int idChapitre, Cours cours, Exercice exercice);
+    public void clearRecherche();
+    public void addExerciceRecherche(Exercice exercice);
     
 }
