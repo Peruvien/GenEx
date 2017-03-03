@@ -219,21 +219,29 @@ public class Database {
         this.chapitresMap.get(chapitre).addCours(new Cours(idCours, numeroCours, libelleCours, fichierCoursPath));
     }
 
-    public void linkExeToCours(Exercice exercice, Cours cours){
-
-        Database.getINSTANCE().coursMap.get(cours).addExercice(exercice);
+   public void linkExeToCours(Exercice exercice, Cours cours){
+        //TODO Vérifier si le cours est bien lié au chapitre auquel l'exercice est lié
+        Chapitre temp = Database.getINSTANCE().chapitresMap.get(exercice.getChapitreExercice().getIdChapitre());
+        //TODO Vérifier si le test fonctionne bien
+        if(temp.getCours().contains(cours)) {
+            Database.getINSTANCE().coursMap.get(cours.getIDCours()).addExercice(exercice);
+        }else{
+            System.err.println("Ce cours n'est pas dans le chapitre de cet exercice.");
+        }
     }
 
     public void linkExeToChapitre(Exercice exercice, Chapitre chapitre){
-        Database.getINSTANCE().chapitresMap.get(chapitre).addExercice(exercice);
+        //TODO Verifier si cette commande sera utile si un exercice sera forcément lié à un chapitre
+        Database.getINSTANCE().chapitresMap.get(chapitre.getIdChapitre()).addExercice(exercice);
     }
 
     public void linkExeToExamen(Exercice exercice, Examen examen){
-        Database.getINSTANCE().examensMap.get(examen).addExercice(exercice);
+        Database.getINSTANCE().examensMap.get(examen.getID()).addExercice(exercice);
     }
 
+    //TODO Verifier si cette commande sera utile si un cours sera forcément lié à un chapitre
     public void linkCoursToChapitre(Cours cours, Chapitre chapitre){
-        Database.getINSTANCE().chapitresMap.get(chapitre).addCours(cours);
+        Database.getINSTANCE().chapitresMap.get(chapitre.getIdChapitre()).addCours(cours);
     }
 
     //STATIC
