@@ -16,7 +16,7 @@ import java.sql.Time;
 public class Exercice implements Comparable<Exercice> {
     
     //ATTRIBUTS
-    private Cours coursExercice;
+    private Chapitre chapitreExercice;
     private final int idExercice;
     private int numeroExercice;
     private final Time duree;
@@ -27,7 +27,8 @@ public class Exercice implements Comparable<Exercice> {
     
     
     //CONSTRUCTEUR
-    private Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags) {
+    private Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice,
+                     String libelleExercice, String fichierExercicePath, String tags) {
         this.idExercice = idExercice;
         this.numeroExercice = numeroExercice;
         this.duree = dureeExercice;
@@ -36,17 +37,18 @@ public class Exercice implements Comparable<Exercice> {
         this.fichier = new File(fichierExercicePath);
         this.tags = tags;
     }
-    public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags, Cours coursExercice) {
+    public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice,
+                    String fichierExercicePath, String tags, Chapitre chapitre) {
         this(idExercice, numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
-        this.coursExercice = coursExercice;
+        this.chapitreExercice = chapitre;
     }
     
     
     //ACCESSEURS
-    public Cours getCoursExercice() {
-        return coursExercice;
+    public Chapitre getChapitreExercice() {
+        return chapitreExercice;
     }
-    
+
     public int getID() {
         return idExercice;
     }
@@ -80,12 +82,12 @@ public class Exercice implements Comparable<Exercice> {
         String res = "";
         //TODO Gerer les 3 cas
         res += "Présentiel : ";
-                if (coursExercice.getModeCours() < 2){
+                if (chapitreExercice.getModeChapitre() < 2){
                     res += "oui" + "\n";
                 }else{
                     res += "non" + "\n";
                 }
-        res += "Numéro de cours : " + coursExercice.getNumeroCours() + "\n";
+        res += "Numéro de cours : " + chapitreExercice.getModeChapitre() + "\n";
         res += "Numéro d'exercice : " + numeroExercice + "\n";
         res += "Temps : " + duree + "\n";
         res += "Points : " + points + "\n";

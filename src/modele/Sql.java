@@ -14,7 +14,7 @@ public abstract class Sql{
         dbConnexion = c;
     }
 
-    public static boolean addExercice(int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags, Cours cours) {
+    public static boolean addExercice(int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags, Chapitre chapitre) {
         try {
             String insertExercice = "INSERT INTO EXERCICE"
                     + "(numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercice) VALUES"
@@ -31,7 +31,7 @@ public abstract class Sql{
             int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
             System.out.println(id);
             Database.getINSTANCE().addExercice(id, numeroExercice, dureeExercice, pointsExercice, libelleExercice,
-                    fichierExercicePath, tags, cours);
+                    fichierExercicePath, tags, chapitre);
             
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
             return true;
@@ -44,7 +44,7 @@ public abstract class Sql{
     public static boolean addChapitre(int numeroChapitre, int modeChapitre, String libelle){
         try {
             String insertExercice = "INSERT INTO CHAPITRE"
-                    + "(numeroChapitre, presentielChapitre, libelleChapitre) VALUES"
+                    + "(numeroChapitre, modeChapitre, libelleChapitre) VALUES"
                     + "(?,?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
             preparedStatement.setInt(1, numeroChapitre);
@@ -69,7 +69,7 @@ public abstract class Sql{
         try {
             String insertExercice = "INSERT INTO EXAMEN"
                     + "(boolExamen, dateExamen, dureeExamen, libelleExamen, fichierExamen) VALUES"
-                    + "(?,?,?)";
+                    + "(?,?,?,?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
             preparedStatement.setBoolean(1, isExamen);
             preparedStatement.setDate(2, date);
@@ -91,15 +91,17 @@ public abstract class Sql{
         return false;
     }
 
-    public static boolean addCours(int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
+    public static boolean addCours(int numeroCours, int modeCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
         try {
             String insertExercice = "INSERT INTO COURS"
-                    + "(numeroCours, libelleCours, fichiercours, fichierExamen, idChapitre) VALUES"
-                    + "(?,?,?)";
+                    + "(numeroCours, modeCours, libelleCours, fichiercours, idChapitre) VALUES"
+                    + "(?,?,?,?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
             preparedStatement.setInt(1, numeroCours);
-            preparedStatement.setString(2, libelleCours);
-            preparedStatement.setString(3, fichierCoursPath);
+            preparedStatement.setInt(2, modeCours);
+            preparedStatement.setString(3, libelleCours);
+            preparedStatement.setString(4, fichierCoursPath);
+            preparedStatement.setInt(5, chapitre.getIdChapitre());
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }

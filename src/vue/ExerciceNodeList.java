@@ -28,10 +28,10 @@ public class ExerciceNodeList extends ExerciceNode {
     //ACCESSEURS
     @Override
     public String toString() {
-        //String res = "Chapitre n°" + exercice.getChapitre().getNumeroChapitre();
-        String res = "Cours n°" + exercice.getCoursExercice().getNumeroCours();
-        //res += exercice.getChapitre().isPresentiel() ? " présentiel " : " distant ";
-        res += exercice.getCoursExercice().getModeCours() < 2 ? " présentiel " : " distant ";
+        String res = "Chapitre n°" + exercice.getChapitreExercice().getNumeroChapitre();
+        //String res = "Cours n°" + exercice.getCoursExercice().getNumeroCours();
+        res += exercice.getChapitreExercice().getModeChapitre() < 2 ? " présentiel " : " distant ";
+        //res += exercice.getCoursExercice().getModeCours() < 2 ? " présentiel " : " distant ";
 
         res += " Exercice n°" + exercice.getNumero();
         return res;

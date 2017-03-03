@@ -98,11 +98,12 @@ public class Modele implements Observable {
                 String libelleExercice = res.getString("libelleExercice");
                 String fichierExercice = res.getString("fichierExercice");
                 String tagsExercice = res.getString("tagsExercice");
-                //int idChapitre = res.getInt("idChapitre");
-                int idCours = res.getInt("idCours");
-                //Chapitre chapitre = database.getChapitres().get(idChapitre);
-                Cours cours = database.getCoursMap().get(idCours);
-                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,cours);
+                int idChapitre = res.getInt("idChapitre");
+                //int idCours = res.getInt("idCours");
+                Chapitre chapitre = database.getChapitres().get(idChapitre);
+                //Cours cours = database.getCoursMap().get(idCours);
+
+                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
             }
         } catch (SQLException ex) {
@@ -140,9 +141,10 @@ public class Modele implements Observable {
                 String libelleExercice = res.getString("libelleExercice");
                 String fichierExercice = res.getString("fichierExercice");
                 String tagsExercice = res.getString("tagsExercice");
-                int idCours = res.getInt("idCours");
-                Cours cours = database.getCoursMap().get(idCours);
-                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,cours);
+                int idChapitre = res.getInt("idChapitre");
+                Chapitre chapitre = database.getChapitres().get(idChapitre);
+                Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,
+                        libelleExercice,fichierExercice,tagsExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
             }
         } catch (SQLException ex) {

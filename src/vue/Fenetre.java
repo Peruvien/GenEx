@@ -857,19 +857,20 @@ public class Fenetre extends JFrame implements Observer {
     public void addExercice(Exercice exercice) {
         ExerciceNode exerciceAdd = new ExerciceNode(exercice);
         //TODO Regarder si ce changement est interessant, gerer les 3 cas
-        boolean presentiel = (exercice.getCoursExercice().getModeCours() < 2);
+        boolean presentiel = (exercice.getChapitreExercice().getModeChapitre() < 2);
         //TODO Remplacer idChapitre par idCours
-        int idCours = exercice.getCoursExercice().getIDCours();
-        //int idChapitre = exercice.getChapitre().getIdChapitre();
+        //TODO EN FAIT NON
+        //int idCours = exercice.getCoursExercice().getIDCours();
+        int idChapitre = exercice.getChapitreExercice().getIdChapitre();
         if (presentiel) {
-            chapitresPresentiels.get(idCours).add(exerciceAdd);
-            //chapitresPresentiels.get(idChapitre).add(exerciceAdd);
+            //chapitresPresentiels.get(idCours).add(exerciceAdd);
+            chapitresPresentiels.get(idChapitre).add(exerciceAdd);
         } else {
-            chapitresDistants.get(idCours).add(exerciceAdd);
-            //chapitresDistants.get(idChapitre).add(exerciceAdd);
+            //chapitresDistants.get(idCours).add(exerciceAdd);
+            chapitresDistants.get(idChapitre).add(exerciceAdd);
         }
         //TODO Remplacer getChapitre par getCoursExercice()
-        exercicePanels.addExercice(new Pair(presentiel, idCours), exercice);
+        exercicePanels.addExercice(new Pair(presentiel, idChapitre), exercice);
         //exercicePanels.addExercice(new Pair(exercice.getChapitre().isPresentiel(),exercice.getChapitre().getNumeroChapitre()), exercice);
     }
     
