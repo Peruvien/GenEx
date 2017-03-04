@@ -199,7 +199,7 @@ public class Database {
         String requete6 = "SELECT * FROM EXERCICEPLANCHE GROUP BY idPlanche";
         ResultSet res6 = connexion.executerRequete(requete6);
         while (res6.next()) {
-            idPlanche = res6.getInt("idCours");
+            idPlanche = res6.getInt("idPlanche");
             idExercice = res6.getInt("idExercice");
             Planche planche = coursMap.get(idPlanche);
             Exercice exercice = exercicesMap.get(idExercice);
