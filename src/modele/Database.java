@@ -222,7 +222,7 @@ public class Database {
             Chapitre chapitre = chapitresMap.get(idChapitre);
             Exercice exercice = exercicesMap.get(idExercice);
 
-            exercice.isIllustration();
+            exercice.setIllustration(true);
         }
     }
     
