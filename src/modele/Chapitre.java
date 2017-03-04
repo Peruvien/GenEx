@@ -48,7 +48,7 @@ public class Chapitre implements Comparable<Chapitre> {
         return exercices;
     }
     
-    public Set<Planche> getCours() {
+    public Set<Planche> getPlanches() {
         return planches;
     }
     
