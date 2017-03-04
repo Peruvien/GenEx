@@ -93,24 +93,24 @@ public abstract class Sql{
         return false;
     }
 
-    public static boolean addPlanche(int numeroPlanche, int modePlanche, String libellePlanche, String fichierPlanchePath, Chapitre chapitre){
+    public static boolean addPlanche(int numeroPlanche, int modePlanche, Date datePlanche, String libellePlanche, String fichierPlanchePath, Chapitre chapitre){
         try {
             String insertExercice = "INSERT INTO PLANCHE"
-                    + "(numeroPlanche, modePlanche, libellePlanche, fichierPlanche, idChapitre) VALUES"
-                    + "(?,?,?,?,?)";
+                    + "(numeroPlanche, modePlanche, datePlanche, libellePlanche, fichierPlanche, idChapitre) VALUES"
+                    + "(?,?,?,?,?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
             preparedStatement.setInt(1, numeroPlanche);
             preparedStatement.setInt(2, modePlanche);
-            preparedStatement.setString(3, libellePlanche);
-            preparedStatement.setString(4, fichierPlanchePath);
-            preparedStatement.setInt(5, chapitre.getIdChapitre());
+            preparedStatement.setDate(3, datePlanche);
+            preparedStatement.setString(4, libellePlanche);
+            preparedStatement.setString(5, fichierPlanchePath);
+            preparedStatement.setInt(6, chapitre.getIdChapitre());
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
             int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
             System.out.println(id);
-            Database.getINSTANCE().addPlanche(id, numeroPlanche, libellePlanche, fichierPlanchePath, chapitre);
-
+            Database.getINSTANCE().addPlanche(id, numeroPlanche, modePlanche, datePlanche, libellePlanche, fichierPlanchePath, chapitre);
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
             return true;
         } catch (SQLException ex) {
@@ -128,11 +128,11 @@ public abstract class Sql{
 
         try {
             String insertExercicePlanche = "INSERT INTO EXERCICEPLANCHE"
-                    + "(idExercice, idPlanche) VALUES"
+                    + "(idPlanche, idExercice) VALUES"
                     + "(?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercicePlanche);
-            preparedStatement.setInt(1, planche.getIDPlanche());
-            preparedStatement.setInt(2, exercice.getIdExercice());
+            preparedStatement.setInt(1, exercice.getIdExercice());
+            preparedStatement.setInt(2, planche.getIDPlanche());
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
@@ -148,6 +148,54 @@ public abstract class Sql{
         return false;
     }
 
+    public static boolean addExerciceChapitre(Exercice exercice, Chapitre chapitre){
+        //Verifier si l'exercice et la planche appartiennent au même chapitre
+        if(chapitre != exercice.getChapitreExercice()){
+            return false;
+        }
+
+        try {
+            String insertExercicePlanche = "INSERT INTO EXERCICECHAPITRE"
+                    + "(idChapitre, idExercice) VALUES"
+                    + "(?,?)";
+            PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercicePlanche);
+            preparedStatement.setInt(1, chapitre.getIdChapitre());
+            preparedStatement.setInt(2, exercice.getIdExercice());
+            if (preparedStatement.executeUpdate() == 0){
+                return false;
+            }
+            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            System.out.println(id);
+            Database.getINSTANCE().linkExeToChapitre(exercice);
+
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public static boolean addExerciceExamen(Exercice exercice, Examen examen){
+        try {
+            String insertExercicePlanche = "INSERT INTO EXERCICEEXAMEN"
+                    + "(idExamen, idExercice) VALUES"
+                    + "(?,?)";
+            PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercicePlanche);
+            preparedStatement.setInt(1, examen.getID());
+            preparedStatement.setInt(2, exercice.getIdExercice());
+            if (preparedStatement.executeUpdate() == 0){
+                return false;
+            }
+            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            System.out.println(id);
+            Database.getINSTANCE().linkExeToExamen(exercice, examen);
+
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
     //STATIC
     //Fonction a utiliser lors de la création d'une nouvelle BDD sqlite
     public static void create(Connexion connexion) throws SQLException{
@@ -173,6 +221,17 @@ public abstract class Sql{
                 ");";
         connexion.executerUpdate(requete2);
 
+        String requete4 = "CREATE TABLE PLANCHE (" +
+                "idPlanche INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "numeroPlanche INTEGER," +
+                "modePlanche INTEGER," +
+                "datePlanche DATE," +
+                "libellePlanche TEXT," +
+                "fichierPlanche TEXT," +
+                "idChapitre INTEGER," +
+                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
+                ");";
+        connexion.executerUpdate(requete4);
 
         String requete3 = "CREATE TABLE EXERCICECHAPITRE (" +
                 "idChapitre INTEGER NOT NULL," +
@@ -184,20 +243,7 @@ public abstract class Sql{
         connexion.executerUpdate(requete3);
 
 
-        String requete4 = "CREATE TABLE PLANCHE (" +
-                "idPlanche INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "numeroPlanche INTEGER," +
-                "modePlanche INTEGER," +
-                "libellePlanche TEXT," +
-                "fichierPlanche TEXT," +
-                "idChapitre INTEGER," +
-                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
-                ");";
-        connexion.executerUpdate(requete4);
-
-
         String requete5 = "CREATE TABLE EXERCICEPLANCHE (" +
-                "dateUtilisation TEXT," +
                 "idPlanche INTEGER NOT NULL," +
                 "idExercice INTEGER NOT NULL," +
                 "PRIMARY KEY(idPlanche, idExercice)," +

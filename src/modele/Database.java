@@ -129,21 +129,24 @@ public class Database {
             examensMap.put(idExamen, examen);
         }
 
-        int numeroCours, idPlanche;
+        int numeroPlanche, idPlanche, modePlanche;
+        Date datePlanche;
         String libelleCours, fichierCoursPath;
 
         String requete4 = "SELECT * FROM PLANCHE";
         ResultSet res4 = connexion.executerRequete(requete4);
         while (res4.next()) {
             idPlanche = res4.getInt("idPlanche");
-            numeroCours = res4.getInt("numeroPlanche");
+            numeroPlanche = res4.getInt("numeroPlanche");
+            modePlanche = res4.getInt("modePlanche");
+            datePlanche = res4.getDate("datePlanche");
             libelleCours = res4.getString("libellePlanche");
             fichierCoursPath = res4.getString("fichierPlanche");
             idChapitre = res4.getInt("idChapitre");
             Chapitre chapitreCours = chapitresMap.get(idChapitre);
-            Planche planche = new Planche(idPlanche,numeroCours,libelleCours,fichierCoursPath,chapitreCours);
+            Planche planche = new Planche(idPlanche,numeroPlanche, modePlanche, datePlanche,libelleCours,fichierCoursPath);
             coursMap.put(idPlanche, planche);
-            chapitresMap.get(idChapitre).addCours(planche);
+            chapitresMap.get(idChapitre).addPlanche(planche);
         }
         
         int idExercice, numeroExercice, pointsExercice;
@@ -198,7 +201,6 @@ public class Database {
         while (res6.next()) {
             idPlanche = res6.getInt("idCours");
             idExercice = res6.getInt("idExercice");
-            Date dateUtilisation = Date.valueOf(res6.getString("dateUtilisation"));
             Planche planche = coursMap.get(idPlanche);
             Exercice exercice = exercicesMap.get(idExercice);
             /*
@@ -246,35 +248,39 @@ public class Database {
        this.examensMap.put(idExamen, new Examen(idExamen, isExamen, isPresentiel, date, duree, libelle, fichier));
     }
 
-    public void addPlanche(int idPlanche, int numeroPlanche, String libellePlanche, String fichierPlanchePath, Chapitre chapitre){
+    public void addPlanche(int idPlanche, int numeroPlanche, int modePlanche, Date datePlanche, String libellePlanche, String fichierPlanchePath, Chapitre chapitre){
         //this.chapitresMap.put(chapitre.getIdChapitre(), new Planche(idCours, numeroCours, libelleCours, fichierCoursPath));
-        this.chapitresMap.get(chapitre).addCours(new Planche(idPlanche, numeroPlanche, libellePlanche, fichierPlanchePath));
+        this.chapitresMap.get(chapitre).addPlanche(
+                new Planche(idPlanche, numeroPlanche, modePlanche, datePlanche, libellePlanche, fichierPlanchePath));
+    }
+
+    public void addPlanche(Planche planche, Chapitre chapitre){
+        this.chapitresMap.get(chapitre).addPlanche(planche);
     }
 
    public void linkExeToPlanche(Exercice exercice, Planche planche){
         //TODO Vérifier si le planche est bien lié au chapitre auquel l'exercice est lié
-        Chapitre temp = Database.getINSTANCE().chapitresMap.get(exercice.getChapitreExercice().getIdChapitre());
+        Chapitre chapitre = Database.getINSTANCE().chapitresMap.get(exercice.getChapitreExercice().getIdChapitre());
         //TODO Vérifier si le test fonctionne bien
-        if(temp.getCours().contains(planche)) {
-            Database.getINSTANCE().coursMap.get(planche.getIDPlanche()).addExercice(exercice);
+        if(chapitre.getCours().contains(planche)) {
+            Date date = planche.getDatePlanche();
+            exercice.setLatestUsage(date);
+            //On admet que planche est le bon objet, sinon utiliser la fonction en dessous
+            planche.addExercice(exercice);
+            //Database.getINSTANCE().coursMap.get(planche.getIDPlanche()).addExercice(exercice);
         }else{
             System.err.println("Ce planche n'est pas dans le chapitre de cet exercice.");
         }
     }
 
-    public void linkExeToChapitre(Exercice exercice, Chapitre chapitre){
-        //TODO Verifier si cette commande sera utile si un exercice sera forcément lié à un chapitre
-        Database.getINSTANCE().chapitresMap.get(chapitre.getIdChapitre()).addExercice(exercice);
+    public void linkExeToChapitre(Exercice exercice){
+        exercice.setIllustration(true);
     }
 
     public void linkExeToExamen(Exercice exercice, Examen examen){
         Database.getINSTANCE().examensMap.get(examen.getID()).addExercice(exercice);
     }
 
-    //TODO Verifier si cette commande sera utile si un planche sera forcément lié à un chapitre
-    public void linkCoursToChapitre(Planche planche, Chapitre chapitre){
-        Database.getINSTANCE().chapitresMap.get(chapitre.getIdChapitre()).addCours(planche);
-    }
 
 
 }

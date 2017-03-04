@@ -111,7 +111,7 @@ public class Chapitre implements Comparable<Chapitre> {
         this.planches = cours;
     }
     
-    public void addCours(Planche td){
+    public void addPlanche(Planche td){
         this.planches.add(td);
     }
     

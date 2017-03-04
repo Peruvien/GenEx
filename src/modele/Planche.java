@@ -6,6 +6,7 @@
 package modele;
 
 import java.io.File;
+import java.sql.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,6 +24,7 @@ public class Planche implements Comparable<Planche> {
     //1 for presentiel
     //2 for distance
     private int modePlanche;
+    private Date datePlanche;
     private final int numeroPlanche;
     private String libellePlanche;
     private File fichierPlanche;
@@ -30,16 +32,14 @@ public class Planche implements Comparable<Planche> {
     
     
     //CONSTRUCTEUR
-    public Planche(int idPlanche, int numeroPlanche, String libellePlanche, String fichierPlanchePath) {
+    public Planche(int idPlanche, int numeroPlanche, int modePlanche, Date datePlanche, String libellePlanche, String fichierPlanchePath) {
         this.idPlanche = idPlanche;
         this.numeroPlanche = numeroPlanche;
+        this.modePlanche = modePlanche;
+        this.datePlanche = datePlanche;
         this.libellePlanche = libellePlanche;
         this.fichierPlanche = new File(fichierPlanchePath);
         exercices = new TreeSet<>();
-    }
-    public Planche(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitreCours) {
-        this(idCours, numeroCours, libelleCours, fichierCoursPath);
-        this.chapitre = chapitreCours;
     }
     
     
@@ -67,7 +67,11 @@ public class Planche implements Comparable<Planche> {
     public Set<Exercice> getExercices() {
         return exercices;
     }
-    
+
+    public Date getDatePlanche() {
+        return datePlanche;
+    }
+
     @Override
     public String toString() {
          String res = "Présentiel : " + chapitre.isPresentiel() + "\n";

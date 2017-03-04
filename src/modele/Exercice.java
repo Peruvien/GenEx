@@ -7,6 +7,7 @@ package modele;
 
 import java.io.File;
 import java.sql.Time;
+import java.sql.Date;
 
 /**
  *
@@ -23,6 +24,7 @@ public class Exercice implements Comparable<Exercice> {
     private int usedPlanche;
     private int usedExamen;
     private int numeroExercice;
+    private Date latestUsage;
     private final Time duree;
     private int points;
     private final String libelle;
@@ -43,6 +45,9 @@ public class Exercice implements Comparable<Exercice> {
         this.tags = tags;
         isIllustration = false;
         usageNumber = 0;
+        usedPlanche = 0;
+        usedExamen = 0;
+        latestUsage = null;
 
     }
     public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice,
@@ -80,7 +85,19 @@ public class Exercice implements Comparable<Exercice> {
     public String getFichier() {
         return fichier.getAbsolutePath();
     }
-    
+
+    public int getUsedPlanche() {
+        return usedPlanche;
+    }
+
+    public int getUsedExamen() {
+        return usedExamen;
+    }
+
+    public Date getLatestUsage() {
+        return latestUsage;
+    }
+
     @Override
     public String toString() {
         String res = "";
@@ -117,6 +134,12 @@ public class Exercice implements Comparable<Exercice> {
     }
 
     //MUTATEURS
+    public void setLatestUsage(Date date){
+        //TODO Verifier le sens de la comparaison
+        if (this.latestUsage.compareTo(date) < 0){
+            this.latestUsage = date;
+        }
+    }
     //TODO Faire en arraylist pour ajouter ou supprimer des tags
     public void setTags(String tags){
         this.tags = tags;
