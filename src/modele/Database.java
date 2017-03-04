@@ -251,12 +251,12 @@ public class Database {
         this.chapitresMap.get(chapitre).addCours(new Planche(idPlanche, numeroPlanche, libellePlanche, fichierPlanchePath));
     }
 
-   public void linkExeToCours(Exercice exercice, Planche planche){
+   public void linkExeToPlanche(Exercice exercice, Planche planche){
         //TODO Vérifier si le planche est bien lié au chapitre auquel l'exercice est lié
         Chapitre temp = Database.getINSTANCE().chapitresMap.get(exercice.getChapitreExercice().getIdChapitre());
         //TODO Vérifier si le test fonctionne bien
         if(temp.getCours().contains(planche)) {
-            Database.getINSTANCE().coursMap.get(planche.getIDCours()).addExercice(exercice);
+            Database.getINSTANCE().coursMap.get(planche.getIDPlanche()).addExercice(exercice);
         }else{
             System.err.println("Ce planche n'est pas dans le chapitre de cet exercice.");
         }

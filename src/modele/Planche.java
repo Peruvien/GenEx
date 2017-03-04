@@ -17,24 +17,24 @@ import java.util.TreeSet;
 public class Planche implements Comparable<Planche> {
     
     //ATTRIBUTS
-    private final int idCours;
+    private final int idPlanche;
     private Chapitre chapitre;
     //0 for both
     //1 for presentiel
     //2 for distance
-    private int modeCours;
-    private final int numeroCours;
-    private String libelleCours;
-    private File fichierCours;
+    private int modePlanche;
+    private final int numeroPlanche;
+    private String libellePlanche;
+    private File fichierPlanche;
     private final Set<Exercice> exercices;
     
     
     //CONSTRUCTEUR
-    public Planche(int idCours, int numeroCours, String libelleCours, String fichierCoursPath) {
-        this.idCours = idCours;
-        this.numeroCours = numeroCours;
-        this.libelleCours = libelleCours;
-        this.fichierCours = new File(fichierCoursPath);
+    public Planche(int idPlanche, int numeroPlanche, String libellePlanche, String fichierPlanchePath) {
+        this.idPlanche = idPlanche;
+        this.numeroPlanche = numeroPlanche;
+        this.libellePlanche = libellePlanche;
+        this.fichierPlanche = new File(fichierPlanchePath);
         exercices = new TreeSet<>();
     }
     public Planche(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitreCours) {
@@ -44,8 +44,8 @@ public class Planche implements Comparable<Planche> {
     
     
     //ACCESSEURS
-    public int getIDCours() {
-        return idCours;
+    public int getIDPlanche() {
+        return idPlanche;
     }
 
     public Chapitre getChapitre() {
@@ -53,15 +53,15 @@ public class Planche implements Comparable<Planche> {
     }
 
     public int getNumeroCours() {
-        return numeroCours;
+        return numeroPlanche;
     }
 
     public String getFichier() {
-        return fichierCours.getAbsolutePath();
+        return fichierPlanche.getAbsolutePath();
     }
 
-    public int getModeCours() {
-        return modeCours;
+    public int getModePlanche() {
+        return modePlanche;
     }
     
     public Set<Exercice> getExercices() {
@@ -72,9 +72,9 @@ public class Planche implements Comparable<Planche> {
     public String toString() {
          String res = "Présentiel : " + chapitre.isPresentiel() + "\n";
         res += "Numéro de chapitre : " + chapitre.getNumeroChapitre() + "\n";
-        res += "Numéro de cours : " + numeroCours + "\n";
-        res += "Libellé : " + libelleCours + "\n";
-        res += "Fichier : " + fichierCours.getAbsolutePath();
+        res += "Numéro de cours : " + numeroPlanche + "\n";
+        res += "Libellé : " + libellePlanche + "\n";
+        res += "Fichier : " + fichierPlanche.getAbsolutePath();
         return res;
     }
     
@@ -89,7 +89,7 @@ public class Planche implements Comparable<Planche> {
     public int compareTo(Planche o) {
         int res = chapitre.compareTo(o.chapitre);
         if (res == 0) {
-            res = numeroCours - o.numeroCours;
+            res = numeroPlanche - o.numeroPlanche;
         }
         return res;
     }

@@ -1,5 +1,6 @@
 package modele;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -109,6 +110,35 @@ public abstract class Sql{
             int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
             System.out.println(id);
             Database.getINSTANCE().addPlanche(id, numeroPlanche, libellePlanche, fichierPlanchePath, chapitre);
+
+            //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public static boolean addExercicePlanche(Exercice exercice, Planche planche){
+        //Verifier si l'exercice et la planche appartiennent au même chapitre
+        Chapitre chapitre = exercice.getChapitreExercice();
+        if(!Database.getINSTANCE().getChapitres().get(chapitre.getIdChapitre()).getCours().contains(planche)){
+            return false;
+        }
+
+        try {
+            String insertExercicePlanche = "INSERT INTO EXERCICEPLANCHE"
+                    + "(idExercice, idPlanche) VALUES"
+                    + "(?,?)";
+            PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercicePlanche);
+            preparedStatement.setInt(1, planche.getIDPlanche());
+            preparedStatement.setInt(2, exercice.getIdExercice());
+            if (preparedStatement.executeUpdate() == 0){
+                return false;
+            }
+            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            System.out.println(id);
+            Database.getINSTANCE().linkExeToPlanche(exercice, planche);
 
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
             return true;

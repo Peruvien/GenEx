@@ -57,10 +57,6 @@ public class Exercice implements Comparable<Exercice> {
         return chapitreExercice;
     }
 
-    public int getID() {
-        return idExercice;
-    }
-    
     public int getNumero() {
         return numeroExercice;
     }
