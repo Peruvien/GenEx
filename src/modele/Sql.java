@@ -92,23 +92,23 @@ public abstract class Sql{
         return false;
     }
 
-    public static boolean addCours(int numeroCours, int modeCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
+    public static boolean addPlanche(int numeroPlanche, int modePlanche, String libellePlanche, String fichierPlanchePath, Chapitre chapitre){
         try {
-            String insertExercice = "INSERT INTO COURS"
-                    + "(numeroCours, modeCours, libelleCours, fichiercours, idChapitre) VALUES"
+            String insertExercice = "INSERT INTO PLANCHE"
+                    + "(numeroPlanche, modePlanche, libellePlanche, fichierPlanche, idChapitre) VALUES"
                     + "(?,?,?,?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
-            preparedStatement.setInt(1, numeroCours);
-            preparedStatement.setInt(2, modeCours);
-            preparedStatement.setString(3, libelleCours);
-            preparedStatement.setString(4, fichierCoursPath);
+            preparedStatement.setInt(1, numeroPlanche);
+            preparedStatement.setInt(2, modePlanche);
+            preparedStatement.setString(3, libellePlanche);
+            preparedStatement.setString(4, fichierPlanchePath);
             preparedStatement.setInt(5, chapitre.getIdChapitre());
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
             int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
             System.out.println(id);
-            Database.getINSTANCE().addCours(id, numeroCours, libelleCours, fichierCoursPath, chapitre);
+            Database.getINSTANCE().addPlanche(id, numeroPlanche, libellePlanche, fichierPlanchePath, chapitre);
 
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
             return true;

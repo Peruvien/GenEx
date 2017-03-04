@@ -236,17 +236,19 @@ public class Database {
 
     public void addExercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice,
                             String libelleExercice, String fichierExercicePath, String tags, Chapitre chapitre){
-        this.exercicesMap.put(idExercice, new Exercice(idExercice, numeroExercice, dureeExercice, pointsExercice,
-                libelleExercice, fichierExercicePath, tags, chapitre));
+        Exercice exercice = new Exercice(idExercice, numeroExercice, dureeExercice, pointsExercice,
+                libelleExercice, fichierExercicePath, tags, chapitre);
+        this.exercicesMap.put(idExercice, exercice);
+        this.usageExercice.put(exercice, new ArrayList<Examen>());
     }
 
     public void addExamen(int idExamen, boolean isExamen, boolean isPresentiel, Date date, Time duree, String libelle, String fichier){
        this.examensMap.put(idExamen, new Examen(idExamen, isExamen, isPresentiel, date, duree, libelle, fichier));
     }
 
-    public void addCours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
+    public void addPlanche(int idPlanche, int numeroPlanche, String libellePlanche, String fichierPlanchePath, Chapitre chapitre){
         //this.chapitresMap.put(chapitre.getIdChapitre(), new Planche(idCours, numeroCours, libelleCours, fichierCoursPath));
-        this.chapitresMap.get(chapitre).addCours(new Planche(idCours, numeroCours, libelleCours, fichierCoursPath));
+        this.chapitresMap.get(chapitre).addCours(new Planche(idPlanche, numeroPlanche, libellePlanche, fichierPlanchePath));
     }
 
    public void linkExeToCours(Exercice exercice, Planche planche){
