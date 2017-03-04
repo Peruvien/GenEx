@@ -6,6 +6,7 @@
 package observer;
 
 import modele.Exercice;
+import modele.Planche;
 
 /**
  *
@@ -15,6 +16,7 @@ public interface Observable {
     
     public void setObserver(Observer obs);
     public void notifyObserverChapitres();
+    public void notifyObserverCours(boolean presentiel, int idChapitre, Planche planche);
     public void notifyObserverExercice(boolean presentiel, int idChapitre, Exercice exercice);
     
 }

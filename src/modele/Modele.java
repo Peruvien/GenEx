@@ -171,12 +171,12 @@ public class Modele implements Observable {
             boolean presentiel = (chapitre.getModeChapitre() < 2);
             int idChapitre = chapitre.getIdChapitre();
             
-            Set<Planche> cours = chapitre.getCours();
-            for (Planche cour : cours) {
-                notifyObserverCours(cour);
-                Set<Exercice> exercicesCours = cour.getExercices();
+            Set<Planche> planches = chapitre.getPlanches();
+            for (Planche planche : planches) {
+                notifyObserverCours(presentiel, idChapitre, planche);
+                Set<Exercice> exercicesCours = planche.getExercices();
                 for (Exercice exerciceCours : exercicesCours) {
-                    observer.addExerciceOfCours(presentiel, idChapitre, cour, exerciceCours);
+                    observer.addExerciceOfCours(presentiel, idChapitre, planche, exerciceCours);
                 }
             }
             
@@ -193,8 +193,9 @@ public class Modele implements Observable {
         observer.addExercice(presentiel, idChapitre, exercice);
     }
     
-    public void notifyObserverCours(Planche planche) {
-        observer.addCours(planche);
+    @Override
+    public void notifyObserverCours(boolean presentiel, int idChapitre, Planche planche) {
+        observer.addPlanche(presentiel, idChapitre, planche);
     }
     
     public void notifyObserverExamens() {

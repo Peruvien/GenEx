@@ -878,10 +878,10 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addCours(Planche planche) {
+    public void addPlanche(boolean presentiel, int idChapitre, Planche planche) {
         //boolean presentiel = planche.getChapitre().isPresentiel();
-        boolean presentiel = planche.getChapitre().getModeChapitre() < 2;
-        int idChapitre = planche.getChapitre().getIdChapitre();
+        //boolean presentiel = planche.getChapitre().getModeChapitre() < 2;
+        //int idChapitre = planche.getChapitre().getIdChapitre();
         CoursNode coursAdd = new CoursNode(planche, "Planche " + planche.getNumeroCours());
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(coursAdd);
