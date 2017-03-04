@@ -139,11 +139,12 @@ public class Database {
             idPlanche = res4.getInt("idPlanche");
             numeroPlanche = res4.getInt("numeroPlanche");
             modePlanche = res4.getInt("modePlanche");
-            datePlanche = res4.getDate("datePlanche");
+            //datePlanche = res4.getDate("datePlanche");
+            datePlanche = Date.valueOf(res4.getString("datePlanche"));
             libelleCours = res4.getString("libellePlanche");
             fichierCoursPath = res4.getString("fichierPlanche");
             idChapitre = res4.getInt("idChapitre");
-            Chapitre chapitreCours = chapitresMap.get(idChapitre);
+            //Chapitre chapitrePlanche = chapitresMap.get(idChapitre);
             Planche planche = new Planche(idPlanche,numeroPlanche, modePlanche, datePlanche,libelleCours,fichierCoursPath);
             coursMap.put(idPlanche, planche);
             chapitresMap.get(idChapitre).addPlanche(planche);
@@ -262,7 +263,7 @@ public class Database {
         //TODO Vérifier si le planche est bien lié au chapitre auquel l'exercice est lié
         Chapitre chapitre = Database.getINSTANCE().chapitresMap.get(exercice.getChapitreExercice().getIdChapitre());
         //TODO Vérifier si le test fonctionne bien
-        if(chapitre.getCours().contains(planche)) {
+        if(chapitre.getPlanches().contains(planche)) {
             Date date = planche.getDatePlanche();
             exercice.setLatestUsage(date);
             //On admet que planche est le bon objet, sinon utiliser la fonction en dessous
