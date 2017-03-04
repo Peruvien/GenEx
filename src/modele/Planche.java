@@ -91,10 +91,6 @@ public class Planche implements Comparable<Planche> {
     //COMPARABLE
     @Override
     public int compareTo(Planche o) {
-        int res = chapitre.compareTo(o.chapitre);
-        if (res == 0) {
-            res = numeroPlanche - o.numeroPlanche;
-        }
-        return res;
+        return idPlanche - o.idPlanche;
     }
 }
