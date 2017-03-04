@@ -29,7 +29,7 @@ public class ExerciceNodeList extends ExerciceNode {
     @Override
     public String toString() {
         String res = "Chapitre n°" + exercice.getChapitreExercice().getNumeroChapitre();
-        //String res = "Cours n°" + exercice.getCoursExercice().getNumeroCours();
+        //String res = "PlancheTd n°" + exercice.getCoursExercice().getNumeroCours();
         res += exercice.getChapitreExercice().getModeChapitre() < 2 ? " présentiel " : " distant ";
         //res += exercice.getCoursExercice().getModeCours() < 2 ? " présentiel " : " distant ";
 

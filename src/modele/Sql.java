@@ -65,23 +65,24 @@ public abstract class Sql{
         return false;
     }
 
-    public static boolean addExamen(boolean isExamen, Date date, Time duree, String libelle, String fichier){
+    public static boolean addExamen(boolean isExamen, boolean isPresentiel, Date date, Time duree, String libelle, String fichier){
         try {
             String insertExercice = "INSERT INTO EXAMEN"
-                    + "(boolExamen, dateExamen, dureeExamen, libelleExamen, fichierExamen) VALUES"
-                    + "(?,?,?,?,?)";
+                    + "(boolExamen, boolPresentiel, dateExamen, dureeExamen, libelleExamen, fichierExamen) VALUES"
+                    + "(?,?,?,?,?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
             preparedStatement.setBoolean(1, isExamen);
-            preparedStatement.setDate(2, date);
-            preparedStatement.setString(3, duree.toString());
-            preparedStatement.setString(4, libelle);
-            preparedStatement.setString(5, fichier);
+            preparedStatement.setBoolean(2, isPresentiel);
+            preparedStatement.setDate(3, date);
+            preparedStatement.setString(4, duree.toString());
+            preparedStatement.setString(5, libelle);
+            preparedStatement.setString(6, fichier);
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
             int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
             System.out.println(id);
-            Database.getINSTANCE().addExamen(id, isExamen, date, duree, libelle, fichier);
+            Database.getINSTANCE().addExamen(id, isExamen, isPresentiel, date, duree, libelle, fichier);
 
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
             return true;
@@ -117,4 +118,90 @@ public abstract class Sql{
         return false;
     }
 
+    //STATIC
+    //Fonction a utiliser lors de la création d'une nouvelle BDD sqlite
+    public static void create(Connexion connexion) throws SQLException{
+        String requete1 = "CREATE TABLE CHAPITRE (" +
+                "idChapitre INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "numeroChapitre INTEGER NOT NULL," +
+                "modeChapitre INTEGER NOT NULL," +
+                "libelleChapitre TEXT," +
+                "CONSTRAINT uniqueChapitre UNIQUE (modeChapitre, numeroChapitre)" +
+                ");";
+        connexion.executerUpdate(requete1);
+
+        String requete2 = "CREATE TABLE EXERCICE (" +
+                "idExercice INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "numeroExercice INTEGER," +
+                "dureeExercice TEXT," +
+                "pointsExercice INTEGER," +
+                "libelleExercice TEXT," +
+                "fichierExercice TEXT," +
+                "tagsExercice TEXT," +
+                "idChapitre INTEGER," +
+                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
+                ");";
+        connexion.executerUpdate(requete2);
+
+
+        String requete3 = "CREATE TABLE EXERCICECHAPITRE (" +
+                "idChapitre INTEGER NOT NULL," +
+                "idExercice INTEGER NOT NULL," +
+                "PRIMARY KEY(idChapitre, idExercice)," +
+                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)," +
+                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
+                ");";
+        connexion.executerUpdate(requete3);
+
+
+        String requete4 = "CREATE TABLE COURS (" +
+                "idCours INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "numeroCours INTEGER," +
+                "modeCours INTEGER," +
+                "libelleCours TEXT," +
+                "fichierCours TEXT," +
+                "idChapitre INTEGER," +
+                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
+                ");";
+        connexion.executerUpdate(requete4);
+
+
+        String requete5 = "CREATE TABLE EXERCICECOURS (" +
+                "dateUtilisation TEXT," +
+                "idCours INTEGER NOT NULL," +
+                "idExercice INTEGER NOT NULL," +
+                "PRIMARY KEY(idCours, idExercice)," +
+                "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
+                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
+                ");";
+        connexion.executerUpdate(requete5);
+
+
+        //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type BOOLEAN
+        String requete6 = "CREATE TABLE EXAMEN (" +
+                "idExamen INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "boolExamen BOOLEAN NOT NULL," +
+                "boolPresentiel BOOLEAN NOT NULL," +
+                "dateExamen DATE," +
+                "dureeExamen TEXT," +
+                "libelleExamen TEXT," +
+                "fichierExamen TEXT" +
+                ");";
+        connexion.executerUpdate(requete6);
+
+
+        String requete7 = "CREATE TABLE EXERCICEEXAMEN (" +
+                "idExamen INTEGER NOT NULL," +
+                "idExercice INTEGER NOT NULL," +
+                "PRIMARY KEY(idExamen, idExercice)," +
+                "FOREIGN KEY(idExamen) REFERENCES EXAMEN(idExamen)," +
+                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
+                ");";
+        connexion.executerUpdate(requete7);
+
+        //Faire un petit message comme quoi la création de table s'est bien passée :)
+        System.out.println("La table a bien été créée !");
+        //Je pense que faire une fenetre info pour le dire peut être cool aussi ^^
+        //Techniquement, je peux te renvoyer un boolean pour dire si ça été créer ou non
+    }
 }

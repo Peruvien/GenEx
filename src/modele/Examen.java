@@ -20,7 +20,10 @@ public class Examen implements Comparable<Examen> {
     
     //ATTRIBUTS
     private final int idExamen;
+    //true : examen / false : devoir
     private final boolean isExamen;
+    //true : presentiel / false : a distance
+    private final boolean isPresentiel;
     private final Date date;
     private final Time duree;
     private final String libelle;
@@ -29,9 +32,10 @@ public class Examen implements Comparable<Examen> {
     
     
     //CONSTRUCTEUR
-    public Examen(int idExamen, boolean isExamen, Date date, Time duree, String libelle, String fichier) {
+    public Examen(int idExamen, boolean isExamen, boolean isPresentiel, Date date, Time duree, String libelle, String fichier) {
         this.idExamen = idExamen;
         this.isExamen = isExamen;
+        this.isPresentiel = isPresentiel;
         this.date = date;
         this.duree = duree;
         this.libelle = libelle;
@@ -43,10 +47,12 @@ public class Examen implements Comparable<Examen> {
     //ACCESSEURS
     @Override
     public String toString() {
-        String res = "Examen n°" + idExamen + "\n";
-        res += "Est un examen : " + isExamen + "\n";
-        res += "Date : " + date.toLocalDate().toString() + "\n";
-        res += "Durée : " + duree.toLocalTime().toString() + "\n";
+        String type = isExamen? "Examen " : "Devoir ";
+        String res = type + "n°" + idExamen + "\n";
+        res += isPresentiel? "Présentiel" : "A distance";
+        res += "\n";
+        res += "Date : " + date.toString() + "\n";
+        res += "Durée : " + duree.toString() + "\n";
         res += "Libellé : " + libelle + "\n";
         res += "Fichier : " + fichier.getAbsolutePath() + "\n";
         return res;

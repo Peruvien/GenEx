@@ -6,7 +6,7 @@
 package observer;
 
 import modele.Chapitre;
-import modele.Cours;
+import modele.PlancheTd;
 import modele.Examen;
 import modele.Exercice;
 
@@ -17,10 +17,10 @@ import modele.Exercice;
 public interface Observer {
     
     public void addChapitre(Chapitre exercice);
-    public void addCours(Cours cours);
+    public void addCours(PlancheTd plancheTd);
     public void addExamen(Examen examen);
     public void addExercice(boolean presentiel, int idChapitre, Exercice exercice);
-    public void addExerciceOfCours(boolean presentiel, int idChapitre, Cours cours, Exercice exercice);
+    public void addExerciceOfCours(boolean presentiel, int idChapitre, PlancheTd plancheTd, Exercice exercice);
     public void clearRecherche();
     public void addExerciceRecherche(Exercice exercice);
     

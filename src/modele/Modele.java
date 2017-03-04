@@ -57,7 +57,7 @@ public class Modele implements Observable {
     public boolean creerBDD(String chemin) {
         connexion.connecter(chemin);
         try {
-            Database.create(connexion);
+            Sql.create(connexion);
         } catch (SQLException ex) {
             Logger.getLogger(Modele.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -101,7 +101,7 @@ public class Modele implements Observable {
                 int idChapitre = res.getInt("idChapitre");
                 //int idCours = res.getInt("idCours");
                 Chapitre chapitre = database.getChapitres().get(idChapitre);
-                //Cours cours = database.getCoursMap().get(idCours);
+                //PlancheTd cours = database.getCoursMap().get(idCours);
 
                 Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
@@ -171,8 +171,8 @@ public class Modele implements Observable {
             boolean presentiel = (chapitre.getModeChapitre() < 2);
             int idChapitre = chapitre.getIdChapitre();
             
-            Set<Cours> cours = chapitre.getCours();
-            for (Cours cour : cours) {
+            Set<PlancheTd> cours = chapitre.getCours();
+            for (PlancheTd cour : cours) {
                 notifyObserverCours(cour);
                 Set<Exercice> exercicesCours = cour.getExercices();
                 for (Exercice exerciceCours : exercicesCours) {
@@ -193,8 +193,8 @@ public class Modele implements Observable {
         observer.addExercice(presentiel, idChapitre, exercice);
     }
     
-    public void notifyObserverCours(Cours cours) {
-        observer.addCours(cours);
+    public void notifyObserverCours(PlancheTd plancheTd) {
+        observer.addCours(plancheTd);
     }
     
     public void notifyObserverExamens() {

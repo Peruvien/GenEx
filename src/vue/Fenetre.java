@@ -5,10 +5,8 @@
  */
 package vue;
 
-import modele.Chapitre;
-import modele.Cours;
-import modele.Examen;
-import modele.Exercice;
+import modele.*;
+import modele.PlancheTd;
 import controleur.Controleur;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -67,7 +65,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import lu.tudor.santec.jtimechooser.JTimeChooser;
-import modele.Connexion;
 import observer.Observer;
 import preferences.Preferences;
 import preferences.PreferencesDialog;
@@ -281,7 +278,7 @@ public class Fenetre extends JFrame implements Observer {
         rechercheButton.addActionListener(listener);
         rechercheAvanceeButton = new JButton("Recherche avancée");
         rechercheAvanceeButton.addActionListener(listener);
-        creerCoursButton = new JButton("Créer Cours");
+        creerCoursButton = new JButton("Créer PlancheTd");
         creerExamButton = new JButton("Créer Examen");
     }
     /**
@@ -881,11 +878,11 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addCours(Cours cours) {
-        //boolean presentiel = cours.getChapitre().isPresentiel();
-        boolean presentiel = cours.getChapitre().getModeChapitre() < 2;
-        int idChapitre = cours.getChapitre().getIdChapitre();
-        CoursNode coursAdd = new CoursNode(cours, "Cours " + cours.getNumeroCours());
+    public void addCours(PlancheTd plancheTd) {
+        //boolean presentiel = plancheTd.getChapitre().isPresentiel();
+        boolean presentiel = plancheTd.getChapitre().getModeChapitre() < 2;
+        int idChapitre = plancheTd.getChapitre().getIdChapitre();
+        CoursNode coursAdd = new CoursNode(plancheTd, "PlancheTd " + plancheTd.getNumeroCours());
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(coursAdd);
         } else {
@@ -900,7 +897,7 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addExerciceOfCours(boolean presentiel, int idChapitre, Cours cours, Exercice exercice) {
+    public void addExerciceOfCours(boolean presentiel, int idChapitre, PlancheTd plancheTd, Exercice exercice) {
         ExerciceNode exerciceNode = new ExerciceNode(exercice);
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).getLastLeaf().add(exerciceNode);

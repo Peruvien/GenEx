@@ -14,7 +14,7 @@ import java.util.TreeSet;
  * @author Robin
  * @author Vincent
  */
-public class Cours implements Comparable<Cours> {
+public class PlancheTd implements Comparable<PlancheTd> {
     
     //ATTRIBUTS
     private final int idCours;
@@ -30,14 +30,14 @@ public class Cours implements Comparable<Cours> {
     
     
     //CONSTRUCTEUR
-    public Cours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath) {
+    public PlancheTd(int idCours, int numeroCours, String libelleCours, String fichierCoursPath) {
         this.idCours = idCours;
         this.numeroCours = numeroCours;
         this.libelleCours = libelleCours;
         this.fichierCours = new File(fichierCoursPath);
         exercices = new TreeSet<>();
     }
-    public Cours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitreCours) {
+    public PlancheTd(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitreCours) {
         this(idCours, numeroCours, libelleCours, fichierCoursPath);
         this.chapitre = chapitreCours;
     }
@@ -86,7 +86,7 @@ public class Cours implements Comparable<Cours> {
     
     //COMPARABLE
     @Override
-    public int compareTo(Cours o) {
+    public int compareTo(PlancheTd o) {
         int res = chapitre.compareTo(o.chapitre);
         if (res == 0) {
             res = numeroCours - o.numeroCours;

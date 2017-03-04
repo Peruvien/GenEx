@@ -25,7 +25,7 @@ public class Database {
     private final Connexion connexion;
     private final Map<Integer,Chapitre> chapitresMap;
     private final Map<Integer,Exercice> exercicesMap;
-    private final Map<Integer,Cours> coursMap;
+    private final Map<Integer, PlancheTd> coursMap;
     private final Map<Integer,Examen> examensMap;
     private final Map<Integer,ExercicesDExamen> exercicesDExamenMap;
     private final Map<Integer,ExercicesDeCours> exercicesDeCoursMap;
@@ -85,7 +85,7 @@ public class Database {
         return examensMap;
     }
 
-    public Map<Integer, Cours> getCoursMap(){ return coursMap;}
+    public Map<Integer, PlancheTd> getCoursMap(){ return coursMap;}
     //TODO Refaire les selects pour virer les classes ExercicesDe...
     private void getDatabase() throws SQLException {
         int idChapitre, numeroChapitre, modeChapitre;
@@ -104,7 +104,7 @@ public class Database {
         
         
         int idExamen;
-        boolean isExamen;
+        boolean isExamen, isPresentiel;
         Date dateExamen;
         Time dureeExamen;
         String libelleExamen, fichierExamenPath;
@@ -114,11 +114,12 @@ public class Database {
         while (res2.next()) {
             idExamen = res2.getInt("idExamen");
             isExamen = res2.getBoolean("boolExamen");
+            isPresentiel = res2.getBoolean("boolPresentiel");
             dateExamen = Date.valueOf(res2.getString("dateExamen"));
             dureeExamen = Time.valueOf(res2.getString("dureeExamen"));
             libelleExamen = res2.getString("libelleExamen");
             fichierExamenPath = res2.getString("fichierExamen");
-            Examen examen = new Examen(idExamen,isExamen,dateExamen,dureeExamen,libelleExamen,fichierExamenPath);
+            Examen examen = new Examen(idExamen,isExamen,isPresentiel,dateExamen,dureeExamen,libelleExamen,fichierExamenPath);
             examensMap.put(idExamen, examen);
         }
         
@@ -157,9 +158,9 @@ public class Database {
             fichierCoursPath = res4.getString("fichierCours");
             idChapitre = res4.getInt("idChapitre");
             Chapitre chapitreCours = chapitresMap.get(idChapitre);
-            Cours cours = new Cours(idCours,numeroCours,libelleCours,fichierCoursPath,chapitreCours);
-            coursMap.put(idCours, cours);
-            chapitresMap.get(idChapitre).addCours(cours);
+            PlancheTd plancheTd = new PlancheTd(idCours,numeroCours,libelleCours,fichierCoursPath,chapitreCours);
+            coursMap.put(idCours, plancheTd);
+            chapitresMap.get(idChapitre).addCours(plancheTd);
         }
         
         String requete5 = "SELECT * FROM EXERCICEEXAMEN GROUP BY idExamen";
@@ -184,15 +185,15 @@ public class Database {
             idCours = res6.getInt("idCours");
             idExercice = res6.getInt("idExercice");
             Date dateUtilisation = Date.valueOf(res6.getString("dateUtilisation"));
-            Cours cours = coursMap.get(idCours);
+            PlancheTd plancheTd = coursMap.get(idCours);
             Exercice exercice = exercicesMap.get(idExercice);
             ExercicesDeCours exercicesDeCours = exercicesDeCoursMap.get(idCours);
             if (exercicesDeCours == null) {
-                exercicesDeCours = new ExercicesDeCours(cours, dateUtilisation);
+                exercicesDeCours = new ExercicesDeCours(plancheTd, dateUtilisation);
                 exercicesDeCoursMap.put(idCours, exercicesDeCours);
             }
             exercicesDeCours.addExercice(exercice);
-            cours.addExercice(exercice);
+            plancheTd.addExercice(exercice);
         }
     }
     
@@ -210,23 +211,23 @@ public class Database {
                 libelleExercice, fichierExercicePath, tags, chapitre));
     }
 
-    public void addExamen(int idExamen, boolean isExamen, Date date, Time duree, String libelle, String fichier){
-       this.examensMap.put(idExamen, new Examen(idExamen, isExamen, date, duree, libelle, fichier));
+    public void addExamen(int idExamen, boolean isExamen, boolean isPresentiel, Date date, Time duree, String libelle, String fichier){
+       this.examensMap.put(idExamen, new Examen(idExamen, isExamen, isPresentiel, date, duree, libelle, fichier));
     }
 
     public void addCours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
-        //this.chapitresMap.put(chapitre.getIdChapitre(), new Cours(idCours, numeroCours, libelleCours, fichierCoursPath));
-        this.chapitresMap.get(chapitre).addCours(new Cours(idCours, numeroCours, libelleCours, fichierCoursPath));
+        //this.chapitresMap.put(chapitre.getIdChapitre(), new PlancheTd(idCours, numeroCours, libelleCours, fichierCoursPath));
+        this.chapitresMap.get(chapitre).addCours(new PlancheTd(idCours, numeroCours, libelleCours, fichierCoursPath));
     }
 
-   public void linkExeToCours(Exercice exercice, Cours cours){
-        //TODO Vérifier si le cours est bien lié au chapitre auquel l'exercice est lié
+   public void linkExeToCours(Exercice exercice, PlancheTd plancheTd){
+        //TODO Vérifier si le plancheTd est bien lié au chapitre auquel l'exercice est lié
         Chapitre temp = Database.getINSTANCE().chapitresMap.get(exercice.getChapitreExercice().getIdChapitre());
         //TODO Vérifier si le test fonctionne bien
-        if(temp.getCours().contains(cours)) {
-            Database.getINSTANCE().coursMap.get(cours.getIDCours()).addExercice(exercice);
+        if(temp.getCours().contains(plancheTd)) {
+            Database.getINSTANCE().coursMap.get(plancheTd.getIDCours()).addExercice(exercice);
         }else{
-            System.err.println("Ce cours n'est pas dans le chapitre de cet exercice.");
+            System.err.println("Ce plancheTd n'est pas dans le chapitre de cet exercice.");
         }
     }
 
@@ -239,97 +240,10 @@ public class Database {
         Database.getINSTANCE().examensMap.get(examen.getID()).addExercice(exercice);
     }
 
-    //TODO Verifier si cette commande sera utile si un cours sera forcément lié à un chapitre
-    public void linkCoursToChapitre(Cours cours, Chapitre chapitre){
-        Database.getINSTANCE().chapitresMap.get(chapitre.getIdChapitre()).addCours(cours);
+    //TODO Verifier si cette commande sera utile si un plancheTd sera forcément lié à un chapitre
+    public void linkCoursToChapitre(PlancheTd plancheTd, Chapitre chapitre){
+        Database.getINSTANCE().chapitresMap.get(chapitre.getIdChapitre()).addCours(plancheTd);
     }
 
-    //STATIC
-    //Fonction a utiliser lors de la création d'une nouvelle Database
-    public static void create(Connexion connexion) throws SQLException{
-        String requete1 = "CREATE TABLE CHAPITRE (" +
-                "idChapitre INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "numeroChapitre INTEGER NOT NULL," +
-                "modeChapitre INTEGER NOT NULL," +
-                "libelleChapitre TEXT," +
-                "CONSTRAINT uniqueChapitre UNIQUE (modeChapitre, numeroChapitre)" +
-                ");";
-        connexion.executerUpdate(requete1);
-        
-        String requete2 = "CREATE TABLE EXERCICE (" +
-                "idExercice INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "numeroExercice INTEGER," +
-                "dureeExercice TEXT," +
-                "pointsExercice INTEGER," +
-                "libelleExercice TEXT," +
-                "fichierExercice TEXT," +
-                "tagsExercice TEXT," +
-                "idChapitre INTEGER," +
-                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
-                ");";
-        connexion.executerUpdate(requete2);
-        
-        
-        String requete3 = "CREATE TABLE EXERCICECHAPITRE (" +
-                "idChapitre INTEGER NOT NULL," +
-                "idExercice INTEGER NOT NULL," +
-                "PRIMARY KEY(idChapitre, idExercice)," +
-                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)," +
-                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
-                ");";
-        connexion.executerUpdate(requete3);
-        
-        
-        String requete4 = "CREATE TABLE COURS (" +
-                "idCours INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "numeroCours INTEGER," +
-                "modeCours INTEGER," +
-                "libelleCours TEXT," +
-                "fichierCours TEXT," +
-                "idChapitre INTEGER," +
-                "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
-                ");";
-        connexion.executerUpdate(requete4);
-        
-        
-        String requete5 = "CREATE TABLE EXERCICECOURS (" +
-                "dateUtilisation TEXT," +
-                "idCours INTEGER NOT NULL," +
-                "idExercice INTEGER NOT NULL," +
-                "PRIMARY KEY(idCours, idExercice)," +
-                "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
-                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
-                ");";
-        connexion.executerUpdate(requete5);
-        
-        
-        //J'ai appeler le boolean "boolExamen", ça ne prend comme valeur 0 ou 1 et est de type BOOLEAN
-        String requete6 = "CREATE TABLE EXAMEN (" +
-                "idExamen INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "boolExamen BOOLEAN NOT NULL," +
-                "dateExamen DATE," +
-                "dureeExamen TEXT," +
-                "libelleExamen TEXT," +
-                "fichierExamen TEXT" +
-                ");";
-        connexion.executerUpdate(requete6);
-        
-        
-        String requete7 = "CREATE TABLE EXERCICEEXAMEN (" +
-                "idExamen INTEGER NOT NULL," +
-                "idExercice INTEGER NOT NULL," +
-                "PRIMARY KEY(idExamen, idExercice)," +
-                "FOREIGN KEY(idExamen) REFERENCES EXAMEN(idExamen)," +
-                "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
-                ");";
-        connexion.executerUpdate(requete7);
-        
-        //Faire un petit message comme quoi la création de table s'est bien passée :)
-        System.out.println("La table a bien été créée !");
-        //Je pense que faire une fenetre info pour le dire peut être cool aussi ^^
-        //Techniquement, je peux te renvoyer un boolean pour dire si ça été créer ou non
-    }
-    
-    
-    
+
 }

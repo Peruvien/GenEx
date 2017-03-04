@@ -5,7 +5,7 @@
  */
 package vue;
 
-import modele.Cours;
+import modele.PlancheTd;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -15,23 +15,23 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class CoursNode extends DefaultMutableTreeNode implements Informations {
     
     //ATTRIBUTS
-    private final Cours cours;
+    private final PlancheTd plancheTd;
     
     //CONSTRUCTEUR
-    public CoursNode(Cours cours, String titre) {
-        super(cours);
-        this.cours = cours;
+    public CoursNode(PlancheTd plancheTd, String titre) {
+        super(plancheTd);
+        this.plancheTd = plancheTd;
     }
     
     
     //ACCESSEURS
-    public Cours getCours() {
-        return cours;
+    public PlancheTd getPlancheTd() {
+        return plancheTd;
     }
     
     @Override
     public String toString() {
-        return "Cours n°" + cours.getNumeroCours();
+        return "PlancheTd n°" + plancheTd.getNumeroCours();
     }
     
     //MUTATEURS
@@ -40,7 +40,7 @@ public class CoursNode extends DefaultMutableTreeNode implements Informations {
     //NODEINFORMATIONS
     @Override
     public String getInformations() {
-        return cours.toString() + "\n";
+        return plancheTd.toString() + "\n";
     }
     
 }

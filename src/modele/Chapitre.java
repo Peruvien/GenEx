@@ -24,7 +24,7 @@ public class Chapitre implements Comparable<Chapitre> {
     private int modeChapitre;
     private String libelle;
     private Set<Exercice> exercices;
-    private Set<Cours> cours;
+    private Set<PlancheTd> cours;
     
     
     //CONSTRUCTEUR
@@ -48,7 +48,7 @@ public class Chapitre implements Comparable<Chapitre> {
         return exercices;
     }
     
-    public Set<Cours> getCours() {
+    public Set<PlancheTd> getCours() {
         return cours;
     }
     
@@ -107,11 +107,11 @@ public class Chapitre implements Comparable<Chapitre> {
         this.exercices = exercices;
     }
     
-    public void setCours(Set<Cours> cours) {
+    public void setCours(Set<PlancheTd> cours) {
         this.cours = cours;
     }
     
-    public void addCours(Cours td){
+    public void addCours(PlancheTd td){
         this.cours.add(td);
     }
     
