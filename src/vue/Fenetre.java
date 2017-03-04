@@ -6,7 +6,7 @@
 package vue;
 
 import modele.*;
-import modele.PlancheTd;
+import modele.Planche;
 import controleur.Controleur;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -278,7 +278,7 @@ public class Fenetre extends JFrame implements Observer {
         rechercheButton.addActionListener(listener);
         rechercheAvanceeButton = new JButton("Recherche avancée");
         rechercheAvanceeButton.addActionListener(listener);
-        creerCoursButton = new JButton("Créer PlancheTd");
+        creerCoursButton = new JButton("Créer Planche");
         creerExamButton = new JButton("Créer Examen");
     }
     /**
@@ -878,11 +878,11 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addCours(PlancheTd plancheTd) {
-        //boolean presentiel = plancheTd.getChapitre().isPresentiel();
-        boolean presentiel = plancheTd.getChapitre().getModeChapitre() < 2;
-        int idChapitre = plancheTd.getChapitre().getIdChapitre();
-        CoursNode coursAdd = new CoursNode(plancheTd, "PlancheTd " + plancheTd.getNumeroCours());
+    public void addCours(Planche planche) {
+        //boolean presentiel = planche.getChapitre().isPresentiel();
+        boolean presentiel = planche.getChapitre().getModeChapitre() < 2;
+        int idChapitre = planche.getChapitre().getIdChapitre();
+        CoursNode coursAdd = new CoursNode(planche, "Planche " + planche.getNumeroCours());
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(coursAdd);
         } else {
@@ -897,7 +897,7 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addExerciceOfCours(boolean presentiel, int idChapitre, PlancheTd plancheTd, Exercice exercice) {
+    public void addExerciceOfCours(boolean presentiel, int idChapitre, Planche planche, Exercice exercice) {
         ExerciceNode exerciceNode = new ExerciceNode(exercice);
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).getLastLeaf().add(exerciceNode);

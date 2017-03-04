@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -25,10 +26,11 @@ public class Database {
     private final Connexion connexion;
     private final Map<Integer,Chapitre> chapitresMap;
     private final Map<Integer,Exercice> exercicesMap;
-    private final Map<Integer, PlancheTd> coursMap;
+    private final Map<Integer, Planche> coursMap;
     private final Map<Integer,Examen> examensMap;
     private final Map<Integer,ExercicesDExamen> exercicesDExamenMap;
     private final Map<Integer,ExercicesDeCours> exercicesDeCoursMap;
+    private final Map<Exercice, ArrayList<Examen>> usageExercice;
     
     //CONSTRUCTEUR
     private Database(Connexion connexion, String path) {
@@ -39,7 +41,7 @@ public class Database {
         examensMap = new TreeMap<>();
         exercicesDExamenMap = new TreeMap<>();
         exercicesDeCoursMap = new TreeMap<>();
-        
+        usageExercice = new TreeMap<>();
         connexion.connecter(path);
         try {
             getDatabase();
@@ -56,6 +58,7 @@ public class Database {
         this.examensMap = null;
         this.exercicesDExamenMap = null;
         this.exercicesDeCoursMap = null;
+        this.usageExercice = null;
     }
 
     private static Database INSTANCE = null;
@@ -85,7 +88,10 @@ public class Database {
         return examensMap;
     }
 
-    public Map<Integer, PlancheTd> getCoursMap(){ return coursMap;}
+    public Map<Integer, Planche> getCoursMap(){ return coursMap;}
+
+    public Map<Exercice, ArrayList<Examen>> getUsageExercice(){return usageExercice;}
+
     //TODO Refaire les selects pour virer les classes ExercicesDe...
     private void getDatabase() throws SQLException {
         int idChapitre, numeroChapitre, modeChapitre;
@@ -122,8 +128,25 @@ public class Database {
             Examen examen = new Examen(idExamen,isExamen,isPresentiel,dateExamen,dureeExamen,libelleExamen,fichierExamenPath);
             examensMap.put(idExamen, examen);
         }
+
+        int numeroCours, idPlanche;
+        String libelleCours, fichierCoursPath;
+
+        String requete4 = "SELECT * FROM PLANCHE";
+        ResultSet res4 = connexion.executerRequete(requete4);
+        while (res4.next()) {
+            idPlanche = res4.getInt("idPlanche");
+            numeroCours = res4.getInt("numeroPlanche");
+            libelleCours = res4.getString("libellePlanche");
+            fichierCoursPath = res4.getString("fichierPlanche");
+            idChapitre = res4.getInt("idChapitre");
+            Chapitre chapitreCours = chapitresMap.get(idChapitre);
+            Planche planche = new Planche(idPlanche,numeroCours,libelleCours,fichierCoursPath,chapitreCours);
+            coursMap.put(idPlanche, planche);
+            chapitresMap.get(idChapitre).addCours(planche);
+        }
         
-        int idExercice, numeroExercice, pointsExercice, idCours;
+        int idExercice, numeroExercice, pointsExercice;
         Time dureeExercice;
         String libelleExercice, fichierExercicePath, tagsExercice;
         
@@ -143,25 +166,12 @@ public class Database {
             Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,
                     fichierExercicePath,tagsExercice,chapitreExercice);
             exercicesMap.put(idExercice, exercice);
-            chapitresMap.get(idChapitre).addExercice(exercice);
+
+            chapitreExercice.addExercice(exercice);
+            usageExercice.put(exercice, new ArrayList<Examen>());
         }
         
-        int numeroCours;
-        String libelleCours, fichierCoursPath;
-        
-        String requete4 = "SELECT * FROM COURS";
-        ResultSet res4 = connexion.executerRequete(requete4);
-        while (res4.next()) {
-            idCours = res4.getInt("idCours");
-            numeroCours = res4.getInt("numeroCours");
-            libelleCours = res4.getString("libelleCours");
-            fichierCoursPath = res4.getString("fichierCours");
-            idChapitre = res4.getInt("idChapitre");
-            Chapitre chapitreCours = chapitresMap.get(idChapitre);
-            PlancheTd plancheTd = new PlancheTd(idCours,numeroCours,libelleCours,fichierCoursPath,chapitreCours);
-            coursMap.put(idCours, plancheTd);
-            chapitresMap.get(idChapitre).addCours(plancheTd);
-        }
+
         
         String requete5 = "SELECT * FROM EXERCICEEXAMEN GROUP BY idExamen";
         ResultSet res5 = connexion.executerRequete(requete5);
@@ -170,6 +180,7 @@ public class Database {
             idExercice = res5.getInt("idExercice");
             Exercice exercice = exercicesMap.get(idExercice);
             Examen examen = examensMap.get(idExamen);
+            /*
             ExercicesDExamen exosDexamen = exercicesDExamenMap.get(idExamen);
             if (exosDexamen == null) {
                 exosDexamen = new ExercicesDExamen(examen);
@@ -177,23 +188,41 @@ public class Database {
             }
             examen.addExercice(exercice);
             exosDexamen.addExercice(exercice);
+            */
+            exercice.addUsageExamen();
+            usageExercice.get(exercice).add(examen);
         }
         
-        String requete6 = "SELECT * FROM EXERCICECOURS GROUP BY idCours";
+        String requete6 = "SELECT * FROM EXERCICEPLANCHE GROUP BY idPlanche";
         ResultSet res6 = connexion.executerRequete(requete6);
         while (res6.next()) {
-            idCours = res6.getInt("idCours");
+            idPlanche = res6.getInt("idCours");
             idExercice = res6.getInt("idExercice");
             Date dateUtilisation = Date.valueOf(res6.getString("dateUtilisation"));
-            PlancheTd plancheTd = coursMap.get(idCours);
+            Planche planche = coursMap.get(idPlanche);
             Exercice exercice = exercicesMap.get(idExercice);
-            ExercicesDeCours exercicesDeCours = exercicesDeCoursMap.get(idCours);
+            /*
+            ExercicesDeCours exercicesDeCours = exercicesDeCoursMap.get(idPlanche);
             if (exercicesDeCours == null) {
-                exercicesDeCours = new ExercicesDeCours(plancheTd, dateUtilisation);
-                exercicesDeCoursMap.put(idCours, exercicesDeCours);
+                exercicesDeCours = new ExercicesDeCours(planche, dateUtilisation);
+                exercicesDeCoursMap.put(idPlanche, exercicesDeCours);
             }
             exercicesDeCours.addExercice(exercice);
-            plancheTd.addExercice(exercice);
+            planche.addExercice(exercice);
+            */
+            planche.addExercice(exercice);
+            exercice.addUsagePlanche();
+        }
+
+        String requete7 = "SELECT * FROM EXERCICECHAPITRE GROUP BY idChapitre";
+        ResultSet res7 = connexion.executerRequete(requete7);
+        while (res7.next()){
+            idChapitre = res7.getInt("idChapitre");
+            idExercice = res7.getInt("idExercice");
+            Chapitre chapitre = chapitresMap.get(idChapitre);
+            Exercice exercice = exercicesMap.get(idExercice);
+
+            exercice.isIllustration();
         }
     }
     
@@ -216,18 +245,18 @@ public class Database {
     }
 
     public void addCours(int idCours, int numeroCours, String libelleCours, String fichierCoursPath, Chapitre chapitre){
-        //this.chapitresMap.put(chapitre.getIdChapitre(), new PlancheTd(idCours, numeroCours, libelleCours, fichierCoursPath));
-        this.chapitresMap.get(chapitre).addCours(new PlancheTd(idCours, numeroCours, libelleCours, fichierCoursPath));
+        //this.chapitresMap.put(chapitre.getIdChapitre(), new Planche(idCours, numeroCours, libelleCours, fichierCoursPath));
+        this.chapitresMap.get(chapitre).addCours(new Planche(idCours, numeroCours, libelleCours, fichierCoursPath));
     }
 
-   public void linkExeToCours(Exercice exercice, PlancheTd plancheTd){
-        //TODO Vérifier si le plancheTd est bien lié au chapitre auquel l'exercice est lié
+   public void linkExeToCours(Exercice exercice, Planche planche){
+        //TODO Vérifier si le planche est bien lié au chapitre auquel l'exercice est lié
         Chapitre temp = Database.getINSTANCE().chapitresMap.get(exercice.getChapitreExercice().getIdChapitre());
         //TODO Vérifier si le test fonctionne bien
-        if(temp.getCours().contains(plancheTd)) {
-            Database.getINSTANCE().coursMap.get(plancheTd.getIDCours()).addExercice(exercice);
+        if(temp.getCours().contains(planche)) {
+            Database.getINSTANCE().coursMap.get(planche.getIDCours()).addExercice(exercice);
         }else{
-            System.err.println("Ce plancheTd n'est pas dans le chapitre de cet exercice.");
+            System.err.println("Ce planche n'est pas dans le chapitre de cet exercice.");
         }
     }
 
@@ -240,9 +269,9 @@ public class Database {
         Database.getINSTANCE().examensMap.get(examen.getID()).addExercice(exercice);
     }
 
-    //TODO Verifier si cette commande sera utile si un plancheTd sera forcément lié à un chapitre
-    public void linkCoursToChapitre(PlancheTd plancheTd, Chapitre chapitre){
-        Database.getINSTANCE().chapitresMap.get(chapitre.getIdChapitre()).addCours(plancheTd);
+    //TODO Verifier si cette commande sera utile si un planche sera forcément lié à un chapitre
+    public void linkCoursToChapitre(Planche planche, Chapitre chapitre){
+        Database.getINSTANCE().chapitresMap.get(chapitre.getIdChapitre()).addCours(planche);
     }
 
 

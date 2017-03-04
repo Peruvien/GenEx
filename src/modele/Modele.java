@@ -101,7 +101,7 @@ public class Modele implements Observable {
                 int idChapitre = res.getInt("idChapitre");
                 //int idCours = res.getInt("idCours");
                 Chapitre chapitre = database.getChapitres().get(idChapitre);
-                //PlancheTd cours = database.getCoursMap().get(idCours);
+                //Planche cours = database.getCoursMap().get(idCours);
 
                 Exercice exercice = new Exercice(idExercice,numeroExercice,dureeExercice,pointsExercice,libelleExercice,fichierExercice,tagsExercice,chapitre);
                 observer.addExerciceRecherche(exercice);
@@ -112,7 +112,7 @@ public class Modele implements Observable {
     }
     
     public void rechercherExercice(Date dateDebut, Date dateFin, String ... tags) {
-        String requete = "SELECT * FROM EXERCICE INNER JOIN EXERCICECOURS ON EXERCICE.idExercice = EXERCICECOURS.idExercice "
+        String requete = "SELECT * FROM EXERCICE INNER JOIN EXERCICEPLANCHE ON EXERCICE.idExercice = EXERCICEPLANCHE.idExercice "
                        + "WHERE tagsExercice LIKE ";
         for (int i = 0; i < tags.length; i++) {
             if (i == 0) {
@@ -171,8 +171,8 @@ public class Modele implements Observable {
             boolean presentiel = (chapitre.getModeChapitre() < 2);
             int idChapitre = chapitre.getIdChapitre();
             
-            Set<PlancheTd> cours = chapitre.getCours();
-            for (PlancheTd cour : cours) {
+            Set<Planche> cours = chapitre.getCours();
+            for (Planche cour : cours) {
                 notifyObserverCours(cour);
                 Set<Exercice> exercicesCours = cour.getExercices();
                 for (Exercice exerciceCours : exercicesCours) {
@@ -193,8 +193,8 @@ public class Modele implements Observable {
         observer.addExercice(presentiel, idChapitre, exercice);
     }
     
-    public void notifyObserverCours(PlancheTd plancheTd) {
-        observer.addCours(plancheTd);
+    public void notifyObserverCours(Planche planche) {
+        observer.addCours(planche);
     }
     
     public void notifyObserverExamens() {

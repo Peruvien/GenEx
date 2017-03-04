@@ -18,14 +18,19 @@ public class Exercice implements Comparable<Exercice> {
     //ATTRIBUTS
     private Chapitre chapitreExercice;
     private final int idExercice;
+    private boolean isIllustration;
+    private int usageNumber;
+    private int usedPlanche;
+    private int usedExamen;
     private int numeroExercice;
     private final Time duree;
     private int points;
     private final String libelle;
     private final File fichier;
     private String tags;
-    
-    
+
+
+
     //CONSTRUCTEUR
     private Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice,
                      String libelleExercice, String fichierExercicePath, String tags) {
@@ -36,6 +41,9 @@ public class Exercice implements Comparable<Exercice> {
         this.libelle = libelleExercice;
         this.fichier = new File(fichierExercicePath);
         this.tags = tags;
+        isIllustration = false;
+        usageNumber = 0;
+
     }
     public Exercice(int idExercice, int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice,
                     String fichierExercicePath, String tags, Chapitre chapitre) {
@@ -95,12 +103,55 @@ public class Exercice implements Comparable<Exercice> {
         res += "Fichier : " + fichier.getAbsolutePath();
         return res;
     }
-    
-    
+
+    public int getIdExercice() {
+        return idExercice;
+    }
+
+    public boolean isIllustration() {
+        return isIllustration;
+    }
+
+    public int getUsageNumber() {
+        return usageNumber;
+    }
+
+    public int getNumeroExercice() {
+        return numeroExercice;
+    }
+
     //MUTATEURS
     //TODO Faire en arraylist pour ajouter ou supprimer des tags
     public void setTags(String tags){
         this.tags = tags;
+    }
+
+    public void setIllustration(boolean illustration) {
+        //A priori, ce test ne devrait jamais fonctionner, mais on n'est jamais trop prudent...
+        if(isIllustration == illustration){
+            return;
+        }
+        this.usageNumber += illustration? 1:-1;
+        isIllustration = illustration;
+    }
+
+    public void addUsageExamen(){
+        this.usedExamen--;
+        this.usageNumber--;
+    }
+
+    public void substractUsageExamen(){
+        this.usedExamen--;
+        this.usedExamen--;
+    }
+    public void addUsagePlanche(){
+        this.usedPlanche++;
+        this.usageNumber++;
+    }
+
+    public void substractUsagePlanche(){
+        this.usedPlanche--;
+        this.usageNumber--;
     }
     
     //COMPARABLE

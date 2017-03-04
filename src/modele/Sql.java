@@ -154,24 +154,24 @@ public abstract class Sql{
         connexion.executerUpdate(requete3);
 
 
-        String requete4 = "CREATE TABLE COURS (" +
-                "idCours INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "numeroCours INTEGER," +
-                "modeCours INTEGER," +
-                "libelleCours TEXT," +
-                "fichierCours TEXT," +
+        String requete4 = "CREATE TABLE PLANCHE (" +
+                "idPlanche INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "numeroPlanche INTEGER," +
+                "modePlanche INTEGER," +
+                "libellePlanche TEXT," +
+                "fichierPlanche TEXT," +
                 "idChapitre INTEGER," +
                 "FOREIGN KEY(idChapitre) REFERENCES CHAPITRE(idChapitre)" +
                 ");";
         connexion.executerUpdate(requete4);
 
 
-        String requete5 = "CREATE TABLE EXERCICECOURS (" +
+        String requete5 = "CREATE TABLE EXERCICEPLANCHE (" +
                 "dateUtilisation TEXT," +
-                "idCours INTEGER NOT NULL," +
+                "idPlanche INTEGER NOT NULL," +
                 "idExercice INTEGER NOT NULL," +
-                "PRIMARY KEY(idCours, idExercice)," +
-                "FOREIGN KEY(idCours) REFERENCES COURS(idCours)," +
+                "PRIMARY KEY(idPlanche, idExercice)," +
+                "FOREIGN KEY(idPlanche) REFERENCES COURS(idPlanche)," +
                 "FOREIGN KEY(idExercice) REFERENCES EXERCICE(idExercice)" +
                 ");";
         connexion.executerUpdate(requete5);
