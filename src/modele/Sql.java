@@ -122,7 +122,7 @@ public abstract class Sql{
     public static boolean addExercicePlanche(Exercice exercice, Planche planche){
         //Verifier si l'exercice et la planche appartiennent au même chapitre
         Chapitre chapitre = exercice.getChapitreExercice();
-        if(!Database.getINSTANCE().getChapitres().get(chapitre.getIdChapitre()).getCours().contains(planche)){
+        if(!Database.getINSTANCE().getChapitres().get(chapitre.getIdChapitre()).getPlanches().contains(planche)){
             return false;
         }
 
