@@ -153,6 +153,13 @@ public class ChapitrePanels extends JComponent {
         }
     }
     
+    public void clear() {
+        presentiels.clear();
+        distants.clear();
+        libelles.clear();
+        numeroBox.removeAllItems();
+    }
+    
     public void addItemPresentiel(int numero, String libelle) {
         presentiels.add(numero);
         if (presentielCheckBox.isSelected()) {

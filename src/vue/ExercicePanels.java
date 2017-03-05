@@ -212,6 +212,11 @@ public class ExercicePanels {
         numeroPanel.add(numeroBox);
     }
     
+    public void clear() {
+        exercices.clear();
+        numeroBox.removeAllItems();
+    }
+    
     public void addExercice(Pair chapitre, Exercice exercice) {
         Set<Exercice> exos = exercices.get(chapitre);
         if (exos == null) {
