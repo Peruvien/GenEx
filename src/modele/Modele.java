@@ -162,6 +162,8 @@ public class Modele implements Observable {
     
     @Override
     public void notifyObserverChapitres() {
+        observer.clear();
+        
         Map<Integer,Chapitre> chapitres = database.getChapitres();
         Set<Entry<Integer,Chapitre>> chapitresSet = chapitres.entrySet();
         

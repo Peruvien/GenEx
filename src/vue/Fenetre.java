@@ -639,10 +639,9 @@ public class Fenetre extends JFrame implements Observer {
         if (src.equals(ajouterChapitrePopup)) {
             setSelectedPresentiel(presentielCheckBox);
         }
-        libelleField.setText("");
         int res = JOptionPane.showOptionDialog(this, inputs, "Ajouter chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
-            controleur.ajouterChapitre(presentielCheckBox.isSelected(), (int)numeroSpinner.getValue(), libelleField.getText());
+            
         }
     }
     
@@ -668,7 +667,7 @@ public class Fenetre extends JFrame implements Observer {
             }
             int res = JOptionPane.showOptionDialog(this, inputs, "Modifier chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (res == JOptionPane.YES_OPTION) {
-                controleur.modifierChapitre(presentielCheckBox.isSelected(), (int) numeroBox.getSelectedItem(), libelleField.getText());
+                
             }
         } else {
             JOptionPane.showMessageDialog(this, "Il n'y a pas de chapitre à modifier");
@@ -696,7 +695,7 @@ public class Fenetre extends JFrame implements Observer {
             if (res == JOptionPane.YES_OPTION) {
                 int res2 = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr ?", "Demande de confirmation", JOptionPane.YES_NO_OPTION);
                 if (res2 == JOptionPane.YES_OPTION) {
-                    controleur.supprimerChapitre(presentielCheckBox.isSelected(), (int)numeroBox.getSelectedItem());
+                    
                 }
             }
         } else {
@@ -780,22 +779,26 @@ public class Fenetre extends JFrame implements Observer {
         
         exercicePanels.setAjout(false);
         exercicePanels.setFields();
-        if (src.equals(modifierExercicePopup)) {
-            setSelectedPresentiel(presentielCheckBox);
-            setSelectedChapitrePath(numeroChapitreBox);
-            TreePath path = getSelectedPath();
-            Object lastPathComponent = path.getLastPathComponent();
-            if (lastPathComponent instanceof ExerciceNode) {
-                ExerciceNode exerciceNode = (ExerciceNode)lastPathComponent;
-                numeroBox.setSelectedItem(exerciceNode.getExercice().getNumero());
+        if (numeroChapitreBox.getItemCount() > 0) {
+            if (src.equals(modifierExercicePopup)) {
+                setSelectedPresentiel(presentielCheckBox);
+                setSelectedChapitrePath(numeroChapitreBox);
+                TreePath path = getSelectedPath();
+                Object lastPathComponent = path.getLastPathComponent();
+                if (lastPathComponent instanceof ExerciceNode) {
+                    ExerciceNode exerciceNode = (ExerciceNode)lastPathComponent;
+                    numeroBox.setSelectedItem(exerciceNode.getExercice().getNumero());
+                }
+            }
+
+            String[] options = { "Modifier", "Annuler" };
+            int res = JOptionPane.showOptionDialog(this, inputs,"Modifier exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
+            if (res == JOptionPane.YES_OPTION) {
+                
             }
         }
-        
-        String[] options = { "Modifier", "Annuler" };
-        
-        int res = JOptionPane.showOptionDialog(this, inputs,"Modifier exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
-        if (res == JOptionPane.YES_OPTION) {
-            
+        else {
+            JOptionPane.showMessageDialog(this, "Il n'y a pas d'exercice à modifier");
         }
     }
     
@@ -818,26 +821,47 @@ public class Fenetre extends JFrame implements Observer {
         
         exercicePanels.setAjout(false);
         exercicePanels.setFields();
-        if (src.equals(supprimerExercicePopup)) {
-            setSelectedPresentiel(presentielCheckBox);
-            setSelectedChapitrePath(numeroChapitreBox);
-            TreePath path = getSelectedPath();
-            Object lastPathComponent = path.getLastPathComponent();
-            if (lastPathComponent instanceof ExerciceNode) {
-                ExerciceNode exerciceNode = (ExerciceNode)lastPathComponent;
-                numeroBox.setSelectedItem(exerciceNode.getExercice().getNumero());
+        
+        if (numeroChapitreBox.getItemCount() > 0) {
+            if (src.equals(supprimerExercicePopup)) {
+                setSelectedPresentiel(presentielCheckBox);
+                setSelectedChapitrePath(numeroChapitreBox);
+                TreePath path = getSelectedPath();
+                Object lastPathComponent = path.getLastPathComponent();
+                if (lastPathComponent instanceof ExerciceNode) {
+                    ExerciceNode exerciceNode = (ExerciceNode)lastPathComponent;
+                    numeroBox.setSelectedItem(exerciceNode.getExercice().getNumero());
+                }
+            }
+
+            String[] options = { "Supprimer", "Annuler" };
+
+            int res = JOptionPane.showOptionDialog(this, inputs,"Supprimer exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
+            if (res == JOptionPane.YES_OPTION) {
+
             }
         }
-        
-        String[] options = { "Supprimer", "Annuler" };
-        
-        int res = JOptionPane.showOptionDialog(this, inputs,"Supprimer exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
-        if (res == JOptionPane.YES_OPTION) {
-            
+        else {
+            JOptionPane.showMessageDialog(this, "Il n'y a pas d'exercice à supprimer");
         }
     }
     
     //OBSERVER
+    @Override
+    public void clear() {
+        chapitrePanels.clear();
+        exercicePanels.clear();
+        rootPresentiels.removeAllChildren();
+        treeChapPresentiels.removeAll();
+        treeChapPresentiels.collapseRow(0);
+        rootDistants.removeAllChildren();
+        treeChapDistants.removeAll();
+        treeChapDistants.collapseRow(0);
+        examModelList.removeAllElements();
+        exosModelList.removeAllElements();
+        this.repaint();
+    }
+    
     @Override
     public void addChapitre(Chapitre chapitre) {
         ChapitreNode chapitreAdd = new ChapitreNode(chapitre);
@@ -879,9 +903,6 @@ public class Fenetre extends JFrame implements Observer {
     
     @Override
     public void addPlanche(boolean presentiel, int idChapitre, Planche planche) {
-        //boolean presentiel = planche.getChapitre().isPresentiel();
-        //boolean presentiel = planche.getChapitre().getModeChapitre() < 2;
-        //int idChapitre = planche.getChapitre().getIdChapitre();
         CoursNode coursAdd = new CoursNode(planche, "Planche " + planche.getNumeroCours());
         if (presentiel) {
             chapitresPresentiels.get(idChapitre).add(coursAdd);

@@ -16,6 +16,7 @@ import modele.Exercice;
  */
 public interface Observer {
     
+    public void clear();
     public void addChapitre(Chapitre exercice);
     public void addPlanche(boolean presentiel, int idChapitre, Planche planche);
     public void addExamen(Examen examen);
