@@ -103,12 +103,13 @@ public class Exercice implements Comparable<Exercice> {
         String res = "";
         //TODO Gerer les 3 cas
         res += "Présentiel : ";
-                if (chapitreExercice.getModeChapitre() < 2){
-                    res += "oui" + "\n";
-                }else{
-                    res += "non" + "\n";
-                }
-        res += "Numéro de cours : " + chapitreExercice.getModeChapitre() + "\n";
+        if (chapitreExercice.getModeChapitre() < 2){
+            res += "oui";
+        }else{
+            res += "non";
+        }
+        res += "\n";   
+        //res += "Numéro de cours : " + chapitreExercice.getModeChapitre() + "\n";
         res += "Numéro d'exercice : " + numeroExercice + "\n";
         res += "Temps : " + duree + "\n";
         res += "Points : " + points + "\n";
@@ -141,6 +142,7 @@ public class Exercice implements Comparable<Exercice> {
         }
     }
     //TODO Faire en arraylist pour ajouter ou supprimer des tags
+    //les tags sont déjà une liste de mots
     public void setTags(String tags){
         this.tags = tags;
     }
@@ -155,8 +157,8 @@ public class Exercice implements Comparable<Exercice> {
     }
 
     public void addUsageExamen(){
-        this.usedExamen--;
-        this.usageNumber--;
+        this.usedExamen++;
+        this.usageNumber++;
     }
 
     public void substractUsageExamen(){
