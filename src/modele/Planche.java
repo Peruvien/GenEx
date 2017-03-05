@@ -74,9 +74,9 @@ public class Planche implements Comparable<Planche> {
 
     @Override
     public String toString() {
-         String res = "Présentiel : " + chapitre.isPresentiel() + "\n";
-        res += "Numéro de chapitre : " + chapitre.getNumeroChapitre() + "\n";
-        res += "Numéro de cours : " + numeroPlanche + "\n";
+        //String res = "Présentiel : " + chapitre.isPresentiel() + "\n";
+        //res += "Numéro de chapitre : " + chapitre.getNumeroChapitre() + "\n";
+        String res = "Numéro de cours : " + numeroPlanche + "\n";
         res += "Libellé : " + libellePlanche + "\n";
         res += "Fichier : " + fichierPlanche.getAbsolutePath();
         return res;
