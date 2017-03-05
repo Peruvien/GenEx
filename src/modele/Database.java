@@ -28,8 +28,8 @@ public class Database {
     private final Map<Integer,Exercice> exercicesMap;
     private final Map<Integer, Planche> coursMap;
     private final Map<Integer,Examen> examensMap;
-    private final Map<Integer,ExercicesDExamen> exercicesDExamenMap;
-    private final Map<Integer,ExercicesDeCours> exercicesDeCoursMap;
+    //private final Map<Integer,ExercicesDExamen> exercicesDExamenMap;
+    //private final Map<Integer,ExercicesDeCours> exercicesDeCoursMap;
     private final Map<Exercice, ArrayList<Examen>> usageExercice;
     
     //CONSTRUCTEUR
@@ -39,8 +39,8 @@ public class Database {
         exercicesMap = new TreeMap<>();
         coursMap = new TreeMap<>();
         examensMap = new TreeMap<>();
-        exercicesDExamenMap = new TreeMap<>();
-        exercicesDeCoursMap = new TreeMap<>();
+        //exercicesDExamenMap = new TreeMap<>();
+        //exercicesDeCoursMap = new TreeMap<>();
         usageExercice = new TreeMap<>();
         connexion.connecter(path);
         try {
@@ -56,8 +56,8 @@ public class Database {
         this.exercicesMap = null;
         this.coursMap = null;
         this.examensMap = null;
-        this.exercicesDExamenMap = null;
-        this.exercicesDeCoursMap = null;
+        //this.exercicesDExamenMap = null;
+        //this.exercicesDeCoursMap = null;
         this.usageExercice = null;
     }
 
