@@ -6,7 +6,6 @@
 package controleur;
 
 import modele.Connexion;
-import java.util.Date;
 import modele.Modele;
 
 /**
@@ -48,15 +47,27 @@ public class Controleur {
         }
     }
     
-    public void ajouterChapitre(boolean presentiel, int numero, String libelle) {
+    public void ajouterChapitre(int modeChapitre, int numero, String libelle) {
         
     }
     
-    public void modifierChapitre(boolean presentiel, int numero, String libelle) {
+    public void modifierChapitre(int modeChapitre, int numero, String libelle) {
         
     }
     
-    public void supprimerChapitre(boolean presentiel, int numero) {
+    public void supprimerChapitre(int modeChapitre, int numero) {
+        
+    }
+    
+    public void ajouterExercice(int modeChapitre, int numeroChapitre, int numeroExercice, String dureeExercice, int pointExercice, String libelleExercice, String fichierExercice, String tagsExercice) {
+        
+    }
+    
+    public void modifierExercice(int modeChapitre, int numeroChapitre, int numeroExercice, String dureeExercice, int pointExercice, String libelleExercice, String fichierExercice, String tagsExercice) {
+        
+    }
+    
+    public void supprimerExercice(int modeChapitre, int numeroChapitre, int numeroExercice) {
         
     }
     
@@ -65,7 +76,7 @@ public class Controleur {
         modele.rechercherExercice(tagsTab);
     }
     
-    public void rechercherExercice(String tags, Date dateDebut, Date dateFin) {
+    public void rechercherExercice(String tags, java.util.Date dateDebut, java.util.Date dateFin) {
         String[] tagsTab = tags.split(",");
         java.sql.Date dateDebutSQL = dateDebut != null ? new java.sql.Date(dateDebut.getTime()) : null;
         java.sql.Date dateFinSQL = dateFin != null ? new java.sql.Date(dateFin.getTime()) : null;
