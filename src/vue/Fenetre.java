@@ -287,7 +287,6 @@ public class Fenetre extends JFrame implements Observer {
     private void initTextFields() {
         infosTextPane = new JTextPane();
         infosTextPane.setEditable(false);
-        infosTextPane.setText("Informations sur l'exerice ou chapitre");
         rechercheField = new JTextField();
         rechercheField.setColumns(15);
     }
@@ -406,7 +405,7 @@ public class Fenetre extends JFrame implements Observer {
     private void setComponents() {
         splitPaneCentral.add(ongletsTabbedPane);
         splitPaneCentral.add(infosExoPanel);
-        splitPaneCentral.setDividerLocation(410);
+        splitPaneCentral.setDividerLocation(350);
         
         ongletsTabbedPane.addTab("Chapitres présentiels", treeChapPresentiels);
         ongletsTabbedPane.addTab("Chapitre distants", treeChapDistants);
@@ -866,7 +865,7 @@ public class Fenetre extends JFrame implements Observer {
     public void addChapitre(Chapitre chapitre) {
         ChapitreNode chapitreAdd = new ChapitreNode(chapitre);
         //TODO GERER LES 3 CAS POSSIBLES
-        boolean presentiel = chapitre.getModeChapitre() < 2 ? true : false;
+        boolean presentiel = chapitre.getModeChapitre() < 2;
         int idChapitre = chapitre.getIdChapitre();
         if (presentiel) {
             chapitresPresentiels.put(idChapitre, chapitreAdd);
