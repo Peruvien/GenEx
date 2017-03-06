@@ -56,6 +56,7 @@ public class Controleur {
     }
     
     public void ajouterChapitre(int modeChapitre, int numero, String libelle) {
+        System.out.println(this.toString());
         Sql.addChapitre(numero, modeChapitre, libelle);
         this.actualiserAffichage();
     }

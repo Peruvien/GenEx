@@ -29,7 +29,7 @@ public abstract class Sql{
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
-            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            int id = preparedStatement.getGeneratedKeys().getInt(1);
             System.out.println(id);
             Database.getINSTANCE().addExercice(id, numeroExercice, dureeExercice, pointsExercice, libelleExercice,
                     fichierExercicePath, tags, chapitre);
@@ -57,10 +57,12 @@ public abstract class Sql{
             preparedStatement.setInt(1, numeroChapitre);
             preparedStatement.setInt(2, modeChapitre);
             preparedStatement.setString(3, libelle);
+            //CATCH FAIL UNIQUE CONSTRAINT
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
-            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            int id = preparedStatement.getGeneratedKeys().getInt(1);
+            //int id = ((Number) preparedStatement.executeQuery("last_inster_rowid();")).intValue();
             System.out.println(id);
             Database.getINSTANCE().addChapitre(id, numeroChapitre, modeChapitre, libelle);
 
@@ -87,7 +89,7 @@ public abstract class Sql{
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
-            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            int id = preparedStatement.getGeneratedKeys().getInt(1);
             System.out.println(id);
             Database.getINSTANCE().addExamen(id, isExamen, isPresentiel, date, duree, libelle, fichier);
 
@@ -114,7 +116,7 @@ public abstract class Sql{
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
-            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            int id = preparedStatement.getGeneratedKeys().getInt(1);
             System.out.println(id);
             Database.getINSTANCE().addPlanche(id, numeroPlanche, modePlanche, datePlanche, libellePlanche, fichierPlanchePath, chapitre);
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
@@ -142,7 +144,7 @@ public abstract class Sql{
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
-            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            int id = preparedStatement.getGeneratedKeys().getInt(1);
             System.out.println(id);
             Database.getINSTANCE().linkExeToPlanche(exercice, planche);
 
@@ -170,7 +172,7 @@ public abstract class Sql{
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
-            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            int id = preparedStatement.getGeneratedKeys().getInt(1);
             System.out.println(id);
             Database.getINSTANCE().linkExeToChapitre(exercice);
 
@@ -192,7 +194,7 @@ public abstract class Sql{
             if (preparedStatement.executeUpdate() == 0){
                 return false;
             }
-            int id = ((Number) preparedStatement.executeQuery("Select last_inster_rowid();")).intValue();
+            int id = preparedStatement.getGeneratedKeys().getInt(1);
             System.out.println(id);
             Database.getINSTANCE().linkExeToExamen(exercice, examen);
 
