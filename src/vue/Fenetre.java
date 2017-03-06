@@ -862,9 +862,11 @@ public class Fenetre extends JFrame implements Observer {
     public void clear() {
         chapitrePanels.clear();
         exercicePanels.clear();
+        chapitresPresentiels.clear();
         rootPresentiels.removeAllChildren();
         treeChapPresentiels.removeAll();
         treeChapPresentiels.collapseRow(0);
+        chapitresDistants.clear();
         rootDistants.removeAllChildren();
         treeChapDistants.removeAll();
         treeChapDistants.collapseRow(0);
