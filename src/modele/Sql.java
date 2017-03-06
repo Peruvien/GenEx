@@ -42,6 +42,12 @@ public abstract class Sql{
         return false;
     }
 
+    public static boolean addExercice(int numeroExercice, String dureeExercice, int pointExercice, String libelleExercice, String fichierExercice, String tagsExercice, int numeroChapitre) {
+        Time time = Time.valueOf(dureeExercice);
+        Chapitre chapitre = Database.getINSTANCE().getChapitres().get(numeroChapitre);
+        return addExercice(numeroExercice, time, pointExercice, libelleExercice, fichierExercice, tagsExercice, chapitre);
+    }
+
     public static boolean addChapitre(int numeroChapitre, int modeChapitre, String libelle){
         try {
             String insertExercice = "INSERT INTO CHAPITRE"
@@ -280,4 +286,6 @@ public abstract class Sql{
         //Je pense que faire une fenetre info pour le dire peut être cool aussi ^^
         //Techniquement, je peux te renvoyer un boolean pour dire si ça été créer ou non
     }
+
+
 }

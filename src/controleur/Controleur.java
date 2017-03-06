@@ -7,11 +7,19 @@ package controleur;
 
 import modele.Connexion;
 import modele.Modele;
+import modele.Sql;
 
 /**
  *
  * @author Robin
  * @author Vincent
+ */
+
+/*
+mode chapitre
+    //0 for both
+    //1 for presentiel
+    //2 for distance
  */
 public class Controleur {
     
@@ -48,7 +56,8 @@ public class Controleur {
     }
     
     public void ajouterChapitre(int modeChapitre, int numero, String libelle) {
-        
+        Sql.addChapitre(numero, modeChapitre, libelle);
+        this.actualiserAffichage();
     }
     
     public void modifierChapitre(int modeChapitre, int numero, String libelle) {
@@ -58,9 +67,13 @@ public class Controleur {
     public void supprimerChapitre(int modeChapitre, int numero) {
         
     }
+
+    //TODO faire les fonctions pour utiliser les exercices à chapitre/devoir/examen
     
     public void ajouterExercice(int modeChapitre, int numeroChapitre, int numeroExercice, String dureeExercice, int pointExercice, String libelleExercice, String fichierExercice, String tagsExercice) {
-        
+        //TODO Vérifier dans Sql que ça fonctionne bien
+        Sql.addExercice(numeroExercice, dureeExercice, pointExercice, libelleExercice, fichierExercice, tagsExercice, numeroChapitre);
+        this.actualiserAffichage();
     }
     
     public void modifierExercice(int modeChapitre, int numeroChapitre, int numeroExercice, String dureeExercice, int pointExercice, String libelleExercice, String fichierExercice, String tagsExercice) {
