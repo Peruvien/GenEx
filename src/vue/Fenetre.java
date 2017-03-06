@@ -640,7 +640,8 @@ public class Fenetre extends JFrame implements Observer {
         }
         int res = JOptionPane.showOptionDialog(this, inputs, "Ajouter chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
-            
+            int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
+            controleur.ajouterChapitre(modeChapitre, (int)numeroSpinner.getValue(), libelleField.getText());
         }
     }
     
@@ -666,7 +667,8 @@ public class Fenetre extends JFrame implements Observer {
             }
             int res = JOptionPane.showOptionDialog(this, inputs, "Modifier chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (res == JOptionPane.YES_OPTION) {
-                
+                int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
+                controleur.modifierChapitre(modeChapitre, (int)numeroBox.getSelectedItem(), libelleField.getText());
             }
         } else {
             JOptionPane.showMessageDialog(this, "Il n'y a pas de chapitre à modifier");
@@ -694,7 +696,8 @@ public class Fenetre extends JFrame implements Observer {
             if (res == JOptionPane.YES_OPTION) {
                 int res2 = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr ?", "Demande de confirmation", JOptionPane.YES_NO_OPTION);
                 if (res2 == JOptionPane.YES_OPTION) {
-                    
+                    int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
+                    controleur.supprimerChapitre(modeChapitre,(int)numeroBox.getSelectedItem());
                 }
             }
         } else {
@@ -743,7 +746,8 @@ public class Fenetre extends JFrame implements Observer {
         
         int res = JOptionPane.showOptionDialog(this, inputs,"Ajouter exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
         if (res == JOptionPane.YES_OPTION) {
-            
+            int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
+            controleur.ajouterExercice(modeChapitre, (int)numeroChapitreBox.getSelectedItem(), (int)numeroSpinner.getValue(), dureeChoser.getFormatedTime(), (int)pointsSpin.getValue(), libelleField.getText(), fichierChooser.getPath(), tagsField.getText());
         }
     }
     
@@ -793,7 +797,8 @@ public class Fenetre extends JFrame implements Observer {
             String[] options = { "Modifier", "Annuler" };
             int res = JOptionPane.showOptionDialog(this, inputs,"Modifier exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
             if (res == JOptionPane.YES_OPTION) {
-                
+                int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
+                controleur.modifierExercice(modeChapitre, (int)numeroChapitreBox.getSelectedItem(), (int)numeroBox.getSelectedItem(), dureeChoser.getFormatedTime(), (int)pointsSpin.getValue(), libelleField.getText(), fichierChooser.getPath(), tagsField.getText());
             }
         }
         else {
@@ -837,7 +842,8 @@ public class Fenetre extends JFrame implements Observer {
 
             int res = JOptionPane.showOptionDialog(this, inputs,"Supprimer exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
             if (res == JOptionPane.YES_OPTION) {
-
+                int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
+                controleur.supprimerExercice(modeChapitre, (int)numeroChapitreBox.getSelectedItem(), (int)numeroBox.getSelectedItem());
             }
         }
         else {
