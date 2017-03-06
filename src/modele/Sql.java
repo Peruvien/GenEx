@@ -15,14 +15,14 @@ public abstract class Sql{
         dbConnexion = c;
     }
 
-    public static boolean addExercice(int numeroExercice, Time dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags, Chapitre chapitre) {
+    public static boolean addExercice(int numeroExercice, String dureeExercice, int pointsExercice, String libelleExercice, String fichierExercicePath, String tags, Chapitre chapitre) {
         try {
             String insertExercice = "INSERT INTO EXERCICE"
                     + "(numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercice) VALUES"
                     + "(?,?,?,?,?)";
             PreparedStatement preparedStatement = dbConnexion.prepareStatement(insertExercice);
             preparedStatement.setInt(1, numeroExercice);
-            preparedStatement.setTime(2, dureeExercice);
+            preparedStatement.setString(2, dureeExercice);
             preparedStatement.setInt(3, pointsExercice);
             preparedStatement.setString(4, libelleExercice);
             preparedStatement.setString(5, tags);
@@ -31,7 +31,7 @@ public abstract class Sql{
             }
             int id = preparedStatement.getGeneratedKeys().getInt(1);
             System.out.println(id);
-            Database.getINSTANCE().addExercice(id, numeroExercice, dureeExercice, pointsExercice, libelleExercice,
+            Database.getINSTANCE().addExercice(id, numeroExercice, Time.valueOf(dureeExercice), pointsExercice, libelleExercice,
                     fichierExercicePath, tags, chapitre);
             
             //numeroExercice, dureeExercice, pointsExercice, libelleExercice, fichierExercicePath, tags);
@@ -43,9 +43,9 @@ public abstract class Sql{
     }
 
     public static boolean addExercice(int numeroExercice, String dureeExercice, int pointExercice, String libelleExercice, String fichierExercice, String tagsExercice, int numeroChapitre) {
-        Time time = Time.valueOf(dureeExercice);
+        //Time time = Time.valueOf(dureeExercice);
         Chapitre chapitre = Database.getINSTANCE().getChapitres().get(numeroChapitre);
-        return addExercice(numeroExercice, time, pointExercice, libelleExercice, fichierExercice, tagsExercice, chapitre);
+        return addExercice(numeroExercice, dureeExercice, pointExercice, libelleExercice, fichierExercice, tagsExercice, chapitre);
     }
 
     public static boolean addChapitre(int numeroChapitre, int modeChapitre, String libelle){
