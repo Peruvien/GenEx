@@ -621,6 +621,7 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     private void ajouterChapitre(Object src) {
+        chapitrePanels.setAjout(true);
         JPanel presentielPanel = chapitrePanels.getPresentielPanel();
         chapitrePanels.setNumeroSpinner();
         JPanel numeroPanel = chapitrePanels.getNumeroPanel();
@@ -638,6 +639,7 @@ public class Fenetre extends JFrame implements Observer {
         if (src.equals(ajouterChapitrePopup)) {
             setSelectedPresentiel(presentielCheckBox);
         }
+        libelleField.setText("");
         int res = JOptionPane.showOptionDialog(this, inputs, "Ajouter chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
             int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
@@ -646,6 +648,7 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     private void modifierChapitre(Object src) {
+        chapitrePanels.setAjout(false);
         JPanel presentielPanel = chapitrePanels.getPresentielPanel();
         chapitrePanels.setNumeroBox();
         JPanel numeroPanel = chapitrePanels.getNumeroPanel();
@@ -676,6 +679,7 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     private void supprimerChapitre(Object src) {
+        chapitrePanels.setAjout(false);
         JPanel presentielPanel = chapitrePanels.getPresentielPanel();
         chapitrePanels.setNumeroBox();
         JPanel numeroPanel = chapitrePanels.getNumeroPanel();
@@ -707,6 +711,8 @@ public class Fenetre extends JFrame implements Observer {
     
     
     private void ajouterExercice(Object src) {
+        chapitrePanels.setAjout(false);
+        exercicePanels.setAjout(true);
         JPanel chapitre = exercicePanels.getChapitrePanel();
         JPanel exercice = exercicePanels.getExercicePanel();
         exercicePanels.setChapitreNumeroBox();
@@ -735,7 +741,6 @@ public class Fenetre extends JFrame implements Observer {
         FileChooser fichierChooser = exercicePanels.getFichierChooser();
         JTextField tagsField = exercicePanels.getTagsField();
         
-        exercicePanels.setAjout(true);
         if (src.equals(ajouterExercicePopup)) {
             setSelectedPresentiel(presentielCheckBox);
             setSelectedChapitrePath(numeroChapitreBox);
@@ -752,6 +757,8 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     private void modifierExercice(Object src) {
+        chapitrePanels.setAjout(false);
+        exercicePanels.setAjout(false);
         JPanel chapitre = exercicePanels.getChapitrePanel();
         JPanel exercice = exercicePanels.getExercicePanel();
         exercicePanels.setChapitreNumeroBox();
@@ -780,7 +787,6 @@ public class Fenetre extends JFrame implements Observer {
         FileChooser fichierChooser = exercicePanels.getFichierChooser();
         JTextField tagsField = exercicePanels.getTagsField();
         
-        exercicePanels.setAjout(false);
         exercicePanels.setFields();
         if (numeroChapitreBox.getItemCount() > 0) {
             if (src.equals(modifierExercicePopup)) {
@@ -807,6 +813,8 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     private void supprimerExercice(Object src) {
+        chapitrePanels.setAjout(false);
+        exercicePanels.setAjout(false);
         JPanel chapitrePan = exercicePanels.getChapitrePanel();
         JPanel exercicePan = new JPanel(new BorderLayout());
         exercicePan.setBorder(BorderFactory.createTitledBorder("Exercice"));
@@ -823,9 +831,7 @@ public class Fenetre extends JFrame implements Observer {
         inputs.add(chapitrePan,BorderLayout.CENTER);
         inputs.add(numeroPan,BorderLayout.SOUTH);
         
-        exercicePanels.setAjout(false);
         exercicePanels.setFields();
-        
         if (numeroChapitreBox.getItemCount() > 0) {
             if (src.equals(supprimerExercicePopup)) {
                 setSelectedPresentiel(presentielCheckBox);

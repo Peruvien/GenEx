@@ -45,11 +45,13 @@ public class ChapitrePanels extends JComponent {
     private Set<Integer> distants;
     private Map<Pair,String> libelles;
     
+    private boolean ajout;
     
     //CONSTRUCTEUR
     public ChapitrePanels() {
         initAll();
         setComponents();
+        ajout = true;
     }
     
     //ACCESSEURS
@@ -160,6 +162,10 @@ public class ChapitrePanels extends JComponent {
         numeroBox.removeAllItems();
     }
     
+    public void setAjout(boolean ajout) {
+        this.ajout = ajout;
+    }
+    
     public void addItemPresentiel(int numero, String libelle) {
         presentiels.add(numero);
         if (presentielCheckBox.isSelected()) {
@@ -196,20 +202,22 @@ public class ChapitrePanels extends JComponent {
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object src = e.getSource();
-            ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+            if (!ajout){
+                Object src = e.getSource();ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+                
+                if (src.equals(presentielCheckBox)) {
+                    if (presentielCheckBox.isSelected()) {
+                        setItemsPresentiels();
+                    }
+                    else {
+                        setItemsDistants();
+                    }
+                }
+                for (ChangeListener listener : listeners) {
+                    listener.stateChanged(new ChangeEvent(src));
+                }
+            }
             
-            if (src.equals(presentielCheckBox)) {
-                if (presentielCheckBox.isSelected()) {
-                    setItemsPresentiels();
-                }
-                else {
-                    setItemsDistants();
-                }
-            }
-            for (ChangeListener listener : listeners) {
-                listener.stateChanged(new ChangeEvent(src));
-            }
         }
         
     }
@@ -218,21 +226,23 @@ public class ChapitrePanels extends JComponent {
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object src = e.getSource();
-            ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
-            
-            if (src.equals(numeroBox)) {
-                boolean presentiel = presentielCheckBox.isSelected();
-                if (numeroBox.getItemCount() != 0) {
-                    int numero = (int)numeroBox.getSelectedItem();
-                    Pair pair = new Pair(presentiel, numero);
-                    String libelle = libelles.get(pair);
-                    libelleField.setText(libelle);
+            if (!ajout) {
+                Object src = e.getSource();ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+                
+                if (src.equals(numeroBox)) {
+                    boolean presentiel = presentielCheckBox.isSelected();
+                    if (numeroBox.getItemCount() != 0) {
+                        int numero = (int)numeroBox.getSelectedItem();
+                        Pair pair = new Pair(presentiel, numero);
+                        String libelle = libelles.get(pair);
+                        libelleField.setText(libelle);
+                    }
+                }
+                for (ChangeListener listener : listeners) {
+                    listener.stateChanged(new ChangeEvent(src));
                 }
             }
-            for (ChangeListener listener : listeners) {
-                listener.stateChanged(new ChangeEvent(src));
-            }
+            
         }
         
     }
