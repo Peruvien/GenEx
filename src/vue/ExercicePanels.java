@@ -231,7 +231,7 @@ public class ExercicePanels {
         if (numeroBox.getItemCount() > 0) {
             numeroBox.setSelectedIndex(0);
         }
-        dureeChooser.setTime(new Time(10));
+        dureeChooser.setTime(Time.valueOf("00:00:00"));
         pointsSpinner.setValue(0);
         libelleField.setText("");
         tagsField.setText("");
