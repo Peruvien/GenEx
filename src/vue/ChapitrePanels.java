@@ -146,6 +146,7 @@ public class ChapitrePanels extends JComponent {
         for (Integer i : presentiels) {
             numeroBox.addItem(i);
         }
+        numeroBox.setSelectedIndex(0);
     }
     
     private void setItemsDistants() {
@@ -153,6 +154,7 @@ public class ChapitrePanels extends JComponent {
         for (Integer i : distants) {
             numeroBox.addItem(i);
         }
+        numeroBox.setSelectedIndex(0);
     }
     
     public void clear() {
@@ -203,7 +205,8 @@ public class ChapitrePanels extends JComponent {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!ajout){
-                Object src = e.getSource();ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+                Object src = e.getSource();
+                ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
                 
                 if (src.equals(presentielCheckBox)) {
                     if (presentielCheckBox.isSelected()) {
@@ -227,7 +230,8 @@ public class ChapitrePanels extends JComponent {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!ajout) {
-                Object src = e.getSource();ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
+                Object src = e.getSource();
+                ChangeListener[] listeners = listenerList.getListeners(ChangeListener.class);
                 
                 if (src.equals(numeroBox)) {
                     boolean presentiel = presentielCheckBox.isSelected();
