@@ -63,6 +63,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import lu.tudor.santec.jtimechooser.JTimeChooser;
 import observer.Observer;
@@ -294,6 +295,8 @@ public class Fenetre extends JFrame implements Observer {
      * Initialise les arbres.
      */
     private void initTrees() {
+        
+        
         rootPresentiels = new DefaultMutableTreeNode("Chapitres");
         rootDistants = new DefaultMutableTreeNode("Chapitres");
         
@@ -730,6 +733,8 @@ public class Fenetre extends JFrame implements Observer {
         FileChooser fichierChooser = exercicePanels.getFichierChooser();
         JTextField tagsField = exercicePanels.getTagsField();
         
+        JTextField libelleChapitreField = chapitrePanels.getLibelleField();
+        libelleChapitreField.setEditable(false);
         if (src.equals(ajouterExercicePopup)) {
             setSelectedPresentiel(presentielCheckBox);
             setSelectedChapitrePath(numeroChapitreBox);
@@ -743,6 +748,7 @@ public class Fenetre extends JFrame implements Observer {
             int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
             controleur.ajouterExercice(modeChapitre, (int)numeroChapitreBox.getSelectedItem(), (int)numeroSpinner.getValue(), dureeChoser.getFormatedTime(), (int)pointsSpin.getValue(), libelleField.getText(), fichierChooser.getPath(), tagsField.getText());
         }
+        libelleChapitreField.setEditable(true);
     }
     
     private void modifierExercice(Object src) {
@@ -778,6 +784,9 @@ public class Fenetre extends JFrame implements Observer {
         
         exercicePanels.setFields();
         if (numeroChapitreBox.getItemCount() > 0) {
+            JTextField libelleChapitreField = chapitrePanels.getLibelleField();
+            libelleChapitreField.setEditable(false);
+            
             if (src.equals(modifierExercicePopup)) {
                 setSelectedPresentiel(presentielCheckBox);
                 setSelectedChapitrePath(numeroChapitreBox);
@@ -788,13 +797,14 @@ public class Fenetre extends JFrame implements Observer {
                     numeroBox.setSelectedItem(exerciceNode.getExercice().getNumero());
                 }
             }
-
+            
             String[] options = { "Modifier", "Annuler" };
             int res = JOptionPane.showOptionDialog(this, inputs,"Modifier exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
             if (res == JOptionPane.YES_OPTION) {
                 int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
                 controleur.modifierExercice(modeChapitre, (int)numeroChapitreBox.getSelectedItem(), (int)numeroBox.getSelectedItem(), dureeChoser.getFormatedTime(), (int)pointsSpin.getValue(), libelleField.getText(), fichierChooser.getPath(), tagsField.getText());
             }
+            libelleChapitreField.setEditable(true);
         }
         else {
             JOptionPane.showMessageDialog(this, "Il n'y a pas d'exercice à modifier");
@@ -822,6 +832,9 @@ public class Fenetre extends JFrame implements Observer {
         
         exercicePanels.setFields();
         if (numeroChapitreBox.getItemCount() > 0) {
+            JTextField libelleChapitreField = chapitrePanels.getLibelleField();
+            libelleChapitreField.setEditable(false);
+            
             if (src.equals(supprimerExercicePopup)) {
                 setSelectedPresentiel(presentielCheckBox);
                 setSelectedChapitrePath(numeroChapitreBox);
@@ -840,6 +853,7 @@ public class Fenetre extends JFrame implements Observer {
                 int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
                 controleur.supprimerExercice(modeChapitre, (int)numeroChapitreBox.getSelectedItem(), (int)numeroBox.getSelectedItem());
             }
+            libelleChapitreField.setEditable(true);
         }
         else {
             JOptionPane.showMessageDialog(this, "Il n'y a pas d'exercice à supprimer");
@@ -853,12 +867,12 @@ public class Fenetre extends JFrame implements Observer {
         exercicePanels.clear();
         chapitresPresentiels.clear();
         rootPresentiels.removeAllChildren();
+        ((DefaultTreeModel)treeChapPresentiels.getModel()).reload(rootPresentiels);
         treeChapPresentiels.removeAll();
-        treeChapPresentiels.collapseRow(0);
         chapitresDistants.clear();
         rootDistants.removeAllChildren();
+        ((DefaultTreeModel)treeChapDistants.getModel()).reload(rootDistants);
         treeChapDistants.removeAll();
-        treeChapDistants.collapseRow(0);
         examModelList.removeAllElements();
         exosModelList.removeAllElements();
         this.repaint();
