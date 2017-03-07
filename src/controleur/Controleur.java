@@ -56,7 +56,6 @@ public class Controleur {
     }
     
     public void ajouterChapitre(int modeChapitre, int numero, String libelle) {
-        System.out.println(this.toString());
         if (Sql.addChapitre(numero, modeChapitre, libelle)) {
             this.actualiserAffichage();
         }
@@ -74,8 +73,9 @@ public class Controleur {
     
     public void ajouterExercice(int modeChapitre, int numeroChapitre, int numeroExercice, String dureeExercice, int pointExercice, String libelleExercice, String fichierExercice, String tagsExercice) {
         //TODO Vérifier dans Sql que ça fonctionne bien
-        Sql.addExercice(numeroExercice, dureeExercice, pointExercice, libelleExercice, fichierExercice, tagsExercice, numeroChapitre);
-        this.actualiserAffichage();
+        if (Sql.addExercice(numeroExercice, dureeExercice, pointExercice, libelleExercice, fichierExercice, tagsExercice, numeroChapitre)) {
+            this.actualiserAffichage();
+        }
     }
     
     public void modifierExercice(int modeChapitre, int numeroChapitre, int numeroExercice, String dureeExercice, int pointExercice, String libelleExercice, String fichierExercice, String tagsExercice) {
