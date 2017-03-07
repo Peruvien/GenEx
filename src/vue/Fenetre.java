@@ -520,13 +520,13 @@ public class Fenetre extends JFrame implements Observer {
             res = JOptionPane.showOptionDialog(this, bddList, "Choisir une base de données", optionType, JOptionPane.PLAIN_MESSAGE, null, options, null);
             if (res == JOptionPane.YES_OPTION) {
                 controleur.ouvrirBDD(dossierBDD + File.separator + bddList.getSelectedValue());
+                controleur.actualiserAffichage();
             }
             if (res == JOptionPane.NO_OPTION) {
                 res2 = this.creerBDD(chemin);
+                controleur.actualiserAffichage();
             }
         } while ((res == JOptionPane.NO_OPTION || res == JOptionPane.CLOSED_OPTION) && !res2);
-        
-        controleur.actualiserAffichage();
     }
     
     /**
