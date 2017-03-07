@@ -79,7 +79,7 @@ public class Fenetre extends JFrame implements Observer {
     //ATTRIBUTS
     //INTERFACE PRINCIPALE
     //JFRAME
-    private LecteurPDFrame lecteurFrame;
+    private final LecteurPDFrame lecteurFrame;
     //PANELS
     private JPanel recherchePanel;
     private JPanel dropPanel;
@@ -622,14 +622,8 @@ public class Fenetre extends JFrame implements Observer {
     
     private void ajouterChapitre(Object src) {
         chapitrePanels.setAjout(true);
-        JPanel presentielPanel = chapitrePanels.getPresentielPanel();
+        JPanel inputs = exercicePanels.getChapitrePanel();
         chapitrePanels.setNumeroSpinner();
-        JPanel numeroPanel = chapitrePanels.getNumeroPanel();
-        JPanel libellePanel = chapitrePanels.getLibellePanel();
-        JPanel inputs = new JPanel(new GridLayout(3, 0));
-        inputs.add(presentielPanel);
-        inputs.add(numeroPanel);
-        inputs.add(libellePanel);
         
         JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
         JSpinner numeroSpinner = chapitrePanels.getNumeroSpinner();
@@ -649,15 +643,9 @@ public class Fenetre extends JFrame implements Observer {
     
     private void modifierChapitre(Object src) {
         chapitrePanels.setAjout(false);
-        JPanel presentielPanel = chapitrePanels.getPresentielPanel();
+        JPanel inputs = exercicePanels.getChapitrePanel();
         chapitrePanels.setNumeroBox();
-        JPanel numeroPanel = chapitrePanels.getNumeroPanel();
-        JPanel libellePanel = chapitrePanels.getLibellePanel();
-        JPanel inputs = new JPanel(new GridLayout(3, 0));
-        inputs.add(presentielPanel);
-        inputs.add(numeroPanel);
-        inputs.add(libellePanel);
-        
+        exercicePanels.setFields();
         JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
         JComboBox numeroBox = chapitrePanels.getNumeroBox();
         JTextField libelleField = chapitrePanels.getLibelleField();
@@ -680,15 +668,14 @@ public class Fenetre extends JFrame implements Observer {
     
     private void supprimerChapitre(Object src) {
         chapitrePanels.setAjout(false);
-        JPanel presentielPanel = chapitrePanels.getPresentielPanel();
+        JPanel inputs = exercicePanels.getChapitrePanel();
         chapitrePanels.setNumeroBox();
-        JPanel numeroPanel = chapitrePanels.getNumeroPanel();
-        JPanel inputs = new JPanel(new GridLayout(2, 0));
-        inputs.add(presentielPanel);
-        inputs.add(numeroPanel);
+        exercicePanels.setFields();
         
         JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
         JComboBox numeroBox = chapitrePanels.getNumeroBox();
+        JTextField libelleField = chapitrePanels.getLibelleField();
+        libelleField.setEditable(false);
         
         String[] options = {"Supprimer", "Annuler"};
         if (numeroBox.getItemCount() > 0) {
@@ -696,6 +683,7 @@ public class Fenetre extends JFrame implements Observer {
                 setSelectedPresentiel(presentielCheckBox);
                 setSelectedChapitrePath(numeroBox);
             }
+            
             int res = JOptionPane.showOptionDialog(this, inputs, "Modifier chapitre", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (res == JOptionPane.YES_OPTION) {
                 int res2 = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr ?", "Demande de confirmation", JOptionPane.YES_NO_OPTION);
@@ -704,6 +692,7 @@ public class Fenetre extends JFrame implements Observer {
                     controleur.supprimerChapitre(modeChapitre,(int)numeroBox.getSelectedItem());
                 }
             }
+            libelleField.setEditable(true);
         } else {
             JOptionPane.showMessageDialog(this, "Il n'y a pas de chapitre à supprimer");
         }

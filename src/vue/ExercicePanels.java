@@ -143,7 +143,7 @@ public class ExercicePanels {
         initFileChooser();
     }
     private void initPanels() {
-        chapitrePanel = new JPanel(new GridLayout(2,0));
+        chapitrePanel = new JPanel(new GridLayout(3,0));
         chapitrePanel.setBorder(BorderFactory.createTitledBorder("Chapitre"));
         exercicePanel = new JPanel(new GridLayout(5,0));
         exercicePanel.setBorder(BorderFactory.createTitledBorder("Exercice"));
@@ -186,6 +186,7 @@ public class ExercicePanels {
     private void setComponents() {
         chapitrePanel.add(chapitrePanels.getPresentielPanel());
         chapitrePanel.add(chapitrePanels.getNumeroPanel());
+        chapitrePanel.add(chapitrePanels.getLibellePanel());
         dureePanel.add(dureeChooser);
         pointsPanel.add(pointsSpinner);
         libellePanel.add(libelleField);
