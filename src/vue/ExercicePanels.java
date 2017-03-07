@@ -255,6 +255,7 @@ public class ExercicePanels {
         dureeChooser.setTime(exercice.getDuree());
         pointsSpinner.setValue(exercice.getPoints());
         libelleField.setText(exercice.getLibelle());
+        fichierChooser.setText(exercice.getFichier());
         tagsField.setText(exercice.getTags());
     }
     
