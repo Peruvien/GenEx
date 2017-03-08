@@ -776,7 +776,7 @@ public class Fenetre extends JFrame implements Observer {
         JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
         JComboBox numeroChapitreBox = chapitrePanels.getNumeroBox();
         JComboBox numeroBox = exercicePanels.getNumeroBox();
-        JTimeChooser dureeChoser = exercicePanels.getDureeChooser();
+        JTimeChooser dureeChooser = exercicePanels.getDureeChooser();
         JSpinner pointsSpin = exercicePanels.getPointsSpinner();
         JTextField libelleField = exercicePanels.getLibelleField();
         FileChooser fichierChooser = exercicePanels.getFichierChooser();
@@ -802,7 +802,7 @@ public class Fenetre extends JFrame implements Observer {
             int res = JOptionPane.showOptionDialog(this, inputs,"Modifier exercice",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,options,options[0]);
             if (res == JOptionPane.YES_OPTION) {
                 int modeChapitre = presentielCheckBox.isSelected() ? 1 : 2;
-                controleur.modifierExercice(modeChapitre, (int)numeroChapitreBox.getSelectedItem(), (int)numeroBox.getSelectedItem(), dureeChoser.getFormatedTime(), (int)pointsSpin.getValue(), libelleField.getText(), fichierChooser.getPath(), tagsField.getText());
+                controleur.modifierExercice(modeChapitre, (int)numeroChapitreBox.getSelectedItem(), (int)numeroBox.getSelectedItem(), dureeChooser.getFormatedTime(), (int)pointsSpin.getValue(), libelleField.getText(), fichierChooser.getPath(), tagsField.getText());
             }
             libelleChapitreField.setEditable(true);
         }
@@ -814,21 +814,34 @@ public class Fenetre extends JFrame implements Observer {
     private void supprimerExercice(Object src) {
         chapitrePanels.setAjout(false);
         exercicePanels.setAjout(false);
-        JPanel chapitrePan = exercicePanels.getChapitrePanel();
-        JPanel exercicePan = new JPanel(new BorderLayout());
-        exercicePan.setBorder(BorderFactory.createTitledBorder("Exercice"));
+        JPanel chapitre = exercicePanels.getChapitrePanel();
+        JPanel exercice = exercicePanels.getExercicePanel();
         exercicePanels.setChapitreNumeroBox();
         exercicePanels.setNumeroBox();
-        exercicePanels.setNumeroBox();
+        JPanel inputs = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 2;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1.0;
+        inputs.add(chapitre,gbc);
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.gridx = 0;
+        gbc.gridheight = GridBagConstraints.REMAINDER;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        inputs.add(exercice,gbc);
         
-        JPanel numeroPan = exercicePanels.getNumeroPanel();
-        JPanel inputs = new JPanel(new BorderLayout());
         JCheckBox presentielCheckBox = chapitrePanels.getPresentielCheckBox();
         JComboBox numeroChapitreBox = chapitrePanels.getNumeroBox();
         JComboBox numeroBox = exercicePanels.getNumeroBox();
+        JTimeChooser dureeChooser = exercicePanels.getDureeChooser();
         
-        inputs.add(chapitrePan,BorderLayout.CENTER);
-        inputs.add(numeroPan,BorderLayout.SOUTH);
+        //JSpinner pointsSpin = exercicePanels.getPointsSpinner();
+        //JTextField libelleField = exercicePanels.getLibelleField();
+        //FileChooser fichierChooser = exercicePanels.getFichierChooser();
+        //JTextField tagsField = exercicePanels.getTagsField();
         
         exercicePanels.setFields();
         if (numeroChapitreBox.getItemCount() > 0) {

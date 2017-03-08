@@ -234,6 +234,7 @@ public class ExercicePanels {
         dureeChooser.setTime(Time.valueOf("00:00:00"));
         pointsSpinner.setValue(0);
         libelleField.setText("");
+        fichierChooser.setText("");
         tagsField.setText("");
     }
     
